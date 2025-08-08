@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Search, Eye, Edit, Trash2 } from "lucide-react"
 import { toast } from "sonner"
-import { Card, CardContent } from "@/components/ui/card"
 
 export function FranchiseTable({ franchises }) {
   const [searchTerm, setSearchTerm] = useState("")

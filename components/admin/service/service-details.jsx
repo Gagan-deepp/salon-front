@@ -61,13 +61,13 @@ export function ServiceDetails({ service }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col items-start">
           <Button variant="ghost" size="sm" onClick={() => router.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{service.name}</h1>
+          <div className="my-4" >
+            <h1 className="text-3xl font-bold ">{service.name}</h1>
             <div className="flex items-center space-x-2 mt-1">
               <Badge variant="outline">{CATEGORY_LABELS[service.category]}</Badge>
               <Badge variant={service.isActive ? "default" : "destructive"}>

@@ -15,19 +15,29 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateProductStock } from "@/lib/actions/product_action"
 import { toast } from "sonner"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export function StockUpdateDialog({ children, product }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const OPTIONS = [
+    {
+      value: 'increase',
+      lable: "INCREASE"
+    },
+    {
+      value: 'decrease',
+      lable: "DECREASE"
+    },
+  ]
 
   const handleSubmit = async (formData) => {
     setLoading(true)
 
     const payload = {
-      current: Number.parseInt(formData.get("currentStock")),
-      minimum: Number.parseInt(formData.get("minimumStock")),
-      maximum: Number.parseInt(formData.get("maximumStock")),
+      quantity: Number.parseInt(formData.get("addStock")),
+      operation: formData.get("operation")
     }
 
     const result = await updateProductStock(product._id, payload)
@@ -54,14 +64,42 @@ export function StockUpdateDialog({ children, product }) {
 
         <form action={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="currentStock">Current Stock *</Label>
+            <Label htmlFor="currentStock">Current Stock </Label>
             <Input
               id="currentStock"
               name="currentStock"
               type="number"
               min="0"
+              disabled={true}
               defaultValue={product.stock.current}
               required />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="currentStock">Add Stock *</Label>
+            <Input
+              id="addStock"
+              name="addStock"
+              type="number"
+              min="0"
+              defaultValue={0}
+              required />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="operation">Operation *</Label>
+            <Select name="operation" required>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Operation" />
+              </SelectTrigger>
+              <SelectContent>
+                {OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.lable}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
@@ -70,6 +108,7 @@ export function StockUpdateDialog({ children, product }) {
               id="minimumStock"
               name="minimumStock"
               type="number"
+              disabled={true}
               min="0"
               defaultValue={product.stock.minimum} />
           </div>
@@ -78,6 +117,7 @@ export function StockUpdateDialog({ children, product }) {
             <Label htmlFor="maximumStock">Maximum Stock</Label>
             <Input
               id="maximumStock"
+              disabled={true}
               name="maximumStock"
               type="number"
               min="0"

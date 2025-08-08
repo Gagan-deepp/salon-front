@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Search, Eye, Edit, Trash2, Clock } from "lucide-react"
 import { toast } from "sonner"
+import { Card, CardContent } from "@/components/ui/card"
 
 const CATEGORIES = [
   { value: "HAIR_CUT", label: "Hair Cut" },
@@ -35,6 +36,16 @@ export function ServiceTable({ services }) {
   const [categoryFilter, setCategoryFilter] = useState("")
   const [roleFilter, setRoleFilter] = useState("")
   const router = useRouter()
+
+  if (services.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-center text-muted-foreground">No Services found.</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const filteredServices = services.filter((service) => {
     const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase())

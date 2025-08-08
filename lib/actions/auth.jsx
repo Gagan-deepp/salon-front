@@ -2,7 +2,7 @@
 import axios from "axios"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
-import { signIn } from "../auth"
+import { signIn, signOut } from "../auth"
 import { AuthError } from "next-auth"
 
 const BASE_URL =
@@ -38,6 +38,12 @@ export const signinAction = async ({ email, password }) => {
 
         throw error;
     }
+}
+
+export const signOutAction = async () => {
+    await signOut({
+        redirectTo: "/"
+    })
 }
 
 // Login (POST /auth/login) — sets token client-side; here we just return data.

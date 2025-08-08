@@ -10,11 +10,10 @@ async function DashboardStats() {
   const session = await auth()
 
   console.log("Session in page ==> ", session)
-
   // Fetch franchises data
   const result = await getFranchises({ limit: 100 })
 
-  console.log("Result ==> ",result)
+  console.log("admin page Result ==> ", result)
 
   if (!result.success) {
     return (
@@ -87,7 +86,7 @@ export default function AdminDashboard() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <h1 className="text-3xl font-bold ">Dashboard</h1>
         <p className="text-gray-600">Overview of your franchise operations</p>
       </div>
       <Suspense fallback={<DashboardSkeleton />}>

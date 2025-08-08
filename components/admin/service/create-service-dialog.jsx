@@ -41,7 +41,7 @@ const ROLES = [
 
 async function fetchFranchises() {
   const result = await getFranchises({ limit: 100 })
-  return result.success ? result.data.franchises || result.data : []
+  return result.success ? result.data.data : []
 }
 
 export function CreateServiceDialog({ children }) {

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Search, Eye, Edit, Trash2, AlertTriangle } from "lucide-react"
 import { toast } from "sonner"
+import { Card, CardContent } from "@/components/ui/card"
 
 const CATEGORIES = [
   { value: "HAIR_CARE", label: "Hair Care" },
@@ -24,6 +25,16 @@ export function ProductTable({ products }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("")
   const router = useRouter()
+
+  if (products.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-center text-muted-foreground">No products found.</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =

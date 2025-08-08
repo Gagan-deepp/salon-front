@@ -4,26 +4,21 @@ import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
 import { auth } from "../auth"
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:8080/api" // adjust per env
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
-// Resolve Bearer token from next-auth session (preferred) or cookies (fallback)
+// Resolve the Bearer token from next-auth session (preferred) or cookies (fallback)
 async function getAuthHeaders() {
   const jar = cookies()
-  const session = await auth().catch(() => null)
+  const session = await auth().catch(() => null) // guards against auth() throwing
   const token =
     session?.accessToken ||
     jar.get("accessToken")?.value ||
     jar.get("token")?.value
-
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 // ───────────────────────────────────────────────────────────────────────────────
-
-
-// Products: Create  (POST /products)
+// Products: Create (POST /products)
 export async function createProduct(payload) {
   try {
     const headers = await getAuthHeaders()
@@ -37,12 +32,12 @@ export async function createProduct(payload) {
   }
 }
 
-// Products: List / Filter  (GET /products?page=&limit=&category=&search=&lowStock=)
+// Products: List / Filter (GET /products?page=&limit=&category=&search=&lowStock=)
 export async function getProducts(params) {
   try {
     const headers = await getAuthHeaders()
     const res = await axios.get(`${BASE_URL}/products`, { params, headers })
-    console.log("getProducts response", res.data)
+    console.log("getProducts response", res.data.data)
     return { success: true, data: res.data }
   } catch (error) {
     console.error("getProducts error", error)
@@ -50,7 +45,7 @@ export async function getProducts(params) {
   }
 }
 
-// Products: Get Categories  (GET /products/categories)
+// Products: Get Categories (GET /products/categories)
 export async function getProductCategories() {
   try {
     const headers = await getAuthHeaders()
@@ -63,7 +58,7 @@ export async function getProductCategories() {
   }
 }
 
-// Products: Low Stock  (GET /products/low-stock)
+// Products: Low Stock (GET /products/low-stock)
 export async function getLowStockProducts() {
   try {
     const headers = await getAuthHeaders()
@@ -76,7 +71,7 @@ export async function getLowStockProducts() {
   }
 }
 
-// Products: Top Selling  (GET /products/top-selling?startDate=&endDate=&limit=)
+// Products: Top Selling (GET /products/top-selling?startDate=&endDate=&limit=)
 export async function getTopSellingProducts(params) {
   try {
     const headers = await getAuthHeaders()
@@ -89,7 +84,7 @@ export async function getTopSellingProducts(params) {
   }
 }
 
-// Products: Get by ID  (GET /products/{productId})
+// Products: Get by ID (GET /products/{productId})
 export async function getProductById(productId) {
   try {
     const headers = await getAuthHeaders()
@@ -102,7 +97,7 @@ export async function getProductById(productId) {
   }
 }
 
-// Products: Update  (PUT /products/{productId})
+// Products: Update (PUT /products/{productId})
 export async function updateProduct(productId, payload) {
   try {
     const headers = await getAuthHeaders()
@@ -117,7 +112,7 @@ export async function updateProduct(productId, payload) {
   }
 }
 
-// Products: Update Stock  (PUT /products/{productId}/stock)
+// Products: Update Stock (PUT /products/{productId}/stock)
 export async function updateProductStock(productId, payload) {
   try {
     const headers = await getAuthHeaders()
@@ -132,7 +127,7 @@ export async function updateProductStock(productId, payload) {
   }
 }
 
-// Products: Delete (deactivate)  (DELETE /products/{productId})
+// Products: Delete (deactivate) (DELETE /products/{productId})
 export async function deleteProduct(productId) {
   try {
     const headers = await getAuthHeaders()

@@ -55,13 +55,13 @@ export function ProductDetails({ product }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col items-start">
           <Button variant="ghost" size="sm" onClick={() => router.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+          <div className="my-4" >
+            <h1 className="text-3xl font-bold ">{product.name}</h1>
             <div className="flex items-center space-x-2 mt-1">
               <Badge variant="outline">{product.sku}</Badge>
               <Badge variant={product.isActive ? "default" : "destructive"}>
@@ -139,7 +139,7 @@ export function ProductDetails({ product }) {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Commission</CardTitle>
+                <CardTitle className="text-sm font-medium">Commission Rate</CardTitle>
                 <Percent className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>

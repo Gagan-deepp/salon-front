@@ -51,7 +51,7 @@ export function FranchiseDetails({ franchise }) {
             Back
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{franchise.name}</h1>
+            <h1 className="text-3xl font-bold ">{franchise.name}</h1>
             <div className="flex items-center space-x-2 mt-1">
               <Badge variant="outline">{franchise.code}</Badge>
               <Badge variant={franchise.isActive ? "default" : "destructive"}>

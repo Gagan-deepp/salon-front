@@ -2,46 +2,41 @@
 import axios from "axios"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
-import { auth } from "../auth"          // NEW
+import { auth } from "../auth"
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:8080/api"           // adjust per env
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
-// ─── Bearer-token resolver ────────────────────────────────────────────────────
+// Resolve the Bearer token from next-auth session (preferred) or cookies (fallback)
 async function getAuthHeaders() {
   const jar = cookies()
-  const session = await auth().catch(() => null)        // guard if not logged in
+  const session = await auth().catch(() => null) // guards against auth() throwing
   const token =
     session?.accessToken ||
     jar.get("accessToken")?.value ||
     jar.get("token")?.value
-
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// Optional: light coercion to align with your Mongoose schema
 function normalizeServicePayload(payload = {}) {
-  const toNum = (v) =>
-    v === undefined || v === null || v === "" ? v : Number(v)
-
+  const toNum = (v) => (v === undefined || v === null || v === "" ? v : Number(v))
   return {
     ...payload,
     duration: toNum(payload.duration),
     price: toNum(payload.price),
     gstRate: toNum(payload.gstRate),
     commissionRate: toNum(payload.commissionRate),
+    // Ensure arrays for allowedRoles
     allowedRoles: Array.isArray(payload.allowedRoles)
       ? payload.allowedRoles
       : payload.allowedRoles
         ? [payload.allowedRoles]
         : [],
-  }
+  };
 }
 
-// ─── Service APIs ─────────────────────────────────────────────────────────────
-
-// Create (POST /services)
+// ───────────────────────────────────────────────────────────────────────────────
+// Services: Create (POST /services)
 export async function createService(payload) {
   try {
     const headers = await getAuthHeaders()
@@ -56,7 +51,7 @@ export async function createService(payload) {
   }
 }
 
-// List / Filter (GET /services)
+// Services: List / Filter (GET /services?page=&limit=&category=&role=&search=)
 export async function getServices(params) {
   try {
     const headers = await getAuthHeaders()
@@ -69,7 +64,7 @@ export async function getServices(params) {
   }
 }
 
-// Categories (GET /services/categories)
+// Services: Categories (GET /services/categories)
 export async function getServiceCategories() {
   try {
     const headers = await getAuthHeaders()
@@ -82,7 +77,7 @@ export async function getServiceCategories() {
   }
 }
 
-// Popular (GET /services/popular)
+// Services: Popular (GET /services/popular?startDate=&endDate=&limit=)
 export async function getPopularServices(params) {
   try {
     const headers = await getAuthHeaders()
@@ -95,7 +90,7 @@ export async function getPopularServices(params) {
   }
 }
 
-
+// Services: By Price Range (GET /services/price-range?minPrice=&maxPrice=)
 export async function getServicesByPriceRange(params) {
   try {
     const headers = await getAuthHeaders()
@@ -108,7 +103,7 @@ export async function getServicesByPriceRange(params) {
   }
 }
 
-// By Role (GET /services/role/{role})
+// Services: By Role (GET /services/role/{role})
 export async function getServicesByRole(role, params) {
   try {
     const headers = await getAuthHeaders()
@@ -121,7 +116,7 @@ export async function getServicesByRole(role, params) {
   }
 }
 
-// Get by ID (GET /services/{serviceId})
+// Services: Get by ID (GET /services/{serviceId})
 export async function getServiceById(serviceId) {
   try {
     const headers = await getAuthHeaders()
@@ -134,7 +129,7 @@ export async function getServiceById(serviceId) {
   }
 }
 
-// Update (PUT /services/{serviceId})
+// Services: Update (PUT /services/{serviceId})
 export async function updateService(serviceId, payload) {
   try {
     const headers = await getAuthHeaders()
@@ -150,7 +145,7 @@ export async function updateService(serviceId, payload) {
   }
 }
 
-// Delete (DELETE /services/{serviceId})
+// Services: Delete (deactivate) (DELETE /services/{serviceId})
 export async function deleteService(serviceId) {
   try {
     const headers = await getAuthHeaders()

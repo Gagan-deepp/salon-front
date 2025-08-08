@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createProduct } from "@/lib/actions/product_action"
 import { getFranchises } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 
 const CATEGORIES = [
   { value: "HAIR_CARE", label: "Hair Care" },
@@ -30,7 +31,7 @@ const CATEGORIES = [
 
 async function fetchFranchises() {
   const result = await getFranchises({ limit: 100 })
-  return result.success ? result.data.franchises || result.data : []
+  return result.success ? result.data.data : []
 }
 
 export function CreateProductDialog({ children }) {
@@ -223,8 +224,8 @@ export function CreateProductDialog({ children }) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Product"}
+            <Button type="submit" disabled={loading} className="cursor-pointer" >
+              {loading ? <> Creating... <Loader2 className="animate-spin" /> </> : "Create Product"}
             </Button>
           </div>
         </form>

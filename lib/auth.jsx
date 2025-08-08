@@ -43,6 +43,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.name = customUser.name;
                 token.email = customUser.email;
                 token.accessToken = customUser.accessToken
+                token.franchiseId = user.franchiseId
             }
 
 
@@ -58,6 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
             }
             session.accessToken = token.accessToken
+            session.franchiseId = token.franchiseId
             return session
         },
         authorized({ request, auth }) {

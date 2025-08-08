@@ -41,7 +41,7 @@ export function CreateFranchiseDialog({ children }) {
         whatsapp: formData.get("whatsapp"),
       },
       gstNumber: formData.get("gstNumber"),
-      ownerId: "688e66f20948b949298195db", // Dummy owner ID
+      ownerId: "507f1f77bcf86cd799439011", // Dummy owner ID
       subscription: {
         plan: formData.get("plan"),
       },

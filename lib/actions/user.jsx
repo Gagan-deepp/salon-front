@@ -2,14 +2,17 @@
 import axios from "axios"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
+import { auth } from "../auth"
 
 const BASE_URL =
     process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "http://localhost:3000/api"
+    "http://localhost:8080/api"
 
-function getAuthHeaders() {
+async function getAuthHeaders() {
     const jar = cookies()
+    const session = await auth().catch(() => null) // guards against auth() throwing
     const token =
+        session?.accessToken ||
         jar.get("accessToken")?.value ||
         jar.get("token")?.value
     return token ? { Authorization: `Bearer ${token}` } : {}
@@ -34,10 +37,9 @@ export async function createUser(payload) {
 // Get Users (GET /users?page=&limit=&role=&isActive=)
 export async function getUsers(params) {
     try {
-        const res = await axios.get(`${BASE_URL}/users`, {
-            params,
-            headers: { ...getAuthHeaders() },
-        })
+        const headers = await getAuthHeaders()
+        console.debug("i am in get user action...")
+        const res = await axios.get(`${BASE_URL}/users`, { params, headers })
         console.log("getUsers response", res.data)
         return { success: true, data: res.data }
     } catch (error) {

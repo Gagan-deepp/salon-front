@@ -4,24 +4,21 @@ import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
 import { auth } from "../auth"
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:8080/api"   // adjust per environment
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
 // Resolve the Bearer token from next-auth session (preferred) or cookies (fallback)
 async function getAuthHeaders() {
   const jar = cookies()
-  const session = await auth().catch(() => null)   // guards against auth() throwing
+  const session = await auth().catch(() => null) // guards against auth() throwing
   const token =
     session?.accessToken ||
     jar.get("accessToken")?.value ||
     jar.get("token")?.value
-
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 // ───────────────────────────────────────────────────────────────────────────────
-// Franchises: Create  (POST /franchises)
+// Franchises: Create (POST /franchises)
 export async function createFranchise(payload) {
   try {
     const headers = await getAuthHeaders()
@@ -35,7 +32,7 @@ export async function createFranchise(payload) {
   }
 }
 
-// Franchises: Update  (PUT /franchises/{franchiseId})
+// Franchises: Update (PUT /franchises/{franchiseId})
 export async function updateFranchise(franchiseId, payload) {
   try {
     const headers = await getAuthHeaders()
@@ -50,7 +47,7 @@ export async function updateFranchise(franchiseId, payload) {
   }
 }
 
-// Franchises: List  (GET /franchises?page=&limit=&q=&sort=...)
+// Franchises: List (GET /franchises?page=&limit=&q=&sort=...)
 export async function getFranchises(params) {
   try {
     const headers = await getAuthHeaders()
@@ -63,7 +60,7 @@ export async function getFranchises(params) {
   }
 }
 
-// Franchises: Get by ID  (GET /franchises/{franchiseId})
+// Franchises: Get by ID (GET /franchises/{franchiseId})
 export async function getFranchiseById(franchiseId) {
   try {
     const headers = await getAuthHeaders()
@@ -76,7 +73,7 @@ export async function getFranchiseById(franchiseId) {
   }
 }
 
-// Franchises: My Franchise  (GET /franchises/my-franchise)
+// Franchises: My Franchise (GET /franchises/my-franchise)
 export async function getMyFranchise() {
   try {
     const headers = await getAuthHeaders()
@@ -89,7 +86,7 @@ export async function getMyFranchise() {
   }
 }
 
-// Franchises: Analytics  (GET /franchises/{franchiseId}/analytics?startDate=&endDate=)
+// Franchises: Analytics (GET /franchises/{franchiseId}/analytics?startDate=&endDate=)
 export async function getFranchiseAnalytics(franchiseId, params) {
   try {
     const headers = await getAuthHeaders()
