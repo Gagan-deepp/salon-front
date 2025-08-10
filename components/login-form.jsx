@@ -1,5 +1,4 @@
 "use client"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -10,10 +9,10 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useActionState } from "react"
+import { signinAction } from "@/lib/actions/user-auth"
+import { cn } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
-import { AuthError } from "next-auth"
-import { signinAction } from "@/lib/actions/auth"
+import { useActionState } from "react"
 
 
 export function LoginForm({
@@ -21,28 +20,8 @@ export function LoginForm({
   ...props
 }) {
 
-  const handleLogin = async (prevState, formData) => {
-    try {
-      await signinAction({ email: formData.get("email"), password: formData.get("password") })
-    } catch (error) {
-      if (error instanceof AuthError) {
-        switch (error.type) {
-          case 'CredentialsSignin':
-            return {
-              message: "Invalid Credentials"
-            }
-          default:
-            return {
-              message: "Something went wrong!!"
-            }
-        }
-      }
 
-      throw error;
-    }
-  }
-
-  const [state, formAction, isPending] = useActionState(handleLogin, { error: "", status: "INITIAL" })
+  const [state, formAction, isPending] = useActionState(signinAction, { error: "", status: "INITIAL" })
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

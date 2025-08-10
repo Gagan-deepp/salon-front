@@ -51,14 +51,6 @@ export function ProductTable({ products }) {
     router.push(`/admin/products/${productId}`)
   }
 
-  const handleEdit = (productId) => {
-    router.push(`/admin/products/${productId}/edit`)
-  }
-
-  const handleDelete = (productId) => {
-    toast.success("Product deleted successfully")
-    router.refresh()
-  }
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-IN", {
@@ -81,29 +73,7 @@ export function ProductTable({ products }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8" />
-        </div>
-        <Select value={categoryFilter || "all"} onValueChange={handleCategoryChange}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Filter by category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {CATEGORIES.map((category) => (
-              <SelectItem key={category.value} value={category.value}>
-                {category.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+    
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -174,23 +144,7 @@ export function ProductTable({ products }) {
                         <Eye className="mr-2 h-4 w-4" />
                         View
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleEdit(product._id)
-                        }}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleDelete(product._id)
-                        }}>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
+
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

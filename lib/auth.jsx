@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { login } from "./actions/auth";
+import { login } from "./actions/user-auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -62,6 +62,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.franchiseId = token.franchiseId
             return session
         },
+        redirect({ baseUrl, token }) {
+            if (token) { // Token exists on successful sign-in
+                // Your role-based logic belongs HERE
+                console.log("I am in redirect callback")
+                console.log("Redirecting based on user role:", token.role)
+                switch (token.role) {
+                    case 'FRANCHISE_OWNER':
+                        return `${baseUrl}/admin/franchise`;
+                    case 'CASHIER':
+                        return `${baseUrl}/admin/create/payment`;
+                    default:
+                        return `${baseUrl}/admin`;
+                }
+            }
+            // Fallback for sign-out or other cases
+            return baseUrl;
+        },
+
         authorized({ request, auth }) {
 
 
@@ -82,16 +100,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             const isLoggedIn = !!auth?.user
             console.log("Is logged in", isLoggedIn)
             console.log("Pathname", pathname)
-
-
-            if (pathname === "/admin/*" && !isLoggedIn) {
-                return Response.redirect(new URL("/", request.nextUrl))
-            }
-            if (pathname === "/" && isLoggedIn) {
-                return Response.redirect(new URL("/admin", request.nextUrl))
-            }
-
-            // Allow everyone to access all pages (no protection)
             return true
         }
     },

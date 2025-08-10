@@ -24,14 +24,14 @@ export function SalesChart() {
       config={{
         sales: {
           label: "Sales",
-          color: "hsl(var(--chart-1))",
+          color: "var(--chart-1)",
         },
         target: {
           label: "Target",
-          color: "hsl(var(--chart-2))",
+          color: "var(--chart-2)",
         },
       }}
-      className="h-[250px]">
+      className="h-[250px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={salesData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />

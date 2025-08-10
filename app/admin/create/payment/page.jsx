@@ -356,16 +356,10 @@ export default function CreatePaymentPage() {
           <h1 className="text-3xl font-bold">Create New Payment</h1>
           <p className="text-gray-600">Record a new payment transaction</p>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => router.back()}
-          className="w-full sm:w-auto">
-          Cancel
-        </Button>
       </div>
       <div className="flex flex-col lg:flex-row h-full gap-6">
         {/* Left Column - Form */}
-        <div className="flex-1 lg:flex-[2] bg-white p-6 rounded-lg shadow-sm">
+        <Card className="flex-1 lg:flex-[2]  p-6 rounded-lg shadow-sm">
           <ScrollArea className="h-[calc(100vh-250px)] pr-4"> {/* Adjusted height for full page */}
             <form onSubmit={handleSubmit} className="space-y-6 p-2">
               {/* Customer Selection */}
@@ -812,12 +806,12 @@ export default function CreatePaymentPage() {
               </Tabs>
             </form>
           </ScrollArea>
-        </div>
+        </Card>
 
         {/* Right Column - Bill Summary */}
-        <div className="lg:flex-1 bg-white p-6 rounded-lg shadow-sm">
+        <Card className="lg:flex-1  p-6 rounded-lg shadow-sm">
           <div className="sticky top-6"> {/* Adjusted top for sticky behavior */}
-            <div className="p-4 border-b bg-white -mx-6 -mt-6 rounded-t-lg"> {/* Adjusted margins for full width */}
+            <div className="p-4 border-b  -mx-6 -mt-6 rounded-t-lg"> {/* Adjusted margins for full width */}
               <h3 className="text-lg font-semibold flex items-center">
                 <Receipt className="w-5 h-5 mr-2" />
                 Bill Summary
@@ -829,11 +823,11 @@ export default function CreatePaymentPage() {
                 {/* Services Breakdown */}
                 {formData.services.length > 0 && (
                   <div className="space-y-3">
-                    <div className="font-medium text-gray-700">Services:</div>
+                    <div className="font-semibold">Services:</div>
                     {formData.services.map((service, index) => (
                       <div
                         key={index}
-                        className="flex justify-between text-sm bg-gray-50 p-3 rounded-lg">
+                        className="flex justify-between text-sm  p-4 rounded-lg bg-muted">
                         <div className="flex-1">
                           <div className="font-medium">
                             {service.serviceName || `Service ${index + 1}`}
@@ -857,11 +851,11 @@ export default function CreatePaymentPage() {
                 {/* Products Breakdown */}
                 {formData.products.length > 0 && (
                   <div className="space-y-3">
-                    <div className="font-medium text-gray-700">Products:</div>
+                    <div className="font-semibold">Products:</div>
                     {formData.products.map((product, index) => (
                       <div
                         key={index}
-                        className="flex justify-between text-sm bg-gray-50 p-3 rounded-lg">
+                        className="flex justify-between text-sm  p-4 rounded-lg bg-muted">
                         <div className="flex-1">
                           <div className="font-medium">
                             {product.productName || `Product ${index + 1}`}
@@ -961,7 +955,7 @@ export default function CreatePaymentPage() {
               </div>
             </ScrollArea>
           </div>
-        </div>
+        </Card>
       </div>
       {/* Footer with action buttons */}
       <div className="mt-6 border-t pt-4 flex justify-end">

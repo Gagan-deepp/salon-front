@@ -23,9 +23,9 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { ModeToggle } from "./Mode-Toggle"
+import { usePathname } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 // This is sample data.
 const adminData = {
@@ -72,11 +72,6 @@ const adminData = {
       icon: LayoutDashboard
     },
     {
-      title: "Franchise",
-      url: "/admin/franchise",
-      icon: ShoppingCart
-    },
-    {
       title: "Branches",
       url: "/admin/branches",
       icon: Building2
@@ -108,27 +103,30 @@ export function AppSidebar({
   ...props
 }) {
   const pathName = usePathname()
+  const { data: session } = useSession()
+  console.debug("Full session object:", JSON.stringify(session, null, 2))
+
+  console.debug("AppSidebar session ==> ", session)
+
+  const sideMenus = session?.user?.role === "FRANCHISE_OWNER" ? adminData.franchise_owner : session?.user?.role === "CASHIER" ? adminData.cashier : adminData.navMain
   return (
     <Sidebar collapsible="icon" {...props}>
+
+
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              asChild
-            >
+            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" asChild >
               <div>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-2xl bg-sidebar-primary text-sidebar-primary-foreground">
                   <LayoutDashboard className="size-4" />
                 </div>
-                <div className="flex gap-1 items-center justify-between flex-1 text-left text-sm leading-tight">
+                <div>
                   <span className="truncate font-semibold">Admin Panel</span>
-                  <ModeToggle />
                 </div>
 
               </div>
             </SidebarMenuButton>
-
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -139,7 +137,7 @@ export function AppSidebar({
           <SidebarGroupContent>
 
             <SidebarMenu>
-              {adminData.navMain.map((item) => {
+              {sideMenus.map((item) => {
 
                 let isActive = pathName === item.url
                 return (

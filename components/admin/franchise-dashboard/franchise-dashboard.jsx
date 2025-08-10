@@ -65,8 +65,8 @@ export function FranchiseDashboard({ franchise }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Building2 className="w-8 h-8 text-blue-600" />
+          <div className="p-2 bg-primary rounded-lg">
+            <Building2 className="w-8 h-8 text-primary-foreground" />
           </div>
           <div>
             <h1 className="text-3xl font-bold ">{franchise.name}</h1>

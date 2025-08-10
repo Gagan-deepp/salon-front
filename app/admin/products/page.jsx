@@ -5,8 +5,10 @@ import { CreateProductDialog } from "@/components/admin/product/create-product-d
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
+import { ProductFilter } from "@/components/admin/product/product-filter"
 
-async function ProductList({ searchParams }) {
+
+export default async function ProductsPage({ searchParams }) {
 
   const searchP = await searchParams
   const result = await getProducts({
@@ -21,10 +23,6 @@ async function ProductList({ searchParams }) {
 
   const products = result.data.data
 
-  return <ProductTable products={products} />;
-}
-
-export default function ProductsPage({ searchParams }) {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -39,8 +37,15 @@ export default function ProductsPage({ searchParams }) {
           </Button>
         </CreateProductDialog>
       </div>
+
+
+      <ProductFilter
+        initialSearchTerm={searchP.search || ""}
+        initialCategoryFilter={searchP.category || "all"}
+      />
+
       <Suspense fallback={<TableSkeleton />}>
-        <ProductList searchParams={searchParams} />
+        <ProductTable products={products} />
       </Suspense>
     </div>
   );

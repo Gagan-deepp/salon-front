@@ -5,17 +5,18 @@ import { auth } from "./lib/auth";
 
 const routePermissions = [
     {
-        paths: ['/admin/franchise'],
-        allowedRoles: ['SUPER_ADMIN', 'OWNER'],
+        paths: ['/admin/create/payment'],
+        allowedRoles: ['CASHIER', 'FRANCHISE_OWNER'],
     },
     {
-        paths: ['/admin/product'],
+        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/create/payment'],
+        allowedRoles: ['SUPER_ADMIN', 'FRANCHISE_OWNER'],
+    },
+    {
+        paths: ['/admin', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/branches'],
         allowedRoles: ['SUPER_ADMIN'],
     },
-    {
-        paths: ['/admin/invoice'],
-        allowedRoles: ['SUPER_ADMIN', 'CASHIER'],
-    },
+
 ];
 
 
@@ -32,7 +33,17 @@ export async function middleware(request) {
     if (pathname === "/") {
         const session = await auth().catch(() => null);
         if (session?.user) {
-            return NextResponse.redirect(new URL("/admin", request.url));
+
+            const role = session.user.role;
+            console.debug("User role in middleware ==> ", role)
+
+            if (role === "SUPER_ADMIN") {
+                return NextResponse.redirect(new URL("/admin", request.url));
+            } else if (role === "FRANCHISE_OWNER") {
+                return NextResponse.redirect(new URL("/admin/franchise", request.url));
+            } else if (role === "CASHIER") {
+                return NextResponse.redirect(new URL("/admin/create/payment", request.url));
+            }
         }
         return NextResponse.next(); // allow access to home page if user is not login
     }
@@ -63,7 +74,7 @@ export async function middleware(request) {
 
     // Role not allowed
     if (!matched.allowedRoles.includes(userRole)) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        return NextResponse.redirect(new URL('/', request.url))
     }
 
     // Everything is okay

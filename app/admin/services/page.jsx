@@ -5,8 +5,10 @@ import { CreateServiceDialog } from "@/components/admin/service/create-service-d
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
+import { ServiceFilter } from "@/components/admin/service/service-filter"
 
-async function ServiceList({ searchParams }) {
+
+export default async function ServicesPage({ searchParams }) {
 
   const searchP = await searchParams
   const result = await getServices({
@@ -21,10 +23,6 @@ async function ServiceList({ searchParams }) {
 
   const services = result.data.data
 
-  return <ServiceTable services={services} />;
-}
-
-export default function ServicesPage({ searchParams }) {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -39,8 +37,15 @@ export default function ServicesPage({ searchParams }) {
           </Button>
         </CreateServiceDialog>
       </div>
+
+      <ServiceFilter
+        initialSearchTerm={searchP.search || ""}
+        initialCategoryFilter={searchP.category || "all"}
+        initialRoleFilter={searchP.role || "all"}
+      />
+
       <Suspense fallback={<TableSkeleton />}>
-        <ServiceList searchParams={searchParams} />
+        <ServiceTable services={services} />
       </Suspense>
     </div>
   );

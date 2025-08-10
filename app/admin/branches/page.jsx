@@ -1,12 +1,11 @@
-import { Suspense } from "react"
-import { getFranchises } from "@/lib/actions/franchise_action"
-import { FranchiseTable } from "@/components/admin/franchise/franchise-table"
 import { CreateFranchiseDialog } from "@/components/admin/franchise/create-franchise-dialog"
+import { FranchiseTable } from "@/components/admin/franchise/franchise-table"
 import { Button } from "@/components/ui/button"
+import { getFranchises } from "@/lib/actions/franchise_action"
 import { Plus } from "lucide-react"
-import { TableSkeleton } from "@/components/admin/table-skeleton"
 
-async function FranchiseList({ searchParams }) {
+
+export default async function FranchisesPage({ searchParams }) {
 
   const searchP = await searchParams
   const result = await getFranchises({
@@ -20,10 +19,6 @@ async function FranchiseList({ searchParams }) {
 
   const franchises = result.data.data
 
-  return <FranchiseTable franchises={franchises} />;
-}
-
-export default function FranchisesPage({ searchParams }) {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -38,9 +33,7 @@ export default function FranchisesPage({ searchParams }) {
           </Button>
         </CreateFranchiseDialog>
       </div>
-      <Suspense fallback={<TableSkeleton />}>
-        <FranchiseList searchParams={searchParams} />
-      </Suspense>
+      <FranchiseTable franchises={franchises} />
     </div>
   );
 }

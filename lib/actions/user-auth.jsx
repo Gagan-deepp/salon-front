@@ -2,8 +2,9 @@
 import axios from "axios"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
-import { signIn, signOut } from "../auth"
+import { auth, signIn, signOut } from "../auth"
 import { AuthError } from "next-auth"
+import { redirect } from "next/dist/server/api-utils"
 
 const BASE_URL =
     process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -19,9 +20,13 @@ function getAuthHeaders() {
 
 // ───────────────────────────────────────────────────────────────────────────────
 
-export const signinAction = async ({ email, password }) => {
+export const signinAction = async (prevState, formData) => {
+    const email = formData.get("email");
+    const password = formData.get("password");
+
     try {
-        await signIn("credentials", { email, password, redirectTo: "/admin" })
+        await signIn("credentials", { email, password })
+
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {

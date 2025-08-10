@@ -2,10 +2,14 @@ import { Suspense } from "react"
 import { getFranchiseById } from "@/lib/actions/franchise_action"
 import { FranchiseDashboard } from "@/components/admin/franchise-dashboard/franchise-dashboard"
 import { FranchiseDashboardSkeleton } from "@/components/admin/franchise-dashboard/franchise-dashboard-skeleton"
+import { auth } from "@/lib/auth"
 
 async function FranchiseData() {
   // For demo purposes, using a fixed franchise ID
   // In real implementation, this could come from user session or context
+
+  const session = await auth()
+  console.log("Session:", session)
   const franchiseId = "507f1f77bcf86cd799439011"
   
   const result = await getFranchiseById(franchiseId)

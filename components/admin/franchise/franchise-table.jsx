@@ -1,14 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Search, Eye, Edit, Trash2 } from "lucide-react"
-import { toast } from "sonner"
+import { Input } from "@/components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Eye, MoreHorizontal, Search } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 export function FranchiseTable({ franchises }) {
   const [searchTerm, setSearchTerm] = useState("")
@@ -30,17 +29,9 @@ export function FranchiseTable({ franchises }) {
     franchise.address?.city?.toLowerCase().includes(searchTerm.toLowerCase()))
 
   const handleView = (franchiseId) => {
-    router.push(`/admin/franchises/${franchiseId}`)
+    router.push(`/admin/branches/${franchiseId}`)
   }
 
-  const handleEdit = (franchiseId) => {
-    router.push(`/admin/franchises/${franchiseId}/edit`)
-  }
-
-  const handleDelete = (franchiseId) => {
-    toast.success("Franchise deleted successfully")
-    router.refresh()
-  }
 
   return (
     <div className="space-y-4">
@@ -126,23 +117,7 @@ export function FranchiseTable({ franchises }) {
                         <Eye className="mr-2 h-4 w-4" />
                         View
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleEdit(franchise._id)
-                        }}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleDelete(franchise._id)
-                        }}>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
+
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

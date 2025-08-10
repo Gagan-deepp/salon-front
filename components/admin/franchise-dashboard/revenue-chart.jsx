@@ -24,14 +24,14 @@ export function RevenueChart() {
       config={{
         services: {
           label: "Services Revenue",
-          color: "hsl(var(--chart-1))",
+          color: "var(--chart-1)",
         },
         products: {
           label: "Products Revenue",
-          color: "hsl(var(--chart-2))",
+          color: "var(--chart-2)",
         },
       }}
-      className="h-[250px]">
+      className="h-[250px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={revenueData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
