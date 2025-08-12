@@ -9,11 +9,11 @@ const routePermissions = [
         allowedRoles: ['CASHIER', 'FRANCHISE_OWNER'],
     },
     {
-        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/create/payment'],
+        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/create/payment', '/admin/payments', '/admin/customers', '/admin/users'],
         allowedRoles: ['SUPER_ADMIN', 'FRANCHISE_OWNER'],
     },
     {
-        paths: ['/admin', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/branches'],
+        paths: ['/admin', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/branches', '/admin/users'],
         allowedRoles: ['SUPER_ADMIN'],
     },
 
@@ -35,12 +35,13 @@ export async function middleware(request) {
         if (session?.user) {
 
             const role = session.user.role;
+            console.debug("session user in middleware ==> ", session)
             console.debug("User role in middleware ==> ", role)
 
             if (role === "SUPER_ADMIN") {
                 return NextResponse.redirect(new URL("/admin", request.url));
             } else if (role === "FRANCHISE_OWNER") {
-                return NextResponse.redirect(new URL("/admin/franchise", request.url));
+                return NextResponse.redirect(new URL(`/admin/franchise`, request.url));
             } else if (role === "CASHIER") {
                 return NextResponse.redirect(new URL("/admin/create/payment", request.url));
             }

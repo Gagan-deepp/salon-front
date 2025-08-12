@@ -30,7 +30,7 @@ async function fetchFranchises() {
   return result.success ? result.data.data || result.data : []
 }
 
-export function CreateCustomerDialog({ children }) {
+export function CreateCustomerDialog({ children, handleCustomerCreated }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [franchises, setFranchises] = useState([])
@@ -72,6 +72,11 @@ export function CreateCustomerDialog({ children }) {
     if (result.success) {
       toast.success("Customer created successfully")
       setOpen(false)
+
+      if (handleCustomerCreated) {
+        handleCustomerCreated(result.data.data);
+      }
+
       router.refresh()
     } else {
       toast.error(result.error || "Failed to create customer")
@@ -79,6 +84,7 @@ export function CreateCustomerDialog({ children }) {
 
     setLoading(false)
   }
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

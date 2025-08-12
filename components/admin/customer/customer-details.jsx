@@ -164,8 +164,8 @@ export function CustomerDetails({ customer }) {
             <div className="text-2xl font-bold">
               {customer.visitHistory?.totalVisits > 0
                 ? formatCurrency(
-                (customer.visitHistory?.totalSpent || 0) / customer.visitHistory.totalVisits
-              )
+                  (customer.visitHistory?.totalSpent || 0) / customer.visitHistory.totalVisits
+                )
                 : formatCurrency(0)}
             </div>
             <p className="text-xs text-muted-foreground">Per visit</p>
@@ -211,11 +211,19 @@ export function CustomerDetails({ customer }) {
                   </div>
                 </div>
                 <Separator />
-                <div>
-                  <p className="font-medium">Date of Birth</p>
-                  <p className="text-sm text-muted-foreground">
-                    {customer.dateOfBirth ? formatDate(customer.dateOfBirth) : "Not provided"}
-                  </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-medium">Date of Birth</p>
+                    <p className="text-sm text-muted-foreground">
+                      {customer.dateOfBirth ? formatDate(customer.dateOfBirth) : "Not provided"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Franchise</p>
+                    <p className="text-sm text-muted-foreground">
+                      {customer.franchiseId.name}
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -379,8 +387,8 @@ export function CustomerDetails({ customer }) {
                 <div className="text-2xl font-bold">
                   {customer.visitHistory?.totalVisits > 0 && customer.visitHistory?.firstVisit
                     ? Math.round(customer.visitHistory.totalVisits /
-                    Math.max(1, Math.ceil((new Date() - new Date(customer.visitHistory.firstVisit)) /
-                      (30 * 24 * 60 * 60 * 1000))))
+                      Math.max(1, Math.ceil((new Date() - new Date(customer.visitHistory.firstVisit)) /
+                        (30 * 24 * 60 * 60 * 1000))))
                     : 0}
                 </div>
                 <p className="text-xs text-muted-foreground">visits per month</p>
@@ -395,8 +403,8 @@ export function CustomerDetails({ customer }) {
                 <div className="text-2xl font-bold">
                   {customer.visitHistory?.firstVisit
                     ? Math.ceil(
-                    (new Date() - new Date(customer.visitHistory.firstVisit)) / (30 * 24 * 60 * 60 * 1000)
-                  )
+                      (new Date() - new Date(customer.visitHistory.firstVisit)) / (30 * 24 * 60 * 60 * 1000)
+                    )
                     : 0}
                 </div>
                 <p className="text-xs text-muted-foreground">months</p>
@@ -411,8 +419,8 @@ export function CustomerDetails({ customer }) {
                 <div className="text-2xl font-bold">
                   {customer.loyaltyPoints?.total > 0
                     ? Math.round(
-                    ((customer.loyaltyPoints?.redeemed || 0) / customer.loyaltyPoints.total) * 100
-                  )
+                      ((customer.loyaltyPoints?.redeemed || 0) / customer.loyaltyPoints.total) * 100
+                    )
                     : 0}
                   %
                 </div>

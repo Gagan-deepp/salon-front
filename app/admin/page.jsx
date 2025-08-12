@@ -13,7 +13,7 @@ async function DashboardStats() {
   // Fetch franchises data
   const result = await getFranchises({ limit: 100 })
 
-  console.log("admin page Result ==> ", result)
+  console.log("admin page Result ==> ", result.data.data)
 
   if (!result.success) {
     return (

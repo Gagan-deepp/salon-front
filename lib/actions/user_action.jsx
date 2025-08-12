@@ -4,18 +4,13 @@ import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
 import { auth } from "../auth" // adjust if needed
 
-const BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "http://localhost:8080/api"
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
 // Resolve Bearer token (next-auth session → cookie fallback)
 async function getAuthHeaders() {
     const jar = cookies()
     const session = await auth().catch(() => null)
-    const token =
-        session?.accessToken ||
-        jar.get("accessToken")?.value ||
-        jar.get("token")?.value
+    const token = session?.accessToken || jar.get("accessToken")?.value || jar.get("token")?.value
 
     return token ? { Authorization: `Bearer ${token}` } : {}
 }
@@ -45,6 +40,19 @@ export async function getUsers(params) {
     } catch (error) {
         console.error("getUsers error", error)
         return { success: false, error: error.response?.data?.message || "getUsers failed" }
+    }
+}
+
+export async function getAllUsers(params) {
+    try {
+        const headers = await getAuthHeaders()
+        console.log("getAllUsers params", params)
+        const res = await axios.get(`${BASE_URL}/users/all`, { params, headers })
+        console.log("getAllUsers response", res.data)
+        return { success: true, data: res.data }
+    } catch (error) {
+        console.error("getAllUsers error", error)
+        return { success: false, error: error.response?.data?.message || "getAllUsers failed" }
     }
 }
 

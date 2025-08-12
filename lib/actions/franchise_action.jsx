@@ -55,7 +55,7 @@ export async function getFranchises(params) {
     console.log("getFranchises response", res.data)
     return { success: true, data: res.data }
   } catch (error) {
-    console.error("getFranchises error", error)
+    console.error("getFranchises error", error.response?.data)
     return { success: false, error: error.response?.data?.message || "getFranchises failed" }
   }
 }
@@ -68,7 +68,7 @@ export async function getFranchiseById(franchiseId) {
     console.log("getFranchiseById response", res.data)
     return { success: true, data: res.data }
   } catch (error) {
-    console.error("getFranchiseById error", error)
+    console.error("getFranchiseById error", error.response?.data)
     return { success: false, error: error.response?.data?.message || "getFranchiseById failed" }
   }
 }

@@ -7,6 +7,7 @@ import {
   ShoppingBasket,
   ShoppingCart,
   Telescope,
+  UserCheck,
   UserCircle
 } from "lucide-react"
 
@@ -27,77 +28,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
 
-// This is sample data.
-const adminData = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  franchise_owner: [
-    {
-      title: "Franchise",
-      url: "/admin/franchise",
-      icon: ShoppingCart
-    },
-    {
-      title: "Payments",
-      url: "/admin/payments",
-      icon: BadgeIndianRupee
-    },
-    {
-      title: "Products",
-      url: "/admin/products",
-      icon: ShoppingBasket
-    },
-    {
-      title: "Services",
-      url: "/admin/services",
-      icon: Telescope
-    },
-  ],
 
-  cashier: [
-    {
-      title: "Create Payment",
-      url: "/admin/create/payment",
-      icon: ShoppingCart
-    },
-  ],
-
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/admin",
-      icon: LayoutDashboard
-    },
-    {
-      title: "Branches",
-      url: "/admin/branches",
-      icon: Building2
-    },
-    {
-      title: "Customers",
-      url: "/admin/customers",
-      icon: UserCircle
-    },
-    {
-      title: "Payments",
-      url: "/admin/payments",
-      icon: BadgeIndianRupee
-    },
-    {
-      title: "Products",
-      url: "/admin/products",
-      icon: ShoppingBasket
-    },
-    {
-      title: "Services",
-      url: "/admin/services",
-      icon: Telescope
-    },
-  ],
-}
 
 export function AppSidebar({
   ...props
@@ -108,7 +39,96 @@ export function AppSidebar({
 
   console.debug("AppSidebar session ==> ", session)
 
+  const adminData = {
+    user: {
+      name: session?.user?.name || "Admin",
+      email: session?.user?.email || "m@example.com",
+      avatar: session?.user?.avatar || "/avatars/shadcn.jpg",
+    },
+    franchise_owner: [
+      {
+        title: "Franchise",
+        url: `/admin/franchise`,
+        icon: ShoppingCart
+      },
+      {
+        title: "Customers",
+        url: "/admin/customers",
+        icon: UserCircle
+      },
+      {
+        title: "Payments",
+        url: "/admin/payments",
+        icon: BadgeIndianRupee
+      },
+      {
+        title: "Products",
+        url: "/admin/products",
+        icon: ShoppingBasket
+      },
+      {
+        title: "Services",
+        url: "/admin/services",
+        icon: Telescope
+      },
+      {
+        title: "Users",
+        url: "/admin/users",
+        icon: UserCheck,
+      },
+    ],
+
+    cashier: [
+      {
+        title: "Create Payment",
+        url: "/admin/create/payment",
+        icon: ShoppingCart
+      },
+    ],
+
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/admin",
+        icon: LayoutDashboard
+      },
+      {
+        title: "Branches",
+        url: "/admin/branches",
+        icon: Building2
+      },
+      {
+        title: "Users",
+        url: "/admin/users",
+        icon: UserCheck,
+      },
+      {
+        title: "Customers",
+        url: "/admin/customers",
+        icon: UserCircle
+      },
+      {
+        title: "Payments",
+        url: "/admin/payments",
+        icon: BadgeIndianRupee
+      },
+      {
+        title: "Products",
+        url: "/admin/products",
+        icon: ShoppingBasket
+      },
+      {
+        title: "Services",
+        url: "/admin/services",
+        icon: Telescope
+      },
+    ],
+  }
+
   const sideMenus = session?.user?.role === "FRANCHISE_OWNER" ? adminData.franchise_owner : session?.user?.role === "CASHIER" ? adminData.cashier : adminData.navMain
+
+
+  
   return (
     <Sidebar collapsible="icon" {...props}>
 

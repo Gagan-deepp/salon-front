@@ -12,13 +12,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, Minus, Calculator, Tag, Receipt, CreditCard, Smartphone, Banknote } from 'lucide-react'
+import { Plus, Minus, Calculator, Tag, Receipt, CreditCard, Smartphone, Banknote, Trash2 } from 'lucide-react'
 import { createPayment, validatePromoCode, calculatePaymentAmount } from "@/lib/actions/payment_action"
 import { getCustomersDropdown } from "@/lib/actions/customer_action"
 import { getServices } from "@/lib/actions/service_action"
 import { getProducts } from "@/lib/actions/product_action"
 import { toast } from "sonner"
-import { getUsers } from "@/lib/actions/user"
+import { getUsers } from "@/lib/actions/user_action"
+import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog"
 
 export default function CreatePaymentPage() {
   const router = useRouter()
@@ -147,70 +148,6 @@ export default function CreatePaymentPage() {
       return total + (product.price * product.quantity)
     }, 0)
   }
-  // const calculateAmountsLocally = () => {
-  //   // Calculate services total
-  //   const servicesTotal = formData.services.reduce((total, service) => {
-  //     return total + (service.price * service.quantity)
-  //   }, 0)
-
-  //   // Calculate products total
-  //   const productsTotal = formData.products.reduce((total, product) => {
-  //     return total + (product.price * product.quantity)
-  //   }, 0)
-
-  //   // Calculate subtotal
-  //   const subtotal = servicesTotal + productsTotal
-
-  //   // Calculate discount amount
-  //   const discountAmount = (subtotal * formData.discount.percentage) / 100
-
-  //   // Calculate amount after discount
-  //   const amountAfterDiscount = subtotal - discountAmount
-
-  //   // Calculate GST on discounted amount
-  //   let totalGst = 0
-
-  //   // GST on services after discount
-  //   formData.services.forEach(service => {
-  //     const serviceTotal = service.price * service.quantity
-  //     const serviceAfterDiscount = serviceTotal - (serviceTotal * formData.discount.percentage / 100)
-  //     const gstAmount = (serviceAfterDiscount * service.gstRate) / 100
-  //     totalGst += gstAmount
-  //   })
-
-  //   // GST on products after discount
-  //   formData.products.forEach(product => {
-  //     const productTotal = product.price * product.quantity
-  //     const productAfterDiscount = productTotal - (productTotal * formData.discount.percentage / 100)
-  //     const gstAmount = (productAfterDiscount * product.gstRate) / 100
-  //     totalGst += gstAmount
-  //   })
-
-  //   // Split GST (assuming intra-state transaction)
-  //   const cgst = totalGst / 2
-  //   const sgst = totalGst / 2
-
-  //   // Calculate final amount
-  //   const finalAmount = amountAfterDiscount + totalGst
-
-  //   setCalculations({
-  //     subtotal,
-  //     servicesTotal,
-  //     productsTotal,
-  //     discount: {
-  //       percentage: formData.discount.percentage,
-  //       amount: discountAmount,
-  //       promoCode: formData.discount.promoCode
-  //     },
-  //     gst: {
-  //       cgst,
-  //       sgst,
-  //       igst: 0,
-  //       total: totalGst
-  //     },
-  //     finalAmount
-  //   })
-  // }
 
   const addService = () => {
     setFormData(prev => ({
@@ -324,7 +261,7 @@ export default function CreatePaymentPage() {
           discount: { percentage: 0, promoCode: "" },
           paymentDetails: {
             transactionId: "",
-            cardDetails: { last4Digits: "", cardType: "" },
+            cardDetails: { last4Digits: "" },
             upiDetails: { vpa: "", transactionRef: "" },
           },
           notes: "",
@@ -348,6 +285,16 @@ export default function CreatePaymentPage() {
     }
   }
 
+  const handleCustomerCreated = (newCustomer) => {
+    setCustomers(prevCustomers => [newCustomer, ...prevCustomers]);
+
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      customerId: newCustomer._id,
+    }));
+  };
+
+
   return (
     <div className="space-y-6 p-6">
       <div
@@ -356,6 +303,13 @@ export default function CreatePaymentPage() {
           <h1 className="text-3xl font-bold">Create New Payment</h1>
           <p className="text-gray-600">Record a new payment transaction</p>
         </div>
+
+        <CreateCustomerDialog handleCustomerCreated={handleCustomerCreated}>
+          <Button type="button">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Customer
+          </Button>
+        </CreateCustomerDialog>
       </div>
       <div className="flex flex-col lg:flex-row h-full gap-6">
         {/* Left Column - Form */}
@@ -497,7 +451,7 @@ export default function CreatePaymentPage() {
                                 size="sm"
                                 onClick={() => removeService(index)}
                                 className="text-red-600 hover:text-red-700">
-                                <Minus className="w-4 h-4" />
+                                <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
                           </div>
@@ -673,7 +627,7 @@ export default function CreatePaymentPage() {
                         <div
                           key={value}
                           className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${formData.paymentMode === value
-                            ? "border-blue-500 bg-blue-50"
+                            ? "border-blue-500 bg-accent"
                             : "border-gray-200 hover:border-gray-300"
                             }`}
                           onClick={() => setFormData(prev => ({ ...prev, paymentMode: value }))}>

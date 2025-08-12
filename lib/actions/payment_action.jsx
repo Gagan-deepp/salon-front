@@ -38,6 +38,19 @@ export async function createPayment(payload) {
   }
 }
 
+// 8) Get All payments
+export async function getAllPayments(params) {
+  try {
+    const headers = await getAuthHeaders()
+    const res = await axios.get(`${BASE_URL}/payments/all`, { params, headers })
+    console.log("getAllPayments response", res.data)
+    return { success: true, data: res.data }
+  } catch (error) {
+    console.error("getAllPayments error", error)
+    return { success: false, error: error.response?.data?.message || "getAllPayments failed" }
+  }
+}
+
 // 2) Get Payment by ID  – GET /payments/{paymentId}
 export async function getPaymentById(paymentId) {
   try {

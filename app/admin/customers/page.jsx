@@ -1,22 +1,28 @@
 import { Suspense } from "react"
-import { getCustomers } from "@/lib/actions/customer_action"
+import { getAllCustomers, getCustomers } from "@/lib/actions/customer_action"
 import { CustomerTable } from "@/components/admin/customer/customer-table"
 import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog"
 import { Button } from "@/components/ui/button"
 import { Plus } from 'lucide-react'
 import { TableSkeleton } from "@/components/admin/table-skeleton"
+import { auth } from "@/lib/auth"
 
 async function CustomerList({ searchParams }) {
 
+  const { user } = await auth()
   const searchP = await searchParams
 
-  const result = await getCustomers({
+  const params = {
     page: searchP.page || 1,
     limit: searchP.limit || 10,
     search: searchP.search || "",
     gender: searchP.gender || "",
-    isActive: searchP.isActive || "",
-  })
+    isActive: searchP.isActive || true,
+  }
+
+  console.log("\n\n Customer params ===> ", params)
+
+  const result = user.role === "SUPER_ADMIN" ? await getAllCustomers(params) : await getCustomers(params)
 
   console.log("\n\n Customer result ===> ", result.data.data)
 

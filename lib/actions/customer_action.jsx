@@ -28,6 +28,7 @@ export async function createCustomer(payload) {
     const res = await axios.post(`${BASE_URL}/customers`, payload, { headers })
     console.log("createCustomer response", res.data)
     revalidatePath("/admin/customers")
+    revalidatePath("/admin/create/payments")
     return { success: true, data: res.data }
   } catch (error) {
     console.error("createCustomer error", error)
@@ -35,6 +36,18 @@ export async function createCustomer(payload) {
   }
 }
 
+// 10. Get All Customers list  (GET /customers?page=&limit=&search=&gender=&isActive=)
+export async function getAllCustomers(params) {
+  try {
+    const headers = await getAuthHeaders()
+    const res = await axios.get(`${BASE_URL}/customers/all`, { params, headers })
+    console.log("getAllCustomers response", res.data)
+    return { success: true, data: res.data }
+  } catch (error) {
+    console.error("getAllCustomers error", error.response?.data)
+    return { success: false, error: error.response?.data || "getAllCustomers failed" }
+  }
+}
 // 2. Get Customers list  (GET /customers?page=&limit=&search=&gender=&isActive=)
 export async function getCustomers(params) {
   try {

@@ -64,7 +64,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         redirect({ baseUrl, token }) {
             if (token) { // Token exists on successful sign-in
-                // Your role-based logic belongs HERE
                 console.log("I am in redirect callback")
                 console.log("Redirecting based on user role:", token.role)
                 switch (token.role) {
@@ -76,7 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         return `${baseUrl}/admin`;
                 }
             }
-            // Fallback for sign-out or other cases
+            // Fallback 
             return baseUrl;
         },
 

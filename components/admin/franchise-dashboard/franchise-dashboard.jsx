@@ -21,10 +21,15 @@ import {
   Target,
   Award,
   Wallet,
+  Edit,
+  Trash2,
 } from 'lucide-react';
 import { SalesChart } from "./sales-chart"
 import { CustomerChart } from "./customer-chart"
 import { RevenueChart } from "./revenue-chart"
+import { EditFranchiseDialog } from "../franchise/edit-franchise-dialog"
+import { DeleteFranchiseDialog } from "../franchise/delete-franchise-dialog"
+import { Button } from "@/components/ui/button"
 
 export function FranchiseDashboard({ franchise }) {
   const formatCurrency = (amount) => {
@@ -89,6 +94,23 @@ export function FranchiseDashboard({ franchise }) {
           </div>
         </div>
       </div>
+
+      <div className="flex items-center space-x-2">
+        <EditFranchiseDialog franchise={franchise}>
+          <Button variant="outline" size="sm">
+            <Edit className="w-4 h-4 mr-2" />
+            Edit
+          </Button>
+        </EditFranchiseDialog>
+        <DeleteFranchiseDialog franchise={franchise}>
+          <Button variant="outline" size="sm">
+            <Trash2 className="w-4 h-4 mr-2" />
+            Delete
+          </Button>
+        </DeleteFranchiseDialog>
+      </div>
+
+
       {/* Key Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -518,6 +540,6 @@ export function FranchiseDashboard({ franchise }) {
           </div>
         </TabsContent>
       </Tabs>
-    </div>
+    </div >
   );
 }
