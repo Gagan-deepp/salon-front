@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, DollarSign, CreditCard, TrendingUp, Users } from "lucide-react"
 import { PaymentTable } from "@/components/admin/payment/payment-table"
-import { getAllPayments, getFranchisePayments, getPaymentAnalyticsSummary } from "@/lib/actions/payment_action"
+import { getAllPayments, getCashierPayments, getFranchisePayments, getPaymentAnalyticsSummary } from "@/lib/actions/payment_action"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
 import Link from "next/link"
 import { PaymentFilters } from "@/components/admin/payment/payment-filter"
@@ -78,7 +78,7 @@ export default async function PaymentsPage({ searchParams }) {
     paymentMode: searchP.paymentMode || "",
   }
 
-  const result = user.role === "SUPER_ADMIN" ? await getAllPayments(params) : await getFranchisePayments(params)
+  const result = user.role === "SUPER_ADMIN" ? await getAllPayments(params) : user.role === "FRANCHISE_OWNER" ? await getFranchisePayments(params) : await getCashierPayments(params, user.id)
 
   console.debug("Payment Data Result ==> ", result.data.data)
   const payments = result.success ? result.data.data || [] : []

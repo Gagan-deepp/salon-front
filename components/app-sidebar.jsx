@@ -84,6 +84,11 @@ export function AppSidebar({
         url: "/admin/create/payment",
         icon: ShoppingCart
       },
+      {
+        title: "All Payments",
+        url: "/admin/payments",
+        icon: BadgeIndianRupee
+      },
     ],
 
     navMain: [
@@ -128,7 +133,7 @@ export function AppSidebar({
   const sideMenus = session?.user?.role === "FRANCHISE_OWNER" ? adminData.franchise_owner : session?.user?.role === "CASHIER" ? adminData.cashier : adminData.navMain
 
 
-  
+
   return (
     <Sidebar collapsible="icon" {...props}>
 

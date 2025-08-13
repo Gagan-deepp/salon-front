@@ -5,7 +5,7 @@ import { auth } from "./lib/auth";
 
 const routePermissions = [
     {
-        paths: ['/admin/create/payment'],
+        paths: ['/admin/create/payment', '/admin/payments'],
         allowedRoles: ['CASHIER', 'FRANCHISE_OWNER'],
     },
     {

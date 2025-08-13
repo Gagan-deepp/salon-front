@@ -29,6 +29,7 @@ export default function CreatePaymentPage() {
   const [services, setServices] = useState([])
   const [products, setProducts] = useState([])
   const [activeTab, setActiveTab] = useState("items")
+  const [cash, setCash] = useState()
   const [calculations, setCalculations] = useState({
     subtotal: 0,
     servicesTotal: 0,
@@ -531,13 +532,7 @@ export default function CreatePaymentPage() {
                             </div>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label className="text-sm font-medium">Unit</Label>
-                              <Input
-                                className="mt-1"
-                                value={product.unit}
-                                onChange={(e) => updateProduct(index, "unit", e.target.value)} />
-                            </div>
+
                             <div className="flex items-end justify-between">
                               <div className="flex-1 mr-4">
                                 <Label className="text-sm font-medium">Total</Label>
@@ -551,7 +546,7 @@ export default function CreatePaymentPage() {
                                 size="sm"
                                 onClick={() => removeProduct(index)}
                                 className="text-red-600 hover:text-red-700">
-                                <Minus className="w-4 h-4" />
+                                <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
                           </div>
@@ -639,6 +634,25 @@ export default function CreatePaymentPage() {
                       ))}
                     </div>
                   </div>
+
+                  {formData.paymentMode === "CASH" && (
+                    <div className="flex items-center space-x-4 ">
+                      <div>
+                        <Label className="text-sm font-medium">Cash Received</Label>
+                        <Input
+                          type="number"
+                          className="mt-1"
+                          value={cash}
+                          onChange={(e) => setCash(parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-green-300">Change</Label>
+                        <span className="text-green-300" >
+                          {isNaN(cash - calculations.finalAmount) ? "0.00" : (cash - calculations.finalAmount).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>)}
 
                   {/* Payment Details */}
                   {formData.paymentMode === "CARD" && (

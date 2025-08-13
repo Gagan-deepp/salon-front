@@ -16,8 +16,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createCustomer } from "@/lib/actions/customer_action"
-import { getFranchises } from "@/lib/actions/franchise_action"
+import { getFranchises, getMyFranchise } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
+import { useSession } from "next-auth/react"
 
 const GENDERS = [
   { value: "MALE", label: "Male" },
@@ -25,8 +26,8 @@ const GENDERS = [
   { value: "OTHER", label: "Other" },
 ]
 
-async function fetchFranchises() {
-  const result = await getFranchises({ limit: 100 })
+async function fetchFranchises({ isAdmin }) {
+  const result = isAdmin ? await getFranchises({ limit: 100 }) : await getMyFranchise()
   return result.success ? result.data.data || result.data : []
 }
 
@@ -36,9 +37,11 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
   const [franchises, setFranchises] = useState([])
   const router = useRouter()
 
+  const { data: session } = useSession()
+
   useEffect(() => {
     const loadFranchises = async () => {
-      const franchiseList = await fetchFranchises()
+      const franchiseList = await fetchFranchises({ isAdmin: session?.user?.role === "SUPER_ADMIN" })
       setFranchises(franchiseList)
     }
     if (open) {
@@ -136,12 +139,12 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="franchiseId">Franchise *</Label>
-              <Select name="franchiseId" required>
+              <Select name="franchiseId" required disabled={session?.user?.role !== "SUPER_ADMIN"} value={session?.user?.role !== "SUPER_ADMIN" ? session?.franchiseId : ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select franchise" />
                 </SelectTrigger>
                 <SelectContent>
-                  {franchises.map((franchise) => (
+                  {franchises?.map((franchise) => (
                     <SelectItem key={franchise._id} value={franchise._id}>
                       {franchise.name} ({franchise.code})
                     </SelectItem>

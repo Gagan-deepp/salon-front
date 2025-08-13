@@ -93,6 +93,18 @@ export async function getFranchisePayments(params) {
   }
 }
 
+export async function getCashierPayments(params, cashierId) {
+  try {
+    const headers = await getAuthHeaders()
+    const res = await axios.get(`${BASE_URL}/payments/cashier/${cashierId}`, { params, headers })
+    console.log("getCashierPayments response", res.data)
+    return { success: true, data: res.data }
+  } catch (error) {
+    console.error("getCashierPayments error", error.response?.data)
+    return { success: false, error: error.response?.data?.message || "getCashierPayments failed" }
+  }
+}
+
 // 5) Validate Promo Code  – POST /payments/validate-promo
 export async function validatePromoCode(payload) {
   try {

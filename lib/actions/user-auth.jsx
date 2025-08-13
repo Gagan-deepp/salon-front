@@ -1,10 +1,9 @@
 "use server"
 import axios from "axios"
+import { AuthError } from "next-auth"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
-import { auth, signIn, signOut } from "../auth"
-import { AuthError } from "next-auth"
-import { redirect } from "next/dist/server/api-utils"
+import { signIn, signOut } from "../auth"
 
 const BASE_URL =
     process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -60,7 +59,7 @@ export async function login({ email, password }) {
         revalidatePath("/")
         return { success: true, data: res.data }
     } catch (error) {
-        console.error("login error", error)
+        console.error("login error", error.response?.data)
         return { success: false, error: error.response?.data?.message || "login failed" }
     }
 }
