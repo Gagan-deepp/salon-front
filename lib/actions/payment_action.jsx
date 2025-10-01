@@ -33,7 +33,7 @@ export async function createPayment(payload) {
     revalidatePath("/admin/payments")
     return { success: true, data: res.data }
   } catch (error) {
-    console.error("createPayment error", error)
+    console.error("createPayment error", error.response?.data?.message)
     return { success: false, error: error.response?.data?.message || "createPayment failed" }
   }
 }
