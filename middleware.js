@@ -71,20 +71,20 @@ export async function middleware(request) {
     const session = await auth().catch(() => null);
     const userRole = session?.user?.role;
 
-    console.debug("👤 User role ==> ", userRole);
-    console.debug("🛣️  Middleware pathname ==> ", pathname);
+    console.debug("\nUser role ==> ", userRole);
+    console.debug(" Middleware pathname ==> ", pathname);
 
     // Find matching route permission (first match wins due to specific-to-general ordering)
     const matched = routePermissions.find((route) =>
         route.paths.some((path) => {
             // Exact match or starts with path
             const isMatch = pathname === path || pathname.startsWith(path + '/');
-            console.debug(`🎯 Checking ${path} against ${pathname}: ${isMatch}`);
+            console.debug(`\t\t Checking ${path} against ${pathname}: ${isMatch}`);
             return isMatch;
         })
     );
 
-    console.debug("✅ Matched route rule:", matched);
+    console.debug("\n Matched route rule:", matched);
 
     // Allow all non-protected routes
     if (!matched) {
@@ -100,13 +100,13 @@ export async function middleware(request) {
 
     // Check if user role is allowed
     const isAllowed = matched.allowedRoles.includes(userRole);
-    console.debug("🔍 Role check:", userRole, "allowed:", matched.allowedRoles, "result:", isAllowed);
+    console.debug("\n\t Role check:", userRole, "allowed:", matched.allowedRoles, "result:", isAllowed);
 
     if (!isAllowed) {
         console.debug("❌ Role not allowed, redirecting to login");
         return NextResponse.redirect(new URL('/', request.url));
     }
 
-    console.debug("✅ Access granted for:", pathname);
+    console.debug("\nAccess granted for:", pathname);
     return NextResponse.next();
 }

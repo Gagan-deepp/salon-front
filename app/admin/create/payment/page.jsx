@@ -317,7 +317,7 @@ export default function CreatePaymentPage() {
                   onValueChange={(value) => setFormData((prev) => ({ ...prev, customerId: value }))}
                   required
                 >
-                  <SelectTrigger className="h-20">
+                  <SelectTrigger className="h-20 ring-2 ring-border">
                     <SelectValue placeholder="Select customer" />
                   </SelectTrigger>
                   <SelectContent>

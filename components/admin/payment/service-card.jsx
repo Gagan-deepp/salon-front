@@ -72,7 +72,7 @@ export function ServiceCard({ services, setFormData, formData }) {
         return (
           <Card
             key={service._id}
-            className={`cursor-pointer transition-all hover:shadow-md ${quantity > 0 ? "ring-2 ring-blue-500 bg-muted" : "hover:bg-muted"
+            className={`cursor-pointer transition-all hover:shadow-md ${quantity > 0 ? "ring-2 ring-border bg-blue-50" : "hover:bg-blue-50"
               }`}
             onClick={() => addServiceFromCard(service)}
           >
