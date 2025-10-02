@@ -1,83 +1,112 @@
-// export { auth as middleware } from "@/lib/auth"
-
 import { NextResponse } from "next/server";
 import { auth } from "./lib/auth";
 
 const routePermissions = [
+    // Most specific routes first - SaaS Owner routes
     {
-        paths: ['/admin/create/payment', '/admin/payments'],
-        allowedRoles: ['CASHIER', 'FRANCHISE_OWNER'],
+        paths: ['/admin/companies'], // Changed from /admin/company to /admin/companies
+        allowedRoles: ['SAAS_OWNER'],
     },
+    
+    // Cashier specific routes
     {
-        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/create/payment', '/admin/payments', '/admin/customers', '/admin/users'],
-        allowedRoles: ['SUPER_ADMIN', 'FRANCHISE_OWNER'],
+        paths: ['/admin/create/payment'],
+        allowedRoles: ['CASHIER', 'FRANCHISE_OWNER', 'SUPER_ADMIN'], // Added hierarchical access
     },
+    
+    // Franchise Owner and above routes
     {
-        paths: ['/admin', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/branches', '/admin/users'],
+        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/users'],
+        allowedRoles: ['FRANCHISE_OWNER', 'SUPER_ADMIN'], // Removed CASHIER for most routes
+    },
+    
+    // Super Admin only routes
+    {
+        paths: ['/admin/branches'], // Super admin specific routes
         allowedRoles: ['SUPER_ADMIN'],
     },
-
+    
+    // General admin dashboard - most permissive, should be last
+    {
+        paths: ['/admin'],
+        allowedRoles: ['SUPER_ADMIN', 'FRANCHISE_OWNER', 'CASHIER'], // All admin users can access base dashboard
+    },
 ];
-
-
 
 export const config = {
     matcher: ["/", "/admin/:path*"],
 };
 
 export async function middleware(request) {
-    const pathname = request.nextUrl.pathname
+    const pathname = request.nextUrl.pathname;
+    
+    console.debug("🔍 Middleware processing:", pathname);
 
-
-    //Don't allow loged in user to come to login page
+    // Handle home page redirects for logged-in users
     if (pathname === "/") {
         const session = await auth().catch(() => null);
         if (session?.user) {
-
             const role = session.user.role;
-            console.debug("session user in middleware ==> ", session)
-            console.debug("User role in middleware ==> ", role)
+            console.debug("📝 Session user in middleware ==> ", session);
+            console.debug("👤 User role in middleware ==> ", role);
 
-            if (role === "SUPER_ADMIN") {
-                return NextResponse.redirect(new URL("/admin", request.url));
-            } else if (role === "FRANCHISE_OWNER") {
-                return NextResponse.redirect(new URL(`/admin/franchise`, request.url));
-            } else if (role === "CASHIER") {
-                return NextResponse.redirect(new URL("/admin/create/payment", request.url));
+            // Redirect based on role
+            const roleRedirects = {
+                "SAAS_OWNER": "/admin/companies", // Fixed redirect path
+                "SUPER_ADMIN": "/admin",
+                "FRANCHISE_OWNER": "/admin/franchise", 
+                "CASHIER": "/admin/create/payment"
+            };
+
+            const redirectPath = roleRedirects[role];
+            if (redirectPath) {
+                console.debug("🔄 Redirecting", role, "to:", redirectPath);
+                return NextResponse.redirect(new URL(redirectPath, request.url));
             }
         }
-        return NextResponse.next(); // allow access to home page if user is not login
+        return NextResponse.next(); // Allow access to home page if user is not logged in
     }
 
+    // Get user session for protected routes
+    const session = await auth().catch(() => null);
+    const userRole = session?.user?.role;
 
+    console.debug("👤 User role ==> ", userRole);
+    console.debug("🛣️  Middleware pathname ==> ", pathname);
 
+    // Find matching route permission (first match wins due to specific-to-general ordering)
     const matched = routePermissions.find((route) =>
-        route.paths.some((path) => pathname.startsWith(path))
+        route.paths.some((path) => {
+            // Exact match or starts with path
+            const isMatch = pathname === path || pathname.startsWith(path + '/');
+            console.debug(`🎯 Checking ${path} against ${pathname}: ${isMatch}`);
+            return isMatch;
+        })
     );
 
-    const session = await auth()
-    const userRole = session?.user?.role
-
-    console.debug("User role ==> ", userRole)
-    console.debug("Middleware pathname ==> ", pathname)
-    console.debug("\n Is matched => ", matched)
-
+    console.debug("✅ Matched route rule:", matched);
 
     // Allow all non-protected routes
     if (!matched) {
-        return NextResponse.next()
+        console.debug("🟢 No protection needed for:", pathname);
+        return NextResponse.next();
     }
 
     // Not logged in user redirect to login page
     if (!userRole) {
-        return NextResponse.redirect(new URL('/', request.url))
+        console.debug("🔐 No user role, redirecting to login");
+        return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // Role not allowed
-    if (!matched.allowedRoles.includes(userRole)) {
-        return NextResponse.redirect(new URL('/', request.url))
+    // Check if user role is allowed
+    const isAllowed = matched.allowedRoles.includes(userRole);
+    console.debug("🔍 Role check:", userRole, "allowed:", matched.allowedRoles, "result:", isAllowed);
+
+    if (!isAllowed) {
+        console.debug("❌ Role not allowed, redirecting to login");
+        return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // Everything is okay
-    return NextResponse.next()
+    console.debug("✅ Access granted for:", pathname);
+    return NextResponse.next();
 }

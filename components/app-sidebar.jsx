@@ -91,6 +91,13 @@ export function AppSidebar({
       },
     ],
 
+    saas_owner:[
+     {
+        title: "Companies",
+        url: "/admin/companies",
+        icon: Telescope
+      }, 
+    ],
     navMain: [
       {
         title: "Dashboard",
@@ -126,11 +133,11 @@ export function AppSidebar({
         title: "Services",
         url: "/admin/services",
         icon: Telescope
-      },
+      }
     ],
   }
 
-  const sideMenus = session?.user?.role === "FRANCHISE_OWNER" ? adminData.franchise_owner : session?.user?.role === "CASHIER" ? adminData.cashier : adminData.navMain
+  const sideMenus = session?.user?.role === "FRANCHISE_OWNER" ? adminData.franchise_owner : session?.user?.role === "CASHIER" ? adminData.cashier :  session?.user?.role === "SAAS_OWNER" ? adminData.saas_owner : adminData.navMain
 
 
 
