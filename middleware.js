@@ -7,25 +7,25 @@ const routePermissions = [
         paths: ['/admin/companies'], // Changed from /admin/company to /admin/companies
         allowedRoles: ['SAAS_OWNER'],
     },
-    
+
     // Cashier specific routes
     {
         paths: ['/admin/create/payment'],
         allowedRoles: ['CASHIER', 'FRANCHISE_OWNER', 'SUPER_ADMIN'], // Added hierarchical access
     },
-    
+
     // Franchise Owner and above routes
     {
         paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/users'],
         allowedRoles: ['FRANCHISE_OWNER', 'SUPER_ADMIN'], // Removed CASHIER for most routes
     },
-    
+
     // Super Admin only routes
     {
         paths: ['/admin/branches'], // Super admin specific routes
         allowedRoles: ['SUPER_ADMIN'],
     },
-    
+
     // General admin dashboard - most permissive, should be last
     {
         paths: ['/admin'],
@@ -39,11 +39,11 @@ export const config = {
 
 export async function middleware(request) {
     const pathname = request.nextUrl.pathname;
-    
+
     console.debug("🔍 Middleware processing:", pathname);
 
     // Handle home page redirects for logged-in users
-    if (pathname === "/") {
+    if (pathname === "/" || pathname === "/login") {
         const session = await auth().catch(() => null);
         if (session?.user) {
             const role = session.user.role;
@@ -54,7 +54,7 @@ export async function middleware(request) {
             const roleRedirects = {
                 "SAAS_OWNER": "/admin/companies", // Fixed redirect path
                 "SUPER_ADMIN": "/admin",
-                "FRANCHISE_OWNER": "/admin/franchise", 
+                "FRANCHISE_OWNER": "/admin/franchise",
                 "CASHIER": "/admin/create/payment"
             };
 

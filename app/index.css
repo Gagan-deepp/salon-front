@@ -1,0 +1,216 @@
+@import "tailwindcss";
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Theme Configuration */
+@theme {
+    /* Colors */
+    --color-border: oklch(from hsl(240 5.9% 90%) l c h);
+    --color-input: oklch(from hsl(240 5.9% 90%) l c h);
+    --color-ring: oklch(from hsl(255 68% 66%) l c h);
+    --color-background: oklch(from hsl(0 0% 100%) l c h);
+    --color-foreground: oklch(from hsl(240 10% 3.9%) l c h);
+
+    --color-primary: oklch(from hsl(255 68% 66%) l c h);
+    --color-primary-foreground: oklch(from hsl(0 0% 100%) l c h);
+
+    --color-secondary: oklch(from hsl(280 85% 70%) l c h);
+    --color-secondary-foreground: oklch(from hsl(0 0% 100%) l c h);
+
+    --color-destructive: oklch(from hsl(0 84.2% 60.2%) l c h);
+    --color-destructive-foreground: oklch(from hsl(0 0% 98%) l c h);
+
+    --color-muted: oklch(from hsl(240 4.8% 95.9%) l c h);
+    --color-muted-foreground: oklch(from hsl(240 3.8% 46.1%) l c h);
+
+    --color-accent: oklch(from hsl(240 4.8% 95.9%) l c h);
+    --color-accent-foreground: oklch(from hsl(240 5.9% 10%) l c h);
+
+    --color-popover: oklch(from hsl(0 0% 100%) l c h);
+    --color-popover-foreground: oklch(from hsl(240 10% 3.9%) l c h);
+
+    --color-card: oklch(from hsl(0 0% 100%) l c h);
+    --color-card-foreground: oklch(from hsl(240 10% 3.9%) l c h);
+
+    /* Sidebar colors */
+    --color-sidebar: oklch(from hsl(0 0% 98%) l c h);
+    --color-sidebar-foreground: oklch(from hsl(240 5.3% 26.1%) l c h);
+    --color-sidebar-primary: oklch(from hsl(240 5.9% 10%) l c h);
+    --color-sidebar-primary-foreground: oklch(from hsl(0 0% 98%) l c h);
+    --color-sidebar-accent: oklch(from hsl(240 4.8% 95.9%) l c h);
+    --color-sidebar-accent-foreground: oklch(from hsl(240 5.9% 10%) l c h);
+    --color-sidebar-border: oklch(from hsl(220 13% 91%) l c h);
+    --color-sidebar-ring: oklch(from hsl(217.2 91.2% 59.8%) l c h);
+
+    /* Border Radius */
+    --radius-lg: 0.75rem;
+    --radius-md: calc(0.75rem - 2px);
+    --radius-sm: calc(0.75rem - 4px);
+
+    /* Animations */
+    --animate-accordion-down: accordion-down 0.2s ease-out;
+    --animate-accordion-up: accordion-up 0.2s ease-out;
+    --animate-fade-in: fade-in 0.6s ease-out;
+    --animate-fade-in-slow: fade-in-slow 0.8s ease-out;
+    --animate-scale-in: scale-in 0.4s ease-out;
+    --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+
+    /* Keyframes */
+    @keyframes accordion-down {
+        from {
+            height: 0;
+        }
+
+        to {
+            height: var(--radix-accordion-content-height);
+        }
+    }
+
+    @keyframes accordion-up {
+        from {
+            height: var(--radix-accordion-content-height);
+        }
+
+        to {
+            height: 0;
+        }
+    }
+
+    @keyframes fade-in {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fade-in-slow {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes scale-in {
+        0% {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes glow-pulse {
+
+        0%,
+        100% {
+            box-shadow: 0 0 20px oklch(from hsl(255 68% 66%) l c h / 0.3);
+        }
+
+        50% {
+            box-shadow: 0 0 40px oklch(from hsl(255 68% 66%) l c h / 0.5);
+        }
+    }
+}
+
+/* Custom CSS Variables (not theme variables) */
+:root {
+    /* Brand gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(255 68% 66%), hsl(280 85% 70%));
+    --gradient-hero: linear-gradient(135deg, hsl(255 68% 66%) 0%, hsl(280 85% 70%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(255 68% 66% / 0.05) 0%, hsl(280 85% 70% / 0.05) 100%);
+
+    /* Shadows */
+    --shadow-primary: 0 10px 40px -10px hsl(255 68% 66% / 0.3);
+    --shadow-glow: 0 0 60px hsl(255 68% 66% / 0.4);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode theme overrides */
+@media (prefers-color-scheme: dark) {
+    @theme {
+        --color-background: oklch(from hsl(240 10% 3.9%) l c h);
+        --color-foreground: oklch(from hsl(0 0% 98%) l c h);
+
+        --color-card: oklch(from hsl(240 10% 3.9%) l c h);
+        --color-card-foreground: oklch(from hsl(0 0% 98%) l c h);
+
+        --color-popover: oklch(from hsl(240 10% 3.9%) l c h);
+        --color-popover-foreground: oklch(from hsl(0 0% 98%) l c h);
+
+        --color-muted: oklch(from hsl(240 3.7% 15.9%) l c h);
+        --color-muted-foreground: oklch(from hsl(240 5% 64.9%) l c h);
+
+        --color-accent: oklch(from hsl(240 3.7% 15.9%) l c h);
+        --color-accent-foreground: oklch(from hsl(0 0% 98%) l c h);
+
+        --color-destructive: oklch(from hsl(0 62.8% 30.6%) l c h);
+        --color-destructive-foreground: oklch(from hsl(0 0% 98%) l c h);
+
+        --color-border: oklch(from hsl(240 3.7% 15.9%) l c h);
+        --color-input: oklch(from hsl(240 3.7% 15.9%) l c h);
+
+        --color-sidebar: oklch(from hsl(240 5.9% 10%) l c h);
+        --color-sidebar-foreground: oklch(from hsl(240 4.8% 95.9%) l c h);
+        --color-sidebar-primary: oklch(from hsl(224.3 76.3% 48%) l c h);
+        --color-sidebar-primary-foreground: oklch(from hsl(0 0% 100%) l c h);
+        --color-sidebar-accent: oklch(from hsl(240 3.7% 15.9%) l c h);
+        --color-sidebar-accent-foreground: oklch(from hsl(240 4.8% 95.9%) l c h);
+        --color-sidebar-border: oklch(from hsl(240 3.7% 15.9%) l c h);
+        --color-sidebar-ring: oklch(from hsl(217.2 91.2% 59.8%) l c h);
+    }
+}
+
+/* Or using class-based dark mode */
+.dark {
+    --color-background: oklch(from hsl(240 10% 3.9%) l c h);
+    --color-foreground: oklch(from hsl(0 0% 98%) l c h);
+    --color-card: oklch(from hsl(240 10% 3.9%) l c h);
+    --color-card-foreground: oklch(from hsl(0 0% 98%) l c h);
+    --color-popover: oklch(from hsl(240 10% 3.9%) l c h);
+    --color-popover-foreground: oklch(from hsl(0 0% 98%) l c h);
+    --color-muted: oklch(from hsl(240 3.7% 15.9%) l c h);
+    --color-muted-foreground: oklch(from hsl(240 5% 64.9%) l c h);
+    --color-accent: oklch(from hsl(240 3.7% 15.9%) l c h);
+    --color-accent-foreground: oklch(from hsl(0 0% 98%) l c h);
+    --color-destructive: oklch(from hsl(0 62.8% 30.6%) l c h);
+    --color-destructive-foreground: oklch(from hsl(0 0% 98%) l c h);
+    --color-border: oklch(from hsl(240 3.7% 15.9%) l c h);
+    --color-input: oklch(from hsl(240 3.7% 15.9%) l c h);
+    --color-sidebar: oklch(from hsl(240 5.9% 10%) l c h);
+    --color-sidebar-foreground: oklch(from hsl(240 4.8% 95.9%) l c h);
+    --color-sidebar-primary: oklch(from hsl(224.3 76.3% 48%) l c h);
+    --color-sidebar-primary-foreground: oklch(from hsl(0 0% 100%) l c h);
+    --color-sidebar-accent: oklch(from hsl(240 3.7% 15.9%) l c h);
+    --color-sidebar-accent-foreground: oklch(from hsl(240 4.8% 95.9%) l c h);
+    --color-sidebar-border: oklch(from hsl(240 3.7% 15.9%) l c h);
+    --color-sidebar-ring: oklch(from hsl(217.2 91.2% 59.8%) l c h);
+}
+
+@layer base {
+    * {
+        border-color: var(--color-border);
+    }
+
+    body {
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+    }
+}

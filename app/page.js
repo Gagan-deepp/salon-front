@@ -1,14 +1,31 @@
-import { LoginForm } from "@/components/login-form";
+import CTA from "@/components/homepage/CTA";
+import FAQ from "@/components/homepage/Faq";
+import Features from "@/components/homepage/Features";
+import Footer from "@/components/homepage/Footer";
+import Header from "@/components/homepage/Header";
+import Hero from "@/components/homepage/Hero";
+import HowItWorks from "@/components/homepage/HowItWork";
+import Industries from "@/components/homepage/Industries";
+import Integrations from "@/components/homepage/Integration";
+import Pricing from "@/components/homepage/Pricing";
+import Stats from "@/components/homepage/Stats";
+import Testimonials from "@/components/homepage/Testimonial";
 
 export default function Page() {
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <div className="flex w-full max-w-sm flex-col gap-6">
-        <a href="#" className="flex items-center gap-2 self-center font-medium">
-          Saloon Inc.
-        </a>
-        <LoginForm />
-      </div>
+    <div className="min-h-screen">
+      <Header />
+      <Hero />
+      <Stats />
+      <Features />
+      <HowItWorks />
+      <Industries />
+      <Testimonials />
+      <Pricing />
+      <Integrations />
+      <FAQ />
+      <CTA />
+      <Footer />
     </div>
   );
 }

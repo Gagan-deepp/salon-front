@@ -2,7 +2,7 @@ import { SessionProvider } from "next-auth/react"
 import { AppSidebar } from "@/components/app-sidebar";
 import { ModeToggle } from "@/components/Mode-Toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-
+import "./globals.css"
 export default function AdminLayout({ children }) {
   return (
     <SessionProvider>

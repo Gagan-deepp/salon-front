@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google"
-import "./globals.css"
+import "./index.css"
 import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 

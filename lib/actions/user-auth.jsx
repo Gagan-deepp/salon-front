@@ -24,7 +24,7 @@ export const signinAction = async (prevState, formData) => {
     const password = formData.get("password");
 
     try {
-        await signIn("credentials", { email, password })
+        await signIn("credentials", { email, password, redirectTo: "/login" })
 
     } catch (error) {
         if (error instanceof AuthError) {
