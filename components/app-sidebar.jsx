@@ -11,22 +11,12 @@ import {
   UserCircle
 } from "lucide-react"
 
+import rynoxLogo from "@/assets/rynox-logo.png"
 import { NavUser } from "@/components/nav-user"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, } from "@/components/ui/sidebar"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useSession } from "next-auth/react"
 
 
 
@@ -91,12 +81,12 @@ export function AppSidebar({
       },
     ],
 
-    saas_owner:[
-     {
+    saas_owner: [
+      {
         title: "Companies",
         url: "/admin/companies",
         icon: Telescope
-      }, 
+      },
     ],
     navMain: [
       {
@@ -137,7 +127,7 @@ export function AppSidebar({
     ],
   }
 
-  const sideMenus = session?.user?.role === "FRANCHISE_OWNER" ? adminData.franchise_owner : session?.user?.role === "CASHIER" ? adminData.cashier :  session?.user?.role === "SAAS_OWNER" ? adminData.saas_owner : adminData.navMain
+  const sideMenus = session?.user?.role === "FRANCHISE_OWNER" ? adminData.franchise_owner : session?.user?.role === "CASHIER" ? adminData.cashier : session?.user?.role === "SAAS_OWNER" ? adminData.saas_owner : adminData.navMain
 
 
 
@@ -150,12 +140,13 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" asChild >
               <div>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-2xl bg-sidebar-primary text-sidebar-primary-foreground">
-                  <LayoutDashboard className="size-4" />
-                </div>
-                <div>
-                  <span className="truncate font-semibold">Admin Panel</span>
-                </div>
+                <Link href="/" className="flex items-center space-x-2 group w-full justify-start" >
+                  <img
+                    src={rynoxLogo.src}
+                    alt="Rynox"
+                    className="h-8  w-auto"
+                  />
+                </Link>
 
               </div>
             </SidebarMenuButton>
@@ -174,7 +165,7 @@ export function AppSidebar({
                 let isActive = pathName === item.url
                 return (
                   <SidebarMenuItem key={item.title}  >
-                    <SidebarMenuButton asChild className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-accent/80 text-sidebar-accent-foreground"}`} >
+                    <SidebarMenuButton asChild className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`} >
                       <Link href={item.url} >
                         <item.icon className="size-2" />
                         <span className="text-base" >{item.title}</span>

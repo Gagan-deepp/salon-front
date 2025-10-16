@@ -143,66 +143,7 @@ html {
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Dark mode theme overrides */
-@media (prefers-color-scheme: dark) {
-    @theme {
-        --color-background: oklch(from hsl(240 10% 3.9%) l c h);
-        --color-foreground: oklch(from hsl(0 0% 98%) l c h);
 
-        --color-card: oklch(from hsl(240 10% 3.9%) l c h);
-        --color-card-foreground: oklch(from hsl(0 0% 98%) l c h);
-
-        --color-popover: oklch(from hsl(240 10% 3.9%) l c h);
-        --color-popover-foreground: oklch(from hsl(0 0% 98%) l c h);
-
-        --color-muted: oklch(from hsl(240 3.7% 15.9%) l c h);
-        --color-muted-foreground: oklch(from hsl(240 5% 64.9%) l c h);
-
-        --color-accent: oklch(from hsl(240 3.7% 15.9%) l c h);
-        --color-accent-foreground: oklch(from hsl(0 0% 98%) l c h);
-
-        --color-destructive: oklch(from hsl(0 62.8% 30.6%) l c h);
-        --color-destructive-foreground: oklch(from hsl(0 0% 98%) l c h);
-
-        --color-border: oklch(from hsl(240 3.7% 15.9%) l c h);
-        --color-input: oklch(from hsl(240 3.7% 15.9%) l c h);
-
-        --color-sidebar: oklch(from hsl(240 5.9% 10%) l c h);
-        --color-sidebar-foreground: oklch(from hsl(240 4.8% 95.9%) l c h);
-        --color-sidebar-primary: oklch(from hsl(224.3 76.3% 48%) l c h);
-        --color-sidebar-primary-foreground: oklch(from hsl(0 0% 100%) l c h);
-        --color-sidebar-accent: oklch(from hsl(240 3.7% 15.9%) l c h);
-        --color-sidebar-accent-foreground: oklch(from hsl(240 4.8% 95.9%) l c h);
-        --color-sidebar-border: oklch(from hsl(240 3.7% 15.9%) l c h);
-        --color-sidebar-ring: oklch(from hsl(217.2 91.2% 59.8%) l c h);
-    }
-}
-
-/* Or using class-based dark mode */
-.dark {
-    --color-background: oklch(from hsl(240 10% 3.9%) l c h);
-    --color-foreground: oklch(from hsl(0 0% 98%) l c h);
-    --color-card: oklch(from hsl(240 10% 3.9%) l c h);
-    --color-card-foreground: oklch(from hsl(0 0% 98%) l c h);
-    --color-popover: oklch(from hsl(240 10% 3.9%) l c h);
-    --color-popover-foreground: oklch(from hsl(0 0% 98%) l c h);
-    --color-muted: oklch(from hsl(240 3.7% 15.9%) l c h);
-    --color-muted-foreground: oklch(from hsl(240 5% 64.9%) l c h);
-    --color-accent: oklch(from hsl(240 3.7% 15.9%) l c h);
-    --color-accent-foreground: oklch(from hsl(0 0% 98%) l c h);
-    --color-destructive: oklch(from hsl(0 62.8% 30.6%) l c h);
-    --color-destructive-foreground: oklch(from hsl(0 0% 98%) l c h);
-    --color-border: oklch(from hsl(240 3.7% 15.9%) l c h);
-    --color-input: oklch(from hsl(240 3.7% 15.9%) l c h);
-    --color-sidebar: oklch(from hsl(240 5.9% 10%) l c h);
-    --color-sidebar-foreground: oklch(from hsl(240 4.8% 95.9%) l c h);
-    --color-sidebar-primary: oklch(from hsl(224.3 76.3% 48%) l c h);
-    --color-sidebar-primary-foreground: oklch(from hsl(0 0% 100%) l c h);
-    --color-sidebar-accent: oklch(from hsl(240 3.7% 15.9%) l c h);
-    --color-sidebar-accent-foreground: oklch(from hsl(240 4.8% 95.9%) l c h);
-    --color-sidebar-border: oklch(from hsl(240 3.7% 15.9%) l c h);
-    --color-sidebar-ring: oklch(from hsl(217.2 91.2% 59.8%) l c h);
-}
 
 @layer base {
     * {
