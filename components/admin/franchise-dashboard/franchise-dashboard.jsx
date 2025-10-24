@@ -88,7 +88,7 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
                       ? "secondary"
                       : "outline"
                 }>
-                {franchise.subscription?.plan}
+                {franchise?.subscription?.plan}
               </Badge>
             </div>
           </div>
@@ -119,7 +119,7 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics.total_sales)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(metrics?.total_sales)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -128,7 +128,7 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.total_customers}</div>
+            <div className="text-2xl font-bold">{metrics?.total_customers}</div>
           </CardContent>
         </Card>
         <Card>
@@ -137,7 +137,7 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
             <TrendingUp className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.average_order_value}</div>
+            <div className="text-2xl font-bold">{metrics?.average_order_value}</div>
           </CardContent>
         </Card>
         <Card>
@@ -146,7 +146,7 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
             <CreditCard className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.total_transactions}</div>
+            <div className="text-2xl font-bold">{metrics?.total_transactions}</div>
           </CardContent>
         </Card>
       </div>
