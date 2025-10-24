@@ -51,3 +51,15 @@ export async function getMetrics() {
         return { success: false, error: error.response?.data?.message || "getSalesData failed" }
     }
 }
+
+export async function getOwnerMetrics() {
+    try {
+        const headers = await getAuthHeaders()
+        const res = await axios.get(`${BASE_URL}/analytics/owner`, { headers })
+        console.log("getOwnerMetrics response", res.data)
+        return res.data
+    } catch (error) {
+        console.error("getOwnerMetrics error", error)
+        return { success: false, error: error.response?.data?.message || "getOwnerMetrics failed" }
+    }
+}

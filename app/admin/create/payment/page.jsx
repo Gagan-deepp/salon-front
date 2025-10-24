@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/admin/payment/product-card"
 import { ServiceCard } from "@/components/admin/payment/service-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -18,7 +18,7 @@ import { calculatePaymentAmount, createPayment, validatePromoCode } from "@/lib/
 import { getProducts } from "@/lib/actions/product_action"
 import { getServices } from "@/lib/actions/service_action"
 import { getUsers } from "@/lib/actions/user_action"
-import { Calculator, IndianRupee, Plus, Receipt, Tag } from "lucide-react"
+import { Calculator, IndianRupee, Plus, Receipt, Tag, Trash } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -173,6 +173,13 @@ export default function CreatePaymentPage() {
     return formData.services.reduce((total, service) => {
       return total + service.price * service.quantity
     }, 0)
+  }
+
+  const handleRemoveService = (serviceId) => {
+    setFormData((prev) => ({
+      ...prev,
+      services: prev.services.filter((s) => s.serviceId !== serviceId),
+    }))
   }
 
   const productTotal = () => {
@@ -341,7 +348,180 @@ export default function CreatePaymentPage() {
                 </TabsList>
 
                 <TabsContent value="services" className="space-y-4 mt-4">
-                  <ServiceCard services={services} setFormData={setFormData} formData={formData} />
+
+                  <Card>
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold">Services</h3>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              services: [
+                                ...prev.services,
+                                {
+                                  serviceId: "",
+                                  serviceName: "",
+                                  price: 0,
+                                  gstRate: 18,
+                                  providerId: "",
+                                  providerName: "",
+                                  duration: 0,
+                                  quantity: 1,
+                                },
+                              ],
+                            }))
+                          }}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Service
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {formData.services.map((service, index) => (
+                        <div key={index} className="p-4 border rounded-lg space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="md:col-span-2 lg:col-span-1">
+                              <Label className="text-sm font-medium">Service</Label>
+                              <Select
+                                value={service.serviceId}
+                                onValueChange={(value) => {
+                                  const selectedService = services.find((s) => s._id === value)
+                                  if (selectedService) {
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      services: prev.services.map((s, i) =>
+                                        i === index
+                                          ? {
+                                            ...s,
+                                            serviceId: value,
+                                            serviceName: selectedService.name,
+                                            price: selectedService.price,
+                                            duration: selectedService.duration,
+                                          }
+                                          : s,
+                                      ),
+                                    }))
+                                  }
+                                }}
+                              >
+                                <SelectTrigger className="mt-1">
+                                  <SelectValue placeholder="Select service" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {services.map((s) => (
+                                    <SelectItem key={s._id} value={s._id}>
+                                      <div className="flex flex-col">
+                                        <span>{s.name}</span>
+                                        <span className="text-sm text-gray-500">₹{s.price}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium">Price</Label>
+                              <input
+                                type="number"
+                                className="mt-1 w-full px-3 py-2 border rounded-md "
+                                value={service.price}
+                                disabled={true}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium">Quantity</Label>
+                              <input
+                                type="number"
+                                min="1"
+                                className="mt-1 w-full px-3 py-2 border rounded-md"
+                                value={service.quantity}
+                                onChange={(e) => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    services: prev.services.map((s, i) =>
+                                      i === index ? { ...s, quantity: Number.parseInt(e.target.value) || 1 } : s,
+                                    ),
+                                  }))
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label className="text-sm font-medium">Provider Name</Label>
+                              <Select
+                                value={service.providerId}
+                                onValueChange={(value) => {
+                                  const selectedProvider = providers.find((p) => p._id === value)
+                                  if (selectedProvider) {
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      services: prev.services.map((s, i) =>
+                                        i === index
+                                          ? {
+                                            ...s,
+                                            providerId: value,
+                                            providerName: selectedProvider.name,
+                                          }
+                                          : s,
+                                      ),
+                                    }))
+                                  }
+                                }}
+                              >
+                                <SelectTrigger className="mt-1">
+                                  <SelectValue placeholder="Select provider" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {providers.map((provider) => (
+                                    <SelectItem key={provider._id} value={provider._id}>
+                                      <div className="flex gap-2">
+                                        <span className="font-medium">{provider.name}</span>
+                                        <span className="text-sm text-gray-500">{provider.role}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="flex items-end justify-between">
+                              <div className="flex-1 mr-4">
+                                <Label className="text-sm font-medium">Total</Label>
+                                <div className="text-lg font-semibold text-green-600 mt-1">
+                                  ₹{(service.price * service.quantity).toFixed(2)}
+                                </div>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleRemoveService(service.serviceId)}
+                                className="text-red-600 hover:text-red-700 cursor-pointer"
+                              >
+                                <Trash className="w-4 h-4 " />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {formData.services.length === 0 && (
+                        <div className="text-center py-12 text-gray-500">
+                          <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                            <Plus className="w-8 h-8 text-gray-400" />
+                          </div>
+                          <p className="text-lg font-medium">No services added yet</p>
+                          <p className="text-sm">Click "Add Service" to get started</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* <ServiceCard services={services} setFormData={setFormData} formData={formData} /> */}
                 </TabsContent>
 
                 <TabsContent value="products" className="space-y-4 mt-4">

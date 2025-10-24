@@ -4,6 +4,7 @@ import { getFranchises } from "@/lib/actions/franchise_action"
 import { Building2, Users, TrendingUp, DollarSign } from "lucide-react"
 import { DashboardSkeleton } from "@/components/admin/dashboard-skeleton"
 import { auth } from "@/lib/auth"
+import { getOwnerMetrics } from "@/lib/actions/analytics_action"
 
 async function DashboardStats() {
 
@@ -12,6 +13,8 @@ async function DashboardStats() {
   console.log("Session in page ==> ", session)
   // Fetch franchises data
   const result = await getFranchises({ limit: 100 })
+
+  const metrics = await getOwnerMetrics();
 
 
 
@@ -25,7 +28,7 @@ async function DashboardStats() {
     );
   }
 
-  console.log("admin page Result ==> ", result.data.data)
+  // console.log("admin page Result ==> ", result.data.data)
 
   // Use dummy data for preview if API fails`
   const franchises = result.data.data
@@ -38,28 +41,28 @@ async function DashboardStats() {
   const stats = [
     {
       title: "Total Franchises",
-      value: totalFranchises,
+      value: metrics.data.total_franchises,
       description: `${activeFranchises} active`,
       icon: Building2,
       color: "text-blue-600",
     },
     {
       title: "Total Sales",
-      value: `₹${(totalSales / 1000).toFixed(0)}K`,
-      description: "This month",
+      value: `₹${metrics.data.total_sales}`,
+      description: "Across all franchises",
       icon: DollarSign,
       color: "text-green-600",
     },
     {
       title: "Total Customers",
-      value: totalCustomers.toLocaleString(),
+      value: metrics.data.total_customers,
       description: "Across all franchises",
       icon: Users,
       color: "text-purple-600",
     },
     {
-      title: "Avg. Bill Value",
-      value: `₹${Math.round(totalSales / totalCustomers || 0)}`,
+      title: "Avg. Order Value",
+      value: `₹${metrics.data.average_order_value}`,
       description: "Per customer",
       icon: TrendingUp,
       color: "text-orange-600",

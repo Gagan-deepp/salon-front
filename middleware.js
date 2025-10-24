@@ -10,7 +10,7 @@ const routePermissions = [
 
     // Cashier specific routes
     {
-        paths: ['/admin/create/payment'],
+        paths: ['/admin/create/payment' , '/admin/payments'],
         allowedRoles: ['CASHIER', 'FRANCHISE_OWNER', 'SUPER_ADMIN'], // Added hierarchical access
     },
 
