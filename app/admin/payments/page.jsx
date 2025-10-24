@@ -78,11 +78,11 @@ export default async function PaymentsPage({ searchParams }) {
     paymentMode: searchP.paymentMode || "",
   }
 
-  const result = user.role === "SUPER_ADMIN" ? await getAllPayments(params) : user.role === "FRANCHISE_OWNER" ? await getFranchisePayments(params) : await getCashierPayments(params, user.id)
+  const result = user.role === "SUPER_ADMIN" ? await getAllPayments(params) : user.role === "CASHIER" ? await getCashierPayments(params, user.id) : await getFranchisePayments(params)
 
   console.debug("Payment Data Result ==> ", result.data.data)
   const payments = result.success ? result.data.data || [] : []
-  const total = result.success ? result.data.total || 0 : 0
+  const total = result.success ? result.data.data.length || 0 : 0
   const totalPages = Math.ceil(total / 10)
 
   return (

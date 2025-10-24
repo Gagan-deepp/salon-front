@@ -48,7 +48,6 @@ export async function getAllCustomers(params) {
     return { success: false, error: error.response?.data || "getAllCustomers failed" }
   }
 }
-// 2. Get Customers list  (GET /customers?page=&limit=&search=&gender=&isActive=)
 export async function getCustomers(params) {
   try {
     const headers = await getAuthHeaders()

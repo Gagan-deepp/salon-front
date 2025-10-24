@@ -1,18 +1,12 @@
 "use client"
 
-import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer, LabelList, CartesianGrid } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
-const customerData = [
-  { month: "Jan", new: 45, returning: 120 },
-  { month: "Feb", new: 52, returning: 135 },
-  { month: "Mar", new: 48, returning: 128 },
-  { month: "Apr", new: 61, returning: 145 },
-  { month: "May", new: 55, returning: 142 },
-  { month: "Jun", new: 67, returning: 158 },
-]
 
-export function CustomerChart() {
+export function CustomerChart({ data }) {
+
+  console.log("Customer Data ============:", data);
   return (
     <ChartContainer
       config={{
@@ -27,13 +21,38 @@ export function CustomerChart() {
       }}
       className="h-[250px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={customerData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}  >
-          <XAxis dataKey="month" />
+
+        <BarChart
+          accessibilityLayer
+          data={data}
+          margin={{
+            top: 20,
+          }}
+        >
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            tickMargin={10}
+            axisLine={false}
+            tickFormatter={(value) => value.slice(0, 3)}
+          />
           <YAxis />
-          <ChartTooltip content={<ChartTooltipContent />} />
-          <Bar dataKey="new" fill="var(--color-new)" radius={5} />
-          <Bar dataKey="returning" fill="var(--color-returning)" radius={7} />
+          <ChartTooltip
+            cursor={false}
+            content={<ChartTooltipContent hideLabel />}
+          />
+          <Bar dataKey="count" fill="var(--color-returning)" radius={8}>
+            <LabelList
+              position="top"
+              offset={12}
+              className="fill-foreground"
+              fontSize={12}
+            />
+          </Bar>
         </BarChart>
+
+
       </ResponsiveContainer>
     </ChartContainer>
   );

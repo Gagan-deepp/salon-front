@@ -31,7 +31,7 @@ import { EditFranchiseDialog } from "../franchise/edit-franchise-dialog"
 import { DeleteFranchiseDialog } from "../franchise/delete-franchise-dialog"
 import { Button } from "@/components/ui/button"
 
-export function FranchiseDashboard({ franchise }) {
+export function FranchiseDashboard({ metrics, franchise, customerData, salesData }) {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -119,8 +119,7 @@ export function FranchiseDashboard({ franchise }) {
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(franchise.analytics.totalSales)}</div>
-            <p className="text-xs text-muted-foreground">+12.5% from last month</p>
+            <div className="text-2xl font-bold">{formatCurrency(metrics.total_sales)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -129,56 +128,53 @@ export function FranchiseDashboard({ franchise }) {
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{franchise.analytics.totalCustomers.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">+8.2% from last month</p>
+            <div className="text-2xl font-bold">{metrics.total_customers}</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Bill Value</CardTitle>
+            <CardTitle className="text-sm font-medium">Avg. Order Value</CardTitle>
             <TrendingUp className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(franchise.analytics.averageBillValue)}</div>
-            <p className="text-xs text-muted-foreground">+3.8% from last month</p>
+            <div className="text-2xl font-bold">{metrics.average_order_value}</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Subscription</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Transaction</CardTitle>
             <CreditCard className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{daysRemaining()}</div>
-            <p className="text-xs text-muted-foreground">days remaining</p>
+            <div className="text-2xl font-bold">{metrics.total_transactions}</div>
           </CardContent>
         </Card>
       </div>
       <Tabs defaultValue="analytics" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          {/* <TabsTrigger value="settings">Settings</TabsTrigger> */}
           <TabsTrigger value="subscription">Subscription</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
+          {/* <TabsTrigger value="performance">Performance</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="analytics" className="space-y-4">
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Sales Trend</CardTitle>
             </CardHeader>
             <CardContent>
               <SalesChart />
             </CardContent>
-          </Card>
+          </Card> */}
 
           <Card>
             <CardHeader>
-              <CardTitle>Customer Growth</CardTitle>
+              <CardTitle>Customer Growth - Last 6 months</CardTitle>
             </CardHeader>
             <CardContent>
-              <CustomerChart />
+              <CustomerChart data={customerData} />
             </CardContent>
           </Card>
 
@@ -187,7 +183,7 @@ export function FranchiseDashboard({ franchise }) {
               <CardTitle>Revenue Analysis</CardTitle>
             </CardHeader>
             <CardContent>
-              <RevenueChart />
+              <RevenueChart data={salesData} />
             </CardContent>
           </Card>
         </TabsContent>

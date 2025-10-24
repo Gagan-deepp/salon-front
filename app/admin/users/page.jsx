@@ -1,12 +1,11 @@
-import { Suspense } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
-import { UserTable } from "@/components/admin/user/user-table"
-import { CreateUserDialog } from "@/components/admin/user/create-user-dialog"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
+import { CreateUserDialog } from "@/components/admin/user/create-user-dialog"
+import { UserTable } from "@/components/admin/user/user-table"
+import { Button } from "@/components/ui/button"
 import { getUsers } from "@/lib/actions/user_action"
-import { getAllUsers } from "@/lib/actions/user_action"
 import { auth } from "@/lib/auth"
+import { Plus } from "lucide-react"
+import { Suspense } from "react"
 
 export default async function UsersPage({ searchParams }) {
 
@@ -22,7 +21,7 @@ export default async function UsersPage({ searchParams }) {
         isActive: searchP?.status || true,
     }
 
-    const result = user.role === "SUPER_ADMIN" ? await getAllUsers(params) : await getUsers(params)
+    const result = await getUsers(params)
     const users = result.success ? result.data.data || [] : []
     const total = result.success ? result.data.total || 0 : 0
     const totalPages = Math.ceil(total / 10)

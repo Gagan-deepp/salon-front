@@ -74,13 +74,13 @@ export function EditFranchiseDialog({ children, franchise }) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Franchise Name *</Label>
-              <Input id="name" name="name" defaultValue={franchise.name} required />
+              <Input id="name" name="name" defaultValue={franchise.name || ""} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="plan">Subscription Plan</Label>
               <Select name="plan" defaultValue={franchise.subscription?.plan || "BASIC"}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Select plan" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="BASIC">Basic</SelectItem>
@@ -97,21 +97,21 @@ export function EditFranchiseDialog({ children, franchise }) {
               id="street"
               name="street"
               rows={2}
-              defaultValue={franchise.address?.street} />
+              defaultValue={franchise.address?.street || ""} />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="city">City *</Label>
-              <Input id="city" name="city" defaultValue={franchise.address?.city} required />
+              <Input id="city" name="city" defaultValue={franchise.address?.city || ""} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="state">State *</Label>
-              <Input id="state" name="state" defaultValue={franchise.address?.state} required />
+              <Input id="state" name="state" defaultValue={franchise.address?.state || ""} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="pincode">Pincode</Label>
-              <Input id="pincode" name="pincode" defaultValue={franchise.address?.pincode} />
+              <Input id="pincode" name="pincode" defaultValue={franchise.address?.pincode || ""} />
             </div>
           </div>
 
@@ -122,7 +122,7 @@ export function EditFranchiseDialog({ children, franchise }) {
                 id="phone"
                 name="phone"
                 type="tel"
-                defaultValue={franchise.contact?.phone}
+                defaultValue={franchise.contact?.phone || ""}
                 required />
             </div>
             <div className="space-y-2">
@@ -131,7 +131,7 @@ export function EditFranchiseDialog({ children, franchise }) {
                 id="whatsapp"
                 name="whatsapp"
                 type="tel"
-                defaultValue={franchise.contact?.whatsapp} />
+                defaultValue={franchise.contact?.whatsapp || ""} />
             </div>
           </div>
 
@@ -142,17 +142,17 @@ export function EditFranchiseDialog({ children, franchise }) {
                 id="email"
                 name="email"
                 type="email"
-                defaultValue={franchise.contact?.email}
+                defaultValue={franchise.contact?.email || ""}
                 required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="gstNumber">GST Number</Label>
-              <Input id="gstNumber" name="gstNumber" defaultValue={franchise.gstNumber} />
+              <Input id="gstNumber" name="gstNumber" defaultValue={franchise.gstNumber || ""} />
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
-            <Switch id="isActive" name="isActive" defaultChecked={franchise.isActive} />
+            <Switch id="isActive" name="isActive" defaultChecked={franchise.isActive ?? true} />
             <Label htmlFor="isActive">Active Status</Label>
           </div>
 
@@ -167,5 +167,5 @@ export function EditFranchiseDialog({ children, franchise }) {
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

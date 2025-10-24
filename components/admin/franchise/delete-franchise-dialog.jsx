@@ -48,7 +48,7 @@ export function DeleteFranchiseDialog({ children, franchise }) {
             <span>Delete Franchise</span>
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete <strong>{franchise.name}</strong>? This action cannot be undone and will
+            Are you sure you want to delete <strong>{franchise?.name || ""}</strong>? This action cannot be undone and will
             remove all associated data.
           </DialogDescription>
         </DialogHeader>

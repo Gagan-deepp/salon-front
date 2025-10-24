@@ -13,7 +13,7 @@ async function DashboardStats() {
   // Fetch franchises data
   const result = await getFranchises({ limit: 100 })
 
-  console.log("admin page Result ==> ", result.data.data)
+
 
   if (!result.success) {
     return (
@@ -24,6 +24,8 @@ async function DashboardStats() {
       </Card>
     );
   }
+
+  console.log("admin page Result ==> ", result.data.data)
 
   // Use dummy data for preview if API fails`
   const franchises = result.data.data

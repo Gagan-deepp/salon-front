@@ -72,7 +72,7 @@ export async function middleware(request) {
     const userRole = session?.user?.role;
 
     console.debug("\nUser role ==> ", userRole);
-    console.debug(" Middleware pathname ==> ", pathname);
+    // console.debug(" Middleware pathname ==> ", pathname);
 
     // Find matching route permission (first match wins due to specific-to-general ordering)
     const matched = routePermissions.find((route) =>

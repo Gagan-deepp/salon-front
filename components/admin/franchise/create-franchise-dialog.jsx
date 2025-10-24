@@ -17,11 +17,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createFranchise } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
+import { useSession } from "next-auth/react"
 
 export function CreateFranchiseDialog({ children }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const { data: session } = useSession()
 
   const handleSubmit = async (formData) => {
     setLoading(true)
@@ -41,7 +43,7 @@ export function CreateFranchiseDialog({ children }) {
         whatsapp: formData.get("whatsapp"),
       },
       gstNumber: formData.get("gstNumber"),
-      ownerId: "507f1f77bcf86cd799439011", // Dummy owner ID
+      ownerId: session.user.id,
       subscription: {
         plan: formData.get("plan"),
       },

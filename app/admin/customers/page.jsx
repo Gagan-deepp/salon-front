@@ -22,7 +22,7 @@ async function CustomerList({ searchParams }) {
 
   console.log("\n\n Customer params ===> ", params)
 
-  const result = user.role === "SUPER_ADMIN" ? await getAllCustomers(params) : await getCustomers(params)
+  const result = await getCustomers(params)
 
   console.log("\n\n Customer result ===> ", result.data.data)
 
