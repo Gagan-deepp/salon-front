@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default async function FranchisePage({ params }) {
     const id = (await params).id
-    const [result, metrics, customerData, salesData] = await Promise.all([getFranchiseById(id), getMetrics(), getCustomerData(), getSalesData()]);
+    const [result, metrics, customerData, salesData] = await Promise.all([getFranchiseById(id), getMetrics(id), getCustomerData(), getSalesData()]);
 
     if (!result.success || !customerData.success) {
         return (

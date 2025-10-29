@@ -142,11 +142,11 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Transaction</CardTitle>
+            <CardTitle className="text-sm font-medium">Daily Revenue</CardTitle>
             <CreditCard className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics?.total_transactions}</div>
+            <div className="text-2xl font-bold">{metrics?.daily_revenue}</div>
           </CardContent>
         </Card>
       </div>

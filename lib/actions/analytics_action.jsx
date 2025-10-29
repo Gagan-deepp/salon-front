@@ -40,10 +40,10 @@ export async function getSalesData() {
     }
 }
 
-export async function getMetrics() {
+export async function getMetrics(franchiseId) {
     try {
         const headers = await getAuthHeaders()
-        const res = await axios.get(`${BASE_URL}/analytics/metrics`, { headers })
+        const res = await axios.get(`${BASE_URL}/analytics/metrics/${franchiseId}`, { headers })
         // console.log("getSalesData response", res.data)
         return res.data
     } catch (error) {
@@ -61,5 +61,17 @@ export async function getOwnerMetrics() {
     } catch (error) {
         console.error("getOwnerMetrics error", error)
         return { success: false, error: error.response?.data?.message || "getOwnerMetrics failed" }
+    }
+}
+
+export async function getCrossFranchise() {
+    try {
+        const headers = await getAuthHeaders()
+        const res = await axios.get(`${BASE_URL}/analytics/cross-franchise`, { headers })
+        // console.log("getCrossFranchise response", res.data)
+        return res.data
+    } catch (error) {
+        console.error("getCrossFranchise error", error)
+        return { success: false, error: error.response?.data?.message || "getSalesData failed" }
     }
 }
