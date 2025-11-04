@@ -1,8 +1,7 @@
 "use server"
 import axios from "axios"
-import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
-import { auth } from "../auth" // adjust if needed
+import { auth } from "../auth"; // adjust if needed
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
@@ -56,7 +55,7 @@ export async function getOwnerMetrics() {
     try {
         const headers = await getAuthHeaders()
         const res = await axios.get(`${BASE_URL}/analytics/owner`, { headers })
-        console.log("getOwnerMetrics response", res.data)
+        // console.log("getOwnerMetrics response", res.data)
         return res.data
     } catch (error) {
         console.error("getOwnerMetrics error", error)
@@ -73,5 +72,51 @@ export async function getCrossFranchise() {
     } catch (error) {
         console.error("getCrossFranchise error", error)
         return { success: false, error: error.response?.data?.message || "getSalesData failed" }
+    }
+}
+
+export async function getLeaderBoard() {
+    try {
+        const headers = await getAuthHeaders()
+        const res = await axios.get(`${BASE_URL}/analytics/leaderboard`, { headers })
+        // console.log("getLeaderBoard response", res.data)
+        return res.data
+    } catch (error) {
+        console.error("getLeaderBoard error", error)
+        return { success: false, error: error.response?.data?.message || "getSalesData failed" }
+    }
+}
+export async function getServiceTopPerformance() {
+    try {
+        const headers = await getAuthHeaders()
+        const res = await axios.get(`${BASE_URL}/analytics/service-performance`, { headers })
+        console.log("getServiceTopPerformance response", res.data)
+        return res.data
+    } catch (error) {
+        console.error("getServiceTopPerformance error", error)
+        return { success: false, error: error.response?.data?.message || "getServiceTopPerformance failed" }
+    }
+}
+
+export async function getRepeatCustomer() {
+    try {
+        const headers = await getAuthHeaders()
+        const res = await axios.get(`${BASE_URL}/analytics/repeat-customer`, { headers })
+        // console.log("getRepeatCustomer response", res)
+        return res.data
+    } catch (error) {
+        console.error("getRepeatCustomer error", error.response?.data)
+        return { success: false, error: error.response?.data?.message || "getRepeatCustomer failed" }
+    }
+}
+export async function getChurnRate() {
+    try {
+        const headers = await getAuthHeaders()
+        const res = await axios.get(`${BASE_URL}/analytics/churn-rate`, { headers })
+        console.log("getChurnRate response", res.data)
+        return res.data
+    } catch (error) {
+        console.error("getChurnRate error", error.response?.data)
+        return { success: false, error: error.response?.data?.message || "getChurnRate failed" }
     }
 }

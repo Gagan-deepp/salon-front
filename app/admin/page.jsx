@@ -1,45 +1,37 @@
 import CrossFranchiseChart from "@/components/admin/cross-franchise-chart"
 import { DashboardSkeleton } from "@/components/admin/dashboard-skeleton"
+import Leaderboard from "@/components/admin/Leaderboard-chart"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getCrossFranchise, getOwnerMetrics } from "@/lib/actions/analytics_action"
-import { getFranchises } from "@/lib/actions/franchise_action"
-import { auth } from "@/lib/auth"
+import { getCrossFranchise, getLeaderBoard, getOwnerMetrics } from "@/lib/actions/analytics_action"
 import { Building2, DollarSign, TrendingUp, Users } from "lucide-react"
 import { Suspense } from "react"
 
 async function DashboardStats() {
 
-  const session = await auth()
-
-  // console.log("Session in page ==> ", session)
-  // Fetch franchises data
-  const result = await getFranchises({ limit: 100 })
-
   const metrics = await getOwnerMetrics();
 
-  const [crossFranchise] = await Promise.all([
+  const [crossFranchise, leaderBoard] = await Promise.all([
     getCrossFranchise(),
+    getLeaderBoard(),
   ]);
 
 
-  if (!result.success) {
+  if (!metrics.success) {
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-center text-muted-foreground">Failed to load bookings: {result.error}</p>
+          <p className="text-center text-muted-foreground">Failed to load bookings: {metrics.error}</p>
         </CardContent>
       </Card>
     );
   }
 
-  const franchises = result.data.data
-  const activeFranchises = franchises.filter((f) => f.isActive).length
 
   const stats = [
     {
       title: "Total Franchises",
       value: metrics.data.total_franchises,
-      description: `${activeFranchises} active`,
+      description: `Active franchisees`,
       icon: Building2,
       color: "text-blue-600",
     },
@@ -84,6 +76,14 @@ async function DashboardStats() {
         ))}
       </div>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Leaderboard : Top 5 franchise in your company</CardTitle>
+        </CardHeader>
+        <CardContent className="w-full" >
+          <Leaderboard data={leaderBoard.data} />
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Cross Franchise Revenue Breakdown</CardTitle>

@@ -6,13 +6,12 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 
 export function CustomerChart({ data }) {
 
-  console.log("Customer Data ============:", data);
   return (
     <ChartContainer
       config={{
         new: {
           label: "New Customers",
-          color: "var(--chart-1)",
+          color: "var(--chart-4)",
         },
         returning: {
           label: "Returning Customers",

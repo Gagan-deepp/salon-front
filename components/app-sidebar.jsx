@@ -2,10 +2,13 @@
 
 import {
   BadgeIndianRupee,
+  Briefcase,
   Building2,
+  ChevronRight,
   LayoutDashboard,
   ShoppingBasket,
   ShoppingCart,
+  SquareTerminal,
   Telescope,
   UserCheck,
   UserCircle
@@ -13,10 +16,11 @@ import {
 
 import rynoxLogo from "@/assets/rynox-logo.png"
 import { NavUser } from "@/components/nav-user"
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail, } from "@/components/ui/sidebar"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
 
 
 
@@ -65,6 +69,29 @@ export function AppSidebar({
         title: "Users",
         url: "/admin/users",
         icon: UserCheck,
+      },
+      {
+        title: "Reports",
+        url: "#",
+        icon: SquareTerminal,
+        isActive: true,
+        items: [
+          {
+            title: "Service Performance",
+            url: "/admin/reports/service",
+            icon: Briefcase
+          },
+          {
+            title: "Repeat Customer",
+            url: "/admin/reports/repeat-customer",
+            icon: UserCircle
+          },
+          {
+            title: "Churn Rate",
+            url: "/admin/reports/churn-rate",
+            icon: UserCircle
+          },
+        ],
       },
     ],
 
@@ -123,7 +150,30 @@ export function AppSidebar({
         title: "Services",
         url: "/admin/services",
         icon: Telescope
-      }
+      },
+      {
+        title: "Reports",
+        url: "#",
+        icon: SquareTerminal,
+        isActive: true,
+        items: [
+          {
+            title: "Service Performance",
+            url: "/admin/reports/service",
+            icon: Briefcase
+          },
+          {
+            title: "Repeat Customer",
+            url: "/admin/reports/repeat-customer",
+            icon: UserCircle
+          },
+          {
+            title: "Churn Rate",
+            url: "/admin/reports/churn-rate",
+            icon: UserCircle
+          },
+        ],
+      },
     ],
   }
 
@@ -164,14 +214,39 @@ export function AppSidebar({
 
                 let isActive = pathName === item.url
                 return (
-                  <SidebarMenuItem key={item.title}  >
-                    <SidebarMenuButton asChild className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`} >
-                      <Link href={item.url} >
-                        <item.icon className="size-2" />
-                        <span className="text-base" >{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  item.items ?
+                    <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
+                      <SidebarMenuItem key={item.title} >
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuSubButton tooltip={item.title} className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}>
+                            {item.icon && <item.icon className="size-2" />}
+                            <span className="text-base" >{item.title}</span>
+                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                          </SidebarMenuSubButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub>
+                            {item.items?.map((subItem) => (
+                              <SidebarMenuSubItem key={subItem.title}>
+                                <SidebarMenuSubButton asChild className="!py-4">
+                                  <Link href={subItem.url} >
+                                    <span className="text-sm" >{subItem.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            ))}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                    : <SidebarMenuItem key={item.title}  >
+                      <SidebarMenuButton asChild className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`} >
+                        <Link href={item.url} >
+                          <item.icon className="size-2" />
+                          <span className="text-base" >{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                 )
               })}
             </SidebarMenu>

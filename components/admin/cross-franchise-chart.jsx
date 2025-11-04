@@ -6,7 +6,6 @@ import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 
 const CrossFranchiseChart = ({ data }) => {
-    console.log("cross franchise data ============:", data);
 
     return (
         <ScrollArea className="w-full rounded-md border whitespace-nowrap" >
@@ -18,7 +17,7 @@ const CrossFranchiseChart = ({ data }) => {
                     },
                     returning: {
                         label: "Returning Customers",
-                        color: "var(--chart-2)",
+                        color: "var(--chart-4)",
                     },
                 }}
                 className="h-[250px] w-full flex">
@@ -30,6 +29,7 @@ const CrossFranchiseChart = ({ data }) => {
                         margin={{
                             top: 20,
                         }}
+                        barSize={100}
                     >
                         <CartesianGrid vertical={false} />
                         <XAxis
@@ -49,7 +49,7 @@ const CrossFranchiseChart = ({ data }) => {
                                 offset={12}
                                 className="fill-foreground"
                                 fontSize={12}
-                                format={(val) => Math.round(val)}
+                                formatter={(val) => Math.round(val)}
                             />
                         </Bar>
                     </BarChart>

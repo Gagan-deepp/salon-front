@@ -10,7 +10,7 @@ const routePermissions = [
 
     // Cashier specific routes
     {
-        paths: ['/admin/create/payment' , '/admin/payments'],
+        paths: ['/admin/create/payment', '/admin/payments'],
         allowedRoles: ['CASHIER', 'FRANCHISE_OWNER', 'SUPER_ADMIN'], // Added hierarchical access
     },
 
@@ -60,7 +60,7 @@ export async function middleware(request) {
 
             const redirectPath = roleRedirects[role];
             if (redirectPath) {
-                console.debug("🔄 Redirecting", role, "to:", redirectPath);
+                // console.debug("🔄 Redirecting", role, "to:", redirectPath);
                 return NextResponse.redirect(new URL(redirectPath, request.url));
             }
         }
@@ -71,7 +71,7 @@ export async function middleware(request) {
     const session = await auth().catch(() => null);
     const userRole = session?.user?.role;
 
-    console.debug("\nUser role ==> ", userRole);
+    // console.debug("\nUser role ==> ", userRole);
     // console.debug(" Middleware pathname ==> ", pathname);
 
     // Find matching route permission (first match wins due to specific-to-general ordering)
@@ -84,17 +84,17 @@ export async function middleware(request) {
         })
     );
 
-    console.debug("\n Matched route rule:", matched);
+    // console.debug("\n Matched route rule:", matched);
 
     // Allow all non-protected routes
     if (!matched) {
-        console.debug("🟢 No protection needed for:", pathname);
+        // console.debug("🟢 No protection needed for:", pathname);
         return NextResponse.next();
     }
 
     // Not logged in user redirect to login page
     if (!userRole) {
-        console.debug("🔐 No user role, redirecting to login");
+        // console.debug("🔐 No user role, redirecting to login");
         return NextResponse.redirect(new URL('/', request.url));
     }
 
@@ -107,6 +107,6 @@ export async function middleware(request) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
-    console.debug("\nAccess granted for:", pathname);
+    // console.debug("\nAccess granted for:", pathname);
     return NextResponse.next();
 }
