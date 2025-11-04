@@ -12,51 +12,45 @@ const Hero = () => {
 
             <div className="container mx-auto relative z-10">
                 <div className="max-w-4xl mx-auto text-center animate-fade-in-slow">
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6 animate-fade-in border border-primary/20">
-                        <span className="text-sm font-medium text-primary">✨ Trusted by 500+ Businesses</span>
-                    </div>
 
                     {/* Main heading */}
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                        Streamline Your Billing,
-                        <br />
+                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                         <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            Grow Your Business
+                            Command Your Network
+                        </span>
+                        <br />
+                        <span className="text-2xl md:text-4xl lg:text-5xl">
+                            The Only Billing System Built for Multi-Unit Franchise Command.
                         </span>
                     </h1>
 
                     {/* Subheading */}
-                    <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-                        The all-in-one billing management platform designed specifically for salons, spas, and gyms.
-                        Automate invoicing, track payments, and delight your clients—all in one place.
+                    <p className="text-base md:text-lg text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
+                        Go beyond POS. Rynox centralizes every store, standardizes pricing, and delivers real-time profitability analytics — from 1 to 500 locations.
                     </p>
 
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                         <Button variant="hero" size="xl" className="group shadow-2xl">
-                            Get Started Free
+                            Request Enterprise Demo
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Button>
                         <Button variant="outline" size="xl" className="group">
-                            <Play className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                            Watch Demo
+                            See All Plans
                         </Button>
                     </div>
 
-                    {/* Trust indicators */}
-                    <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+                    {/* Trust Signal Row */}
+                    <div className="flex flex-col items-center justify-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
-                            <span className="text-primary">✓</span>
-                            No credit card required
+                            <span className="text-primary">✅</span>
+                            <span>Trusted by leading brands like Femina Flaunt, Naturals, and Looks Salon</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-primary">✓</span>
-                            14-day free trial
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-primary">✓</span>
-                            Cancel anytime
+                        {/* Logos Carousel - Placeholder for brand logos */}
+                        <div className="flex items-center gap-8 mt-4 opacity-60">
+                            <span className="text-xs font-semibold">FEMINA FLAUNT</span>
+                            <span className="text-xs font-semibold">NATURALS</span>
+                            <span className="text-xs font-semibold">LOOKS SALON</span>
                         </div>
                     </div>
                 </div>

@@ -10,36 +10,24 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 const FAQ = () => {
     const faqs = [
         {
-            question: "How long does it take to set up Rynox?",
-            answer: "Most businesses are up and running in under 15 minutes. Our intuitive setup wizard guides you through adding your services, pricing, and payment methods. You can start sending invoices on day one.",
+            question: "How does Rynox help me enforce standards across my franchise network?",
+            answer: "Rynox's Centralized Price Lock feature allows you to control pricing, services, and promotions from a single master dashboard. Any updates you make are instantly pushed to all franchise locations, ensuring complete brand standardization. Our Franchise Profit Audit tools let you monitor compliance in real-time, tracking performance indicators and identifying any deviations from your standards across the entire network.",
         },
         {
-            question: "Do I need a credit card to start the free trial?",
-            answer: "No credit card required! We offer a full-featured 14-day free trial. You'll only be asked for payment information when you decide to upgrade to a paid plan after your trial ends.",
+            question: "Can I restrict store-level access to only their own data?",
+            answer: "Absolutely. Rynox Enterprise tiers include sophisticated role-based access controls. You can define granular permissions for each user and location, ensuring franchise owners and staff only see data relevant to their specific store. Meanwhile, corporate administrators maintain full visibility across the network. This security architecture protects sensitive profitability data while empowering local teams with the information they need.",
         },
         {
-            question: "Can I import my existing client data?",
-            answer: "Yes! Rynox supports CSV imports from most billing and CRM systems. Our support team can help you migrate your data smoothly, and for Enterprise customers, we provide dedicated onboarding assistance.",
+            question: "Do you offer data migration from my existing POS software?",
+            answer: "Yes! Our Dedicated Launch Team provides white-glove data migration services for all Enterprise customers. We handle the complex process of transferring your customer data, service catalogs, pricing structures, and historical records from your existing system to Rynox. Our specialists work closely with your team to ensure a seamless transition with zero data loss and minimal disruption to your operations.",
         },
         {
-            question: "What payment methods do you support?",
-            answer: "We support all major credit cards, debit cards, ACH transfers, and digital wallets through integrations with Stripe, PayPal, and Square. Your clients can pay online instantly and securely.",
+            question: "How does the per-store fee work above the 20-unit Enterprise limit?",
+            answer: "Our Full Enterprise plan is designed for networks of 20+ stores with transparent, scalable pricing. Beyond the base 20 locations, each additional store is billed at a discounted per-unit rate that decreases as your network grows. This ensures you get better value as you scale. Contact our Enterprise Specialists for a custom quote tailored to your specific network size and requirements.",
         },
         {
-            question: "Is my data secure?",
-            answer: "Absolutely. We use bank-level 256-bit SSL encryption for all data transmission and storage. We're PCI DSS compliant and regularly undergo security audits. Your data is backed up daily and stored in secure, redundant servers.",
-        },
-        {
-            question: "Can I customize invoices with my branding?",
-            answer: "Yes! Professional and Enterprise plans include custom branding features. Add your logo, choose your colors, customize email templates, and even use your own domain for invoice links.",
-        },
-        {
-            question: "What kind of support do you offer?",
-            answer: "All plans include email support with response times under 24 hours. Professional plans get priority support, and Enterprise customers receive 24/7 dedicated support with a dedicated account manager.",
-        },
-        {
-            question: "Can I cancel anytime?",
-            answer: "Yes, you can cancel your subscription at any time with no penalties or cancellation fees. You'll continue to have access to your account until the end of your billing period, and you can export all your data.",
+            question: "How secure is my sensitive customer and profitability data?",
+            answer: "Security is our top priority. Rynox uses enterprise-grade cloud infrastructure with 256-bit SSL encryption, multi-factor authentication, and role-based access controls. Your data is hosted on secure, redundant servers with 24x7 monitoring and automated backups. We're fully compliant with industry standards including PCI DSS and GDPR, and we conduct regular third-party security audits to ensure your customer and financial data remains protected at all times.",
         },
     ];
 
@@ -54,11 +42,8 @@ const FAQ = () => {
             <div className="container mx-auto max-w-3xl">
                 <div className="text-center mb-12 sm:mb-16 animate-fade-in">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-                        Frequently Asked <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Questions</span>
+                        Your Questions, <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Answered.</span>
                     </h2>
-                    <p className="text-base sm:text-lg text-muted-foreground px-4">
-                        Everything you need to know about Rynox
-                    </p>
                 </div>
 
                 <div className={`${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>

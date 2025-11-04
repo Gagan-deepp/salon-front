@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import rynoxLogo from "@/assets/rynox-logo.png";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
+import Link from "next/link";
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,13 +20,24 @@ const Header = () => {
 
     const isScrolled = scrollY > 50;
 
+    const handleNavClick = (e, href) => {
+        e.preventDefault();
+        const element = document.querySelector(href);
+        if (element) {
+            const headerOffset = 80; // Height of fixed header
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+        setIsMenuOpen(false);
+    };
+
     return (
         <>
-            {/* Scroll progress indicator */}
-            <div
-                className="fixed top-0 left-0 h-1 bg-gradient-to-r from-primary to-secondary z-50 transition-all duration-300"
-                style={{ width: `${scrollProgress}%` }}
-            />
 
             <header
                 className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled
@@ -36,7 +48,11 @@ const Header = () => {
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-between h-16 md:h-20">
                         {/* Logo */}
-                        <a href="#hero" className="flex items-center space-x-2 group">
+                        <a
+                            href="#hero"
+                            className="flex items-center space-x-2 group"
+                            onClick={(e) => handleNavClick(e, '#hero')}
+                        >
                             <img
                                 src={rynoxLogo.src}
                                 alt="Rynox"
@@ -50,7 +66,8 @@ const Header = () => {
                                 <a
                                     key={link.name}
                                     href={link.href}
-                                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group"
+                                    onClick={(e) => handleNavClick(e, link.href)}
+                                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group cursor-pointer"
                                 >
                                     {link.name}
                                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
@@ -61,10 +78,9 @@ const Header = () => {
                         {/* Desktop CTAs */}
                         <div className="hidden md:flex items-center space-x-4">
                             <Button variant="ghost" size="default">
-                                Sign In
-                            </Button>
-                            <Button variant="hero" size="default">
-                                Get Started Free
+                                <Link href="/login">
+                                    Login
+                                </Link>
                             </Button>
                         </div>
 
@@ -86,8 +102,8 @@ const Header = () => {
                                     <a
                                         key={link.name}
                                         href={link.href}
-                                        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-4 py-2"
-                                        onClick={() => setIsMenuOpen(false)}
+                                        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-4 py-2 cursor-pointer"
+                                        onClick={(e) => handleNavClick(e, link.href)}
                                     >
                                         {link.name}
                                     </a>

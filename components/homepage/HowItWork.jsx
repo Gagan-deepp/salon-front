@@ -1,28 +1,30 @@
 'use client';
-import { UserPlus, Settings, Zap, CheckCircle } from "lucide-react";
+import { TrendingUp, Package, BarChart2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const HowItWorks = () => {
-    const steps = [
+    const revenueEngines = [
         {
-            icon: UserPlus,
-            title: "Sign Up & Setup",
-            description: "Create your account in under 2 minutes. No credit card required to get started.",
+            icon: TrendingUp,
+            title: "Staff Incentive Calculator",
+            benefit: "Motivate performance with precision.",
+            description: "Automatically calculate complex staff commissions and target-based rewards, moving your team from service providers to proactive sellers.",
+            gradient: "from-primary to-secondary",
         },
         {
-            icon: Settings,
-            title: "Configure Your Services",
-            description: "Add your services, pricing, and team members. Our intuitive interface makes it simple.",
+            icon: Package,
+            title: "Advanced Stock Usage Tracking",
+            benefit: "Identify the true cost per ticket.",
+            description: "Go deeper than inventory counts. Rynox shows the exact stock value consumed for every service, maximizing your yield and service margins.",
+            gradient: "from-primary to-secondary",
         },
         {
-            icon: Zap,
-            title: "Start Billing",
-            description: "Generate invoices, accept payments, and track revenue with just a few clicks.",
-        },
-        {
-            icon: CheckCircle,
-            title: "Grow Your Business",
-            description: "Access insights, automate workflows, and focus on what matters most—your clients.",
+            icon: BarChart2,
+            title: "Hyper-Targeted Analytics",
+            benefit: "Actionable data at your fingertips.",
+            description: "Instantly drill down to your peak profit windows, top-performing services, and highest-converting staff members, all from a visual dashboard.",
+            gradient: "from-primary to-secondary",
         },
     ];
 
@@ -32,47 +34,71 @@ const HowItWorks = () => {
         <section
             id="how-it-works"
             ref={elementRef}
-            className="py-20 px-4 bg-muted/20"
+            className="py-24 px-4 bg-gradient-to-b from-muted/30 via-background to-muted/30 relative overflow-hidden"
         >
-            <div className="container mx-auto">
-                <div className="text-center mb-16 animate-fade-in">
-                    <h2 className="text-3xl md:text-5xl font-bold mb-4">
-                        Get Started in <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">4 Simple Steps</span>
+            {/* Background decoration */}
+            <div className="absolute inset-0 bg-dot-pattern opacity-5" />
+            <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+            
+            <div className="container mx-auto relative z-10">
+                {/* Section Header */}
+                <div className="text-center mb-20 animate-fade-in">
+                    <div className="inline-block mb-4">
+                        <span className="text-sm font-semibold text-primary uppercase tracking-wider bg-primary/10 px-4 py-2 rounded-full">
+                            Revenue Engines
+                        </span>
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                        Boost Store Revenue With <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Smart Automation</span>
                     </h2>
-                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        From setup to your first invoice in minutes, not days
+                    <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+                        Solo Advance / Growth Tier Value — Designed for actionable growth
                     </p>
                 </div>
 
-                <div className="relative max-w-5xl mx-auto">
-                    {/* Connection line for desktop */}
-                    <div className="hidden md:block absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        {steps.map((step, index) => (
-                            <div
-                                key={step.title}
-                                className={`relative ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
-                                style={{ animationDelay: `${index * 150}ms` }}
-                            >
-                                <div className="text-center">
-                                    {/* Step number badge */}
-                                    <div className="relative inline-block mb-6">
-                                        <div className="w-24 h-24 mx-auto bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-110">
-                                            <step.icon className="w-10 h-10 text-white" />
-                                        </div>
-                                        <div className="absolute -top-2 -right-2 w-8 h-8 bg-background border-2 border-primary rounded-full flex items-center justify-center text-sm font-bold text-primary">
-                                            {index + 1}
-                                        </div>
-                                    </div>
-
-                                    <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        {step.description}
-                                    </p>
+                {/* Revenue Engines Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                    {revenueEngines.map((engine, index) => (
+                        <Card
+                            key={engine.title}
+                            className={`relative p-8 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-2 border-primary/10 hover:border-primary/30 group cursor-pointer overflow-hidden ${
+                                isVisible ? 'animate-fade-in' : 'opacity-0'
+                            }`}
+                            style={{ animationDelay: `${index * 200}ms` }}
+                        >
+                            {/* Gradient overlay on hover */}
+                            <div className={`absolute inset-0 bg-gradient-to-br ${engine.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                            
+                            <div className="relative z-10">
+                                {/* Icon */}
+                                <div className={`w-16 h-16 bg-gradient-to-br ${engine.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:shadow-2xl transition-all duration-300`}>
+                                    <engine.icon className="w-8 h-8 text-white" />
                                 </div>
+
+                                {/* Content */}
+                                <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
+                                    {engine.title}
+                                </h3>
+                                <p className="text-lg font-semibold text-primary/90 mb-4">
+                                    {engine.benefit}
+                                </p>
+                                <p className="text-muted-foreground leading-relaxed">
+                                    {engine.description}
+                                </p>
+
+                                {/* Decorative element */}
+                                <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
                             </div>
-                        ))}
+                        </Card>
+                    ))}
+                </div>
+
+                {/* Bottom accent */}
+                <div className="mt-16 text-center">
+                    <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-primary" />
+                        <span className="font-medium">Designed for Solo Stores & Growing Franchises</span>
+                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-primary" />
                     </div>
                 </div>
             </div>

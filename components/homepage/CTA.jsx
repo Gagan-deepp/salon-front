@@ -12,44 +12,20 @@ const CTA = () => {
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-50" />
 
                         <div className="relative z-10">
-                            <div className="inline-flex items-center gap-2 bg-primary/10 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-4 sm:mb-6 border border-primary/20">
-                                <span className="text-xs sm:text-sm font-medium text-primary">🎉 Join 500+ Happy Customers</span>
-                            </div>
-
                             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
-                                Ready to Transform Your <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Billing?</span>
+                                Command, Control & Scale — <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">With Rynox.</span>
                             </h2>
-                            <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4">
-                                Join hundreds of businesses streamlining their operations with Rynox. Start your free trial today—no credit card required.
+                            <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
+                                Experience the only system trusted by India's fastest-growing salon and retail chains to unify and maximize their franchise network.
                             </p>
-                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8">
+                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                                 <Button variant="hero" size="xl" className="group shadow-2xl">
-                                    Start Free Trial
+                                    Request Enterprise Demo
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </Button>
                                 <Button variant="outline" size="xl">
-                                    Schedule a Demo
+                                    Explore All Plans
                                 </Button>
-                            </div>
-
-                            {/* Trust signals */}
-                            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-muted-foreground border-t border-primary/10 pt-4 sm:pt-6">
-                                <div className="flex items-center gap-1.5 sm:gap-2">
-                                    <span className="text-primary">✓</span>
-                                    <span className="whitespace-nowrap">Setup in 15 minutes</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 sm:gap-2">
-                                    <span className="text-primary">✓</span>
-                                    <span className="whitespace-nowrap">No credit card required</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 sm:gap-2">
-                                    <span className="text-primary">✓</span>
-                                    <span className="whitespace-nowrap">Cancel anytime</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 sm:gap-2">
-                                    <span className="text-primary">✓</span>
-                                    <span className="whitespace-nowrap">30-day money back guarantee</span>
-                                </div>
                             </div>
                         </div>
                     </div>

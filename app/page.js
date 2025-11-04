@@ -8,6 +8,7 @@ import HowItWorks from "@/components/homepage/HowItWork";
 import Industries from "@/components/homepage/Industries";
 import Integrations from "@/components/homepage/Integration";
 import Pricing from "@/components/homepage/Pricing";
+import Promise from "@/components/homepage/Promise";
 import Stats from "@/components/homepage/Stats";
 import Testimonials from "@/components/homepage/Testimonial";
 
@@ -20,8 +21,9 @@ export default function Page() {
       <Features />
       <HowItWorks />
       <Industries />
-      <Testimonials />
       <Pricing />
+      <Promise />
+      <Testimonials />
       <Integrations />
       <FAQ />
       <CTA />

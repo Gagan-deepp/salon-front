@@ -1,9 +1,9 @@
 'use client';
 const stats = [
-  { value: "500+", label: "Active Businesses" },
-  { value: "50K+", label: "Invoices Generated" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "24/7", label: "Support" },
+  { value: "50,000+", label: "Users" },
+  { value: "500+", label: "Brands Managed" },
+  { value: "99.9%", label: "Uptime Guarantee" },
+  { value: "24×7", label: "Priority Support" },
 ];
 
 const Stats = () => {
