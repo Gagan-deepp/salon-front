@@ -5,6 +5,7 @@ import {
   Briefcase,
   Building2,
   ChevronRight,
+  DollarSign,
   LayoutDashboard,
   ShoppingBasket,
   ShoppingCart,
@@ -113,6 +114,11 @@ export function AppSidebar({
         title: "Companies",
         url: "/admin/companies",
         icon: Telescope
+      },
+      {
+        title: "Subscription",
+        url: "/admin/subscription",
+        icon: DollarSign
       },
     ],
     navMain: [

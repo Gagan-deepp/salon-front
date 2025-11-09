@@ -13,8 +13,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { updateCompanySubscription } from "@/lib/actions/company_action"
 import { toast } from "sonner"
+import { updateCompanySubscription } from "@/lib/actions/company_action"
 
 const SUBSCRIPTION_PLANS = [
   { value: "BASIC", label: "Basic - $99/month" },
@@ -42,7 +42,7 @@ export function UpdateSubscriptionDialog({ company, children }) {
       }
 
       const result = await updateCompanySubscription(company.companyId, subscriptionData)
-      
+
       if (result.success) {
         toast.success("Subscription updated successfully")
         setOpen(false)
