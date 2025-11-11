@@ -20,7 +20,7 @@ export default async function ProductsPage({ searchParams }) {
 
     console.log("\n\n Subscriptions result ===> ", result.data)
 
-    const subscriptions = result.data || []
+    const subscriptions = result.data.data || []
 
     return (
         <div className="p-6">
