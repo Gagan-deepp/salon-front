@@ -47,6 +47,11 @@ const navigation = [
     icon: Company,
   },
   {
+    name: "Offers",
+    href: "/admin/offers",
+    icon: Company,
+  },
+  {
     name: "Services",
     href: "/admin/services",
     icon: Scissors,

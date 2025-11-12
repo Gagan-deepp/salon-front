@@ -120,6 +120,11 @@ export function AppSidebar({
         url: "/admin/subscription",
         icon: DollarSign
       },
+      {
+        title: "Offers",
+        url: "/admin/offers",
+        icon: DollarSign
+      },
     ],
     navMain: [
       {

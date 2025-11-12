@@ -4,7 +4,7 @@ import { auth } from "./lib/auth";
 const routePermissions = [
     // Most specific routes first - SaaS Owner routes
     {
-        paths: ['/admin/companies', '/admin/subscription'], // Changed from /admin/company to /admin/companies
+        paths: ['/admin/companies', '/admin/subscription', '/admin/offers'], // Changed from /admin/company to /admin/companies
         allowedRoles: ['SAAS_OWNER'],
     },
 
