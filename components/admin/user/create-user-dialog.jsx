@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -12,6 +12,7 @@ import { createUser } from "@/lib/actions/user_action"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { getFranchises } from "@/lib/actions/franchise_action"
+import { useSession } from "next-auth/react"
 
 async function fetchFranchises() {
   const result = await getFranchises({ limit: 100 })
@@ -20,9 +21,12 @@ async function fetchFranchises() {
 
 export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true }) {
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
+  // const [isPending, ] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const [franchises, setFranchises] = useState([])
   const router = useRouter()
+  const { data: session } = useSession()
+  console.log("session franchiseId prop:", session)
 
 
   useEffect(() => {
@@ -36,45 +40,45 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
   }, [open])
 
   const handleSubmit = async (formData) => {
-    setLoading(true)
 
-    const role = formData.get("role")
+    startTransition(async () => {
+      const role = formData.get("role")
 
-    const payload = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      password: formData.get("password"),
-      role: role,
-      isActive: formData.get("isActive") === "on",
-    }
-
-    // Add franchise ID if not super admin
-    if (role !== "SUPER_ADMIN") {
-      payload.franchiseId = formData.get("franchiseId")
-    }
-
-    // Add commission structure for cashier
-    if (role === "CASHIER") {
-      payload.commissionStructure = {
-        type: formData.get("commissionType") || "PERCENTAGE",
-        defaultServiceRate: Number(formData.get("serviceRate")) || 10,
-        defaultProductRate: Number(formData.get("productRate")) || 5,
+      const payload = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        phone: formData.get("phone"),
+        password: formData.get("password"),
+        role: role,
+        isActive: formData.get("isActive") === "on",
+        companyId: session?.companyId || null,
       }
-    }
 
-    const result = await createUser(payload)
+      // Add franchise ID if not super admin
+      if (role !== "SUPER_ADMIN") {
+        payload.franchiseId = formData.get("franchiseId")
+      }
 
-    if (result.success) {
-      toast.success("User created successfully")
-      setOpen(false)
-      router.refresh()
-      onUserCreated?.()
-    } else {
-      toast.error(result.error || "Failed to create user")
-    }
+      // Add commission structure for cashier
+      if (role === "CASHIER") {
+        payload.commissionStructure = {
+          type: formData.get("commissionType") || "PERCENTAGE",
+          defaultServiceRate: Number(formData.get("serviceRate")) || 10,
+          defaultProductRate: Number(formData.get("productRate")) || 5,
+        }
+      }
 
-    setLoading(false)
+      const result = await createUser(payload)
+
+      if (result.success) {
+        toast.success("User created successfully")
+        setOpen(false)
+        router.refresh()
+        onUserCreated?.()
+      } else {
+        toast.error(result.error || "Failed to create user")
+      }
+    })
   }
 
   return (
@@ -118,15 +122,14 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
                   {isSuperAdmin && <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>}
                   <SelectItem value="FRANCHISE_OWNER">Franchise Owner</SelectItem>
                   <SelectItem value="CASHIER">Cashier</SelectItem>
+                  <SelectItem value="PROVIDER">Provider</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2 w-full">
-              {/* <Label htmlFor="franchiseId">Franchise ID</Label>
-              <Input id="franchiseId" name="franchiseId" placeholder="Leave empty for Super Admin" /> */}
               <Label htmlFor="franchiseId">Franchise *</Label>
-              <Select name="franchiseId" required>
-                <SelectTrigger>
+              <Select name="franchiseId" required value={session?.franchiseId || ""}>
+                <SelectTrigger disabled={session?.user?.role === "FRANCHISE_OWNER"}>
                   <SelectValue placeholder="Select franchise" />
                 </SelectTrigger>
                 <SelectContent>
@@ -146,7 +149,7 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="commissionType">Commission Type</Label>
-                <Select name="commissionType" defaultValue="PERCENTAGE">
+                <Select name="commissionType" defaultValue="PERCENTAGE" >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -177,11 +180,11 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={isPending}>
+              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create User
             </Button>
           </div>

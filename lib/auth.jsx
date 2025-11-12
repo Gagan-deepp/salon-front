@@ -25,6 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     email: user.email,
                     user_role: user.role,
                     franchiseId: user.franchiseId,
+                    companyId: user.companyId,
                     accessToken: result.data.data.accessToken,
                 }
 
@@ -44,6 +45,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.email = customUser.email;
                 token.accessToken = customUser.accessToken
                 token.franchiseId = user.franchiseId
+                token.companyId = user.companyId
             }
 
 
@@ -60,6 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             session.accessToken = token.accessToken
             session.franchiseId = token.franchiseId
+            session.companyId = token.companyId
             return session
         },
         redirect({ baseUrl, token }) {

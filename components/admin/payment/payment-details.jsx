@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, User, CreditCard, Receipt, MapPin, FileText } from "lucide-react"
+import { InvoiceDownloadButton } from "@/components/invoice"
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -38,6 +39,36 @@ const getPaymentModeColor = (mode) => {
 export function PaymentDetails({ payment }) {
   const router = useRouter()
 
+  console.log("Payment Details:", payment)
+  const customerInfo = {
+    name: payment.customerId?.name || "N/A",
+    phoneNumber: payment.customerId?.phone || "N/A",
+    modeOfPayment: payment.paymentMode || "N/A",
+    placeOfSupply: payment.placeOfSupply || "Place of supply not available",
+    placeOfDelivery: payment.placeOfDelivery || "Place of delivery not available",
+  }
+
+  const sellerInfo = {
+    companyName: payment.franchiseId?.name || "Seller Company Name",
+    address: `${payment.franchiseId?.address.street} - ${payment.franchiseId?.address.city} - ${payment.franchiseId?.address.state} - ${payment.franchiseId?.address.country} - ${payment.franchiseId?.address.pincode}` || "Seller Address",
+    city: payment.franchiseId?.address.city || "Seller City",
+    phone: payment.franchiseId?.phone || "Seller Phone",
+    additionalAddress: payment.franchiseId?.additionalAddress || "Seller Additional Address",
+  }
+
+  const orderDetails = {
+    orderNumber: payment._id || "N/A",
+    orderDate: new Date(payment.createdAt).toLocaleDateString("en-IN") || "N/A",
+    invoiceNumber: payment.invoiceId || "N/A",
+    invoiceDate: new Date(payment.createdAt).toLocaleDateString("en-IN") || "N/A",
+    gstNumber: payment.gstNumber || "N/A - GST Number not available",
+    panNumber: payment.panNumber || "N/A - PAN Number not available",
+    cinNumber: payment.cinNumber || "N/A - CIN Number not available",
+  }
+
+  const items = [...payment?.products, ...payment?.services]
+  const discount = payment.amounts?.discount || { percentage: 0, amount: 0 }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -46,9 +77,23 @@ export function PaymentDetails({ payment }) {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Payment Details</h1>
-          <p className="text-muted-foreground">Payment ID: {payment.paymentId || payment._id}</p>
+        <div className="flex justify-between items-center w-full">
+          <div>
+            <h1 className="text-3xl font-bold">Payment Details</h1>
+            <p className="text-muted-foreground">Payment ID: {payment.paymentId || payment._id}</p>
+          </div>
+
+          <div>
+            <InvoiceDownloadButton
+              customerInfo={customerInfo}
+              sellerInfo={sellerInfo}
+              orderDetails={orderDetails}
+              items={items}
+              companyLogo={""}
+              discount={discount}
+              notes={payment?.notes || ""}
+            />
+          </div>
         </div>
       </div>
 

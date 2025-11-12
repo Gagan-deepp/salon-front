@@ -10,7 +10,8 @@ import { Suspense } from "react"
 export default async function UsersPage({ searchParams }) {
 
     const searchP = await searchParams
-    const { user } = await auth()
+    const session = await auth()
+    console.log("User page search params ==> ", session)
 
     // Server-side data fetching
     const params = {
@@ -34,7 +35,7 @@ export default async function UsersPage({ searchParams }) {
                     <p className="text-muted-foreground">Manage system users and their roles</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <CreateUserDialog isSuperAdmin={user.role === "SUPER_ADMIN"}>
+                    <CreateUserDialog isSuperAdmin={session.user.role === "SUPER_ADMIN"}>
                         <Button>
                             <Plus className="mr-2 h-4 w-4" />
                             Add User
