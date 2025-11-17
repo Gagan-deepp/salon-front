@@ -73,7 +73,9 @@ const Footer = () => {
                         <p className="text-center md:text-left">© 2025 Rynox. All rights reserved.</p>
                         <div className="flex flex-wrap gap-4 sm:gap-6 justify-center">
                             <a href="#terms" className="hover:text-primary transition-colors whitespace-nowrap">Terms</a>
-                            <a href="#privacy" className="hover:text-primary transition-colors whitespace-nowrap">Privacy</a>
+                            <a href="/privacy" className="hover:text-primary transition-colors whitespace-nowrap">Privacy Policy</a>
+                            <a href="/refund" className="hover:text-primary transition-colors whitespace-nowrap">Refund Policy</a>
+
                         </div>
                     </div>
                 </div>
