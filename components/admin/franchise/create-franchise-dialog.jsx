@@ -19,7 +19,7 @@ import { createFranchise } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
 import { useSession } from "next-auth/react"
 
-export function CreateFranchiseDialog({ children }) {
+export function CreateFranchiseDialog({ children, companyId }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -47,6 +47,7 @@ export function CreateFranchiseDialog({ children }) {
       subscription: {
         plan: formData.get("plan"),
       },
+      companyId: companyId,
     }
 
     const result = await createFranchise(payload)

@@ -2,12 +2,14 @@ import { CreateFranchiseDialog } from "@/components/admin/franchise/create-franc
 import { FranchiseTable } from "@/components/admin/franchise/franchise-table"
 import { Button } from "@/components/ui/button"
 import { getFranchises } from "@/lib/actions/franchise_action"
+import { auth } from "@/lib/auth"
 import { Plus } from "lucide-react"
 
 
 export default async function FranchisesPage({ searchParams }) {
 
-  const searchP = await searchParams
+  const searchP = await searchParams;
+  const session = await auth()
   const result = await getFranchises({
     page: searchP.page || 1,
     limit: searchP.limit || 10,
@@ -26,7 +28,7 @@ export default async function FranchisesPage({ searchParams }) {
           <h1 className="text-3xl font-bold ">Franchises</h1>
           <p className="text-gray-600">Manage your franchise locations</p>
         </div>
-        <CreateFranchiseDialog>
+        <CreateFranchiseDialog companyId={session?.companyId}>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Franchise

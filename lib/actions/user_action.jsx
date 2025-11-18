@@ -35,7 +35,7 @@ export async function getUsers(params) {
     try {
         const headers = await getAuthHeaders()
         const res = await axios.get(`${BASE_URL}/users`, { params, headers })
-        // console.log("getUsers response", res.data)
+        console.log("getUsers response", res.data)
         return { success: true, data: res.data }
     } catch (error) {
         console.error("getUsers error", error)

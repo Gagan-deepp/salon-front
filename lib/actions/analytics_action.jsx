@@ -43,7 +43,7 @@ export async function getMetrics(franchiseId) {
     try {
         const headers = await getAuthHeaders()
         const res = await axios.get(`${BASE_URL}/analytics/metrics/${franchiseId}`, { headers })
-        // console.log("getSalesData response", res.data)
+        console.log("franchise metrics :", res.data)
         return res.data
     } catch (error) {
         console.error("getSalesData error", error)

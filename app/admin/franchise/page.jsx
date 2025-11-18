@@ -14,7 +14,7 @@ async function FranchiseData() {
 
   console.log("franchise id of user ==> ", franchiseId)
   // const result = await getFranchiseById(franchiseId)
-  const [result, metrics, customerData, salesData] = await Promise.all([getFranchiseById(franchiseId), getMetrics(), getCustomerData(), getSalesData()]);
+  const [result, metrics, customerData, salesData] = await Promise.all([getFranchiseById(franchiseId), getMetrics(franchiseId), getCustomerData(), getSalesData()]);
 
 
   // Enhanced dummy data based on your schema
