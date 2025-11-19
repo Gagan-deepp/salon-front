@@ -1,35 +1,34 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
+  Award,
   Building2,
-  DollarSign,
-  Users,
-  TrendingUp,
+  Clock,
   CreditCard,
-  Phone,
+  Edit,
+  IndianRupee,
   Mail,
   MapPin,
   MessageSquare,
-  Receipt,
   Percent,
-  Clock,
+  Phone,
+  Receipt,
   Target,
-  Award,
-  Wallet,
-  Edit,
   Trash2,
-} from 'lucide-react';
-import { SalesChart } from "./sales-chart"
+  TrendingUp,
+  Users,
+  Wallet
+} from 'lucide-react'
+import { DeleteFranchiseDialog } from "../franchise/delete-franchise-dialog"
+import { EditFranchiseDialog } from "../franchise/edit-franchise-dialog"
 import { CustomerChart } from "./customer-chart"
 import { RevenueChart } from "./revenue-chart"
-import { EditFranchiseDialog } from "../franchise/edit-franchise-dialog"
-import { DeleteFranchiseDialog } from "../franchise/delete-franchise-dialog"
-import { Button } from "@/components/ui/button"
 
 export function FranchiseDashboard({ metrics, franchise, customerData, salesData }) {
   const formatCurrency = (amount) => {
@@ -116,7 +115,7 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-600" />
+            <IndianRupee className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(metrics?.total_sales)}</div>

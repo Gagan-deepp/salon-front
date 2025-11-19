@@ -15,26 +15,26 @@ async function getAuthHeaders() {
 }
 
 // ───────────────────────────────────────────────────────────────────────────────
-export async function getCustomerData() {
+export async function getCustomerData(id = undefined) {
     try {
         const headers = await getAuthHeaders()
-        const res = await axios.get(`${BASE_URL}/analytics/customers`, { headers })
+        const res = await axios.get(`${BASE_URL}/analytics/customers?franchiseId=${id}`, { headers })
         // console.log("getCustomerData response", res.data)
         return { success: true, data: res.data }
     } catch (error) {
-        console.error("getCustomerData error", error)
+        console.error("getCustomerData error", error.response?.data)
         return { success: false, error: error.response?.data?.message || "getCustomerData failed" }
     }
 }
 
-export async function getSalesData() {
+export async function getSalesData(id = undefined) {
     try {
         const headers = await getAuthHeaders()
-        const res = await axios.get(`${BASE_URL}/analytics/sales`, { headers })
+        const res = await axios.get(`${BASE_URL}/analytics/sales?franchiseId=${id}`, { headers })
         // console.log("getSalesData response", res.data)
         return res.data
     } catch (error) {
-        console.error("getSalesData error", error)
+        console.error("getSalesData error", error.response?.data)
         return { success: false, error: error.response?.data?.message || "getSalesData failed" }
     }
 }
