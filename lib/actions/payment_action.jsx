@@ -31,7 +31,7 @@ export async function createPayment(payload) {
     const res = await axios.post(`${BASE_URL}/payments`, payload, { headers })
     console.log("createPayment response", res.data)
     revalidatePath("/admin/payments")
-    return { success: true, data: res.data }
+    return res.data
   } catch (error) {
     console.error("createPayment error", error.response?.data?.message)
     return { success: false, error: error.response?.data?.message || "createPayment failed" }

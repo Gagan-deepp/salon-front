@@ -4,10 +4,9 @@ import { CreateCustomerDialog } from "@/components/admin/customer/create-custome
 import { DiscountDialog } from "@/components/admin/payment/discount-dialog"
 import { PaymentDialog } from "@/components/admin/payment/payment-dialog"
 import { ProductCard } from "@/components/admin/payment/product-card"
-import { ServiceCard } from "@/components/admin/payment/service-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -18,7 +17,7 @@ import { calculatePaymentAmount, createPayment, validatePromoCode } from "@/lib/
 import { getProducts } from "@/lib/actions/product_action"
 import { getServices } from "@/lib/actions/service_action"
 import { getUsers } from "@/lib/actions/user_action"
-import { Calculator, IndianRupee, Plus, Receipt, Tag, Trash } from "lucide-react"
+import { Calculator, IndianRupee, Loader2, Plus, Receipt, Tag, Trash } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -240,9 +239,79 @@ export default function CreatePaymentPage() {
       }
 
       const result = await createPayment(payload)
+
+      console.log("Create payment result ==> ", result)
       if (result.success) {
+        // Get the invoice/payment data from the result (now populated!)
+        const invoice = result.data.invoice
+        const payment = result.data.payment
+
+        // Get selected customer for fallback
+        const selectedCustomer = customers.find((c) => c._id === formData.customerId)
+
+        // Prepare the invoice data - now using populated data from backend
+        const invoiceData = {
+          customerInfo: {
+            name: invoice.customerId?.name || selectedCustomer?.name || "N/A",
+            phoneNumber: invoice.customerId?.phone || selectedCustomer?.phone || "N/A",
+            email: invoice.customerId?.email || selectedCustomer?.email || "",
+            address: invoice.customerId?.address || selectedCustomer?.address || "",
+            modeOfPayment: payment.paymentMode || "N/A",
+            placeOfSupply: paymentData.placeOfSupply || invoice.customerId?.address?.state || "N/A",
+            placeOfDelivery: paymentData.placeOfDelivery || invoice.customerId?.address?.city || "N/A",
+          },
+          sellerInfo: {
+            companyName: invoice.franchiseId?.name || "N/A",
+            address: invoice.franchiseId?.address
+              ? `${invoice.franchiseId.address.street}, ${invoice.franchiseId.address.city}, ${invoice.franchiseId.address.state}, ${invoice.franchiseId.address.country} - ${invoice.franchiseId.address.pincode}`
+              : "N/A",
+            city: invoice.franchiseId?.address?.city || "N/A",
+            phone: invoice.franchiseId?.contact?.phone || "N/A",
+            email: invoice.franchiseId?.contact?.email || "N/A",
+            gstNumber: invoice.franchiseId?.gstNumber || "N/A",
+            additionalAddress: invoice.franchiseId?.additionalAddress || "",
+          },
+          orderDetails: {
+            orderNumber: payment._id || invoice._id,
+            orderDate: new Date(invoice.createdAt).toLocaleDateString("en-IN"),
+            invoiceNumber: invoice.invoiceNumber,
+            invoiceDate: new Date(invoice.createdAt).toLocaleDateString("en-IN"),
+            gstNumber: invoice.franchiseId?.gstNumber || "N/A",
+            panNumber: invoice.franchiseId?.panNumber || "N/A",
+            cinNumber: invoice.franchiseId?.cinNumber || "N/A",
+          },
+          items: [
+            ...formData.services.map(s => ({
+              serviceName: s.serviceName,
+              price: s.price,
+              quantity: s.quantity,
+              gstRate: s.gstRate || 18
+            })),
+            ...formData.products.map(p => ({
+              productName: p.productName,
+              price: p.price,
+              quantity: p.quantity,
+              gstRate: p.gstRate || 18
+            }))
+          ],
+          discount: {
+            percentage: calculations.discount.percentage,
+            amount: calculations.discount.amount
+          }
+        }
+
+        const response = await fetch('/api/send-invoice', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invoiceData),
+        })
+
+        const res = await response.json()
+        console.log("invoice response ==> ", res)
         toast.success(`Payment created successfully`)
-        router.push("/admin/payments")
+        // router.push("/admin/payments")
       } else {
         toast.warning(result.error)
       }
@@ -302,8 +371,11 @@ export default function CreatePaymentPage() {
               disabled={!formData.customerId || (calculations.subtotal === 0 && servicesTotal() + productTotal() === 0)}
               className="min-w-[120px]"
             >
-              <IndianRupee className="w-4 h-4 mr-2" />
-              Create Payment
+              {loading ? <> <Loader2 className="animate-spin" /> Processing... </> : <>
+                <IndianRupee className="w-4 h-4 mr-2" />
+                Make Payment
+              </>}
+
             </Button>
           </PaymentDialog>
         </div>

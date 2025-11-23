@@ -18,17 +18,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createCompany } from "@/lib/actions/company_action"
 import { toast } from "sonner"
 
-const SUBSCRIPTION_PLANS = [
-  { value: "BASIC", label: "Basic Plan - $99/month" },
-  { value: "STANDARD", label: "Standard Plan - $199/month" },
-  { value: "PREMIUM", label: "Premium Plan - $399/month" },
-]
 
-const SUBSCRIPTION_STATUS = [
-  { value: "TRIAL", label: "Trial" },
-  { value: "ACTIVE", label: "Active" },
-  { value: "INACTIVE", label: "Inactive" },
-]
+
+
 
 export function CreateCompanyDialog({ children }) {
   const [open, setOpen] = useState(false)
@@ -53,11 +45,8 @@ export function CreateCompanyDialog({ children }) {
         name: formData.get("ownerName"),
         email: formData.get("ownerEmail"),
         phone: formData.get("ownerPhone"),
-      },
-      subscription: {
-        plan: formData.get("plan"),
-        status: formData.get("status"),
-      },
+      }
+      
     }
 
     const result = await createCompany(payload)
@@ -156,7 +145,7 @@ export function CreateCompanyDialog({ children }) {
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Subscription</h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="plan">Subscription Plan *</Label>
                 <Select name="plan" required>
                   <SelectTrigger>
@@ -170,8 +159,8 @@ export function CreateCompanyDialog({ children }) {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
+              </div> */}
+              {/* <div className="space-y-2">
                 <Label htmlFor="status">Status *</Label>
                 <Select name="status" required>
                   <SelectTrigger>
@@ -185,7 +174,7 @@ export function CreateCompanyDialog({ children }) {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
             </div>
           </div>
 
