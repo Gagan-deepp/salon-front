@@ -163,6 +163,11 @@ export function AppSidebar({
         icon: Telescope
       },
       {
+        title: "Offers",
+        url: "/admin/offers",
+        icon: DollarSign
+      },
+      {
         title: "Reports",
         url: "#",
         icon: SquareTerminal,
