@@ -275,17 +275,37 @@ export function CreatePaymentDialog({ open, onOpenChange, onSuccess }) {
     }
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+ const handleSubmit = async (e) => {
+  e.preventDefault()
+  setLoading(true)
 
-    try {
-      const payload = {
-        ...formData,
-        amounts: calculations,
+  try {
+    // Ensure calculations.discount includes absolute discount amount, promoCode, offerId etc.
+    const payload = {
+      ...formData,
+      discount: {
+        ...formData.discount,
+        // The calculation from backend or local
+        amount: calculations.discount.amount, // Discount in currency, not just percent
+        promoCode: calculations.discount.promoCode || formData.discount.promoCode || "",
+        offerId: calculations.discount.offerId || formData.discount.offerId,
+        offerName: calculations.discount.offerName || formData.discount.offerName
+      },
+      amounts: {
+        ...calculations,
+        discount: {
+          ...calculations.discount,
+          // Keep all details for full clarity
+          promoCode: calculations.discount.promoCode || formData.discount.promoCode || "",
+          percentage: calculations.discount.percentage || formData.discount.percentage || 0,
+          amount: calculations.discount.amount,
+          offerId: calculations.discount.offerId || formData.discount.offerId,
+          offerName: calculations.discount.offerName || formData.discount.offerName
+        }
       }
+    }
 
-      const result = await createPayment(payload)
+    const result = await createPayment(payload)
       if (result.success) {
         toast.success("Payment created successfully")
         onSuccess?.()
