@@ -6,8 +6,7 @@ import html2canvas from "html2canvas-pro"
 import jsPDF from "jspdf"
 import { amountToWords } from "@/lib/utils"
 
-
-export function InvoiceDownloadButton({
+export default function InvoiceDownloadButton({
     customerInfo,
     sellerInfo,
     orderDetails,
@@ -15,6 +14,7 @@ export function InvoiceDownloadButton({
     companyLogo,
     discount = { percentage: 0, amount: 0 },
     notes,
+    mode = "dev", // "dev" or "server"
 }) {
     const pdfRef = useRef(null)
 
@@ -105,7 +105,6 @@ export function InvoiceDownloadButton({
         }
     }
 
-
     const termsConditions = [
         "We encourage you to raise any concerns on the customer care number or email ID mentioned above.",
         "Any issue arising from a service delivered by us should be reported within 48 hours of completion.",
@@ -114,125 +113,282 @@ export function InvoiceDownloadButton({
 
     return (
         <>
-            <div ref={pdfRef}
-                className="bg-white p-8 space-y-6"  // Add Tailwind classes back
+            <div
+                id="invoice-design"
+                ref={pdfRef}
                 style={{
                     position: "absolute",
                     left: "-9999px",
                     top: 0,
                     width: "210mm",
-                    backgroundColor: "#ffffff",  // Backup inline style
-                    padding: "2rem",  // Backup inline style
+                    backgroundColor: "#ffffff",
+                    padding: "2rem",
                 }}
             >
                 {/* Header */}
-                <div className="flex justify-between items-start gap-8">
-                    <div className="space-y-2">
+                <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    gap: "32px",
+                    marginBottom: "24px"
+                }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                         {companyLogo && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={companyLogo || "/placeholder.svg"} alt="Company Logo" className="h-12 w-auto" />
+                            <img
+                                src={companyLogo || "/placeholder.svg"}
+                                alt="Company Logo"
+                                style={{ height: "48px", width: "auto" }}
+                            />
                         )}
                         <div>
-                            <h1 className="text-2xl font-bold">{sellerInfo.companyName}</h1>
-                            <p className="text-sm text-gray-600">{sellerInfo.address}</p>
+                            <h1 style={{
+                                fontSize: "24px",
+                                fontWeight: "bold",
+                                margin: "0 0 4px 0"
+                            }}>
+                                {sellerInfo.companyName}
+                            </h1>
+                            <p style={{
+                                fontSize: "14px",
+                                color: "#4b5563",
+                                margin: "0"
+                            }}>
+                                {sellerInfo.address}
+                            </p>
                         </div>
                     </div>
-                    <div className="text-right">
-                        <h2 className="text-2xl font-bold text-gray-800">TAX INVOICE</h2>
+                    <div style={{ textAlign: "right" }}>
+                        <h2 style={{
+                            fontSize: "24px",
+                            fontWeight: "bold",
+                            color: "#1f2121",
+                            margin: "0"
+                        }}>
+                            TAX INVOICE
+                        </h2>
                     </div>
                 </div>
 
-                <hr className="border-t-2 border-gray-300" />
+                <hr style={{ borderTop: "2px solid #d1d5db", borderBottom: "none", borderLeft: "none", borderRight: "none", margin: "0 0 24px 0" }} />
 
                 {/* Customer and Seller Info */}
-                <div className="grid grid-cols-2 gap-8">
+                <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "32px",
+                    marginBottom: "24px"
+                }}>
                     {/* Sold/Served To */}
-                    <div className="space-y-3">
-                        <div className="bg-gray-200 p-2 font-bold text-sm">SOLD/SERVED TO:</div>
-                        <div className="text-sm space-y-1">
-                            <p>
-                                <span className="font-semibold">Name:</span> {customerInfo.name}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        <div style={{
+                            backgroundColor: "#d1d5db",
+                            padding: "8px",
+                            fontWeight: "bold",
+                            fontSize: "14px"
+                        }}>
+                            SOLD/SERVED TO:
+                        </div>
+                        <div style={{ fontSize: "14px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                            <p style={{ margin: "0" }}>
+                                <span style={{ fontWeight: "600" }}>Name:</span> {customerInfo.name}
                             </p>
-                            <p>
-                                <span className="font-semibold">Phone Number:</span> {customerInfo.phoneNumber}
+                            <p style={{ margin: "0" }}>
+                                <span style={{ fontWeight: "600" }}>Phone Number:</span> {customerInfo.phoneNumber}
                             </p>
-                            <p>
-                                <span className="font-semibold">Mode Of Payment:</span> {customerInfo.modeOfPayment}
+                            <p style={{ margin: "0" }}>
+                                <span style={{ fontWeight: "600" }}>Mode Of Payment:</span> {customerInfo.modeOfPayment}
                             </p>
-                            <p>
-                                <span className="font-semibold">Place Of Supply:</span> {customerInfo.placeOfSupply}
+                            <p style={{ margin: "0" }}>
+                                <span style={{ fontWeight: "600" }}>Place Of Supply:</span> {customerInfo.placeOfSupply}
                             </p>
-                            <p>
-                                <span className="font-semibold">Place Of Delivery:</span> {customerInfo.placeOfDelivery}
+                            <p style={{ margin: "0" }}>
+                                <span style={{ fontWeight: "600" }}>Place Of Delivery:</span> {customerInfo.placeOfDelivery}
                             </p>
                         </div>
                     </div>
 
                     {/* Sold/Served By */}
-                    <div className="space-y-3">
-                        <div className="bg-gray-200 p-2 font-bold text-sm">SOLD/SERVED BY:</div>
-                        <div className="text-sm space-y-1">
-                            <p className="font-semibold">{sellerInfo.companyName}</p>
-                            <p>{sellerInfo.address}</p>
-                            {sellerInfo.additionalAddress && <p>{sellerInfo.additionalAddress}</p>}
-                            <p>{sellerInfo.city}</p>
-                            <p>
-                                <span className="font-semibold">Phone Number:</span> {sellerInfo.phone}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        <div style={{
+                            backgroundColor: "#d1d5db",
+                            padding: "8px",
+                            fontWeight: "bold",
+                            fontSize: "14px"
+                        }}>
+                            SOLD/SERVED BY:
+                        </div>
+                        <div style={{ fontSize: "14px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                            <p style={{ fontWeight: "600", margin: "0" }}>{sellerInfo.companyName}</p>
+                            <p style={{ margin: "0" }}>{sellerInfo.address}</p>
+                            {sellerInfo.additionalAddress && <p style={{ margin: "0" }}>{sellerInfo.additionalAddress}</p>}
+                            <p style={{ margin: "0" }}>{sellerInfo.city}</p>
+                            <p style={{ margin: "0" }}>
+                                <span style={{ fontWeight: "600" }}>Phone Number:</span> {sellerInfo.phone}
                             </p>
                         </div>
                     </div>
                 </div>
 
                 {/* Order Details */}
-                <div className="bg-gray-200 p-2 font-bold text-sm">ORDER DETAILS:</div>
-                <div className="grid grid-cols-2 gap-8 text-sm">
-                    <div className="space-y-1">
-                        <p>
-                            <span className="font-semibold">Order Number:</span> {orderDetails.orderNumber}
+                <div style={{
+                    backgroundColor: "#d1d5db",
+                    padding: "8px",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginBottom: "16px"
+                }}>
+                    ORDER DETAILS:
+                </div>
+                <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "32px",
+                    fontSize: "14px",
+                    marginBottom: "24px"
+                }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <p style={{ margin: "0" }}>
+                            <span style={{ fontWeight: "600" }}>Order Number:</span> {orderDetails.orderNumber}
                         </p>
-                        <p>
-                            <span className="font-semibold">Order Date:</span> {orderDetails.orderDate}
-                        </p>
-                    </div>
-                    <div className="space-y-1">
-                        <p>
-                            <span className="font-semibold">Invoice Number:</span> {orderDetails.invoiceNumber}
-                        </p>
-                        <p>
-                            <span className="font-semibold">Invoice Date:</span> {orderDetails.invoiceDate}
-                        </p>
-                    </div>
-                    <div className="space-y-1">
-                        <p>
-                            <span className="font-semibold">GST Number:</span> {orderDetails.gstNumber}
-                        </p>
-                        <p>
-                            <span className="font-semibold">PAN Number:</span> {orderDetails.panNumber}
+                        <p style={{ margin: "0" }}>
+                            <span style={{ fontWeight: "600" }}>Order Date:</span> {orderDetails.orderDate}
                         </p>
                     </div>
-                    <div className="space-y-1">
-                        <p>
-                            <span className="font-semibold">CIN Number:</span> {orderDetails.cinNumber}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <p style={{ margin: "0" }}>
+                            <span style={{ fontWeight: "600" }}>Invoice Number:</span> {orderDetails.invoiceNumber}
+                        </p>
+                        <p style={{ margin: "0" }}>
+                            <span style={{ fontWeight: "600" }}>Invoice Date:</span> {orderDetails.invoiceDate}
+                        </p>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <p style={{ margin: "0" }}>
+                            <span style={{ fontWeight: "600" }}>GST Number:</span> {orderDetails.gstNumber}
+                        </p>
+                        <p style={{ margin: "0" }}>
+                            <span style={{ fontWeight: "600" }}>PAN Number:</span> {orderDetails.panNumber}
+                        </p>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <p style={{ margin: "0" }}>
+                            <span style={{ fontWeight: "600" }}>CIN Number:</span> {orderDetails.cinNumber}
                         </p>
                     </div>
                 </div>
 
                 {/* Items Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-xs border-collapse">  {/* Changed to text-xs */}
+                <div style={{
+                    overflowX: "auto",
+                    marginBottom: "24px"
+                }}>
+                    <table style={{
+                        width: "100%",
+                        fontSize: "12px",
+                        borderCollapse: "collapse"
+                    }}>
                         <thead>
-                            <tr className="bg-gray-100 border-b-2 border-gray-300">
-                                <th className="border border-gray-300 px-1 py-1 text-left font-semibold text-[9px]">Item</th>
-                                <th className="border border-gray-300 px-1 py-1 text-center font-semibold text-[9px]">HSN</th>
-                                <th className="border border-gray-300 px-1 py-1 text-right font-semibold text-[9px]">Price</th>
-                                <th className="border border-gray-300 px-1 py-1 text-center font-semibold text-[9px]">Qty</th>
-                                <th className="border border-gray-300 px-1 py-1 text-right font-semibold text-[9px]">Total</th>
-                                <th className="border border-gray-300 px-1 py-1 text-right font-semibold text-[9px]">Disc</th>
-                                <th className="border border-gray-300 px-1 py-1 text-right font-semibold text-[9px]">Net</th>
-                                <th className="border border-gray-300 px-1 py-1 text-center font-semibold text-[9px]">Type</th>
-                                <th className="border border-gray-300 px-1 py-1 text-right font-semibold text-[9px]">GST%</th>
-                                <th className="border border-gray-300 px-1 py-1 text-right font-semibold text-[9px]">Tax</th>
-                                <th className="border border-gray-300 px-1 py-1 text-right font-semibold text-[9px]">Total</th>
+                            <tr style={{ backgroundColor: "#f3f4f6", borderBottom: "2px solid #d1d5db" }}>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "left",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Item
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "center",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    HSN
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Price
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "center",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Qty
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Total
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Disc
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Net
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "center",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Type
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    GST%
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Tax
+                                </th>
+                                <th style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "4px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                    fontSize: "11px"
+                                }}>
+                                    Total
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -242,20 +398,82 @@ export function InvoiceDownloadButton({
                                 const netAmount = itemPrice - (discount.amount / items.length || 0)
 
                                 return (
-                                    <tr key={index} className="border-b border-gray-300">
-                                        <td className="border border-gray-300 p-2">
+                                    <tr key={index} style={{ borderBottom: "1px solid #d1d5db" }}>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px"
+                                        }}>
                                             {"productName" in item ? item.productName : item.serviceName}
                                         </td>
-                                        <td className="border border-gray-300 p-2 text-center">-</td>
-                                        <td className="border border-gray-300 p-2 text-right">₹{item.price.toFixed(2)}</td>
-                                        <td className="border border-gray-300 p-2 text-center">{item.quantity}</td>
-                                        <td className="border border-gray-300 p-2 text-right">₹{itemPrice.toFixed(2)}</td>
-                                        <td className="border border-gray-300 p-2 text-right">-</td>
-                                        <td className="border border-gray-300 p-2 text-right">₹{netAmount.toFixed(2)}</td>
-                                        <td className="border border-gray-300 p-2 text-center">GST</td>
-                                        <td className="border border-gray-300 p-2 text-right">{item.gstRate}%</td>
-                                        <td className="border border-gray-300 p-2 text-right">₹{taxAmount.toFixed(2)}</td>
-                                        <td className="border border-gray-300 p-2 text-right font-semibold">
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "center"
+                                        }}>
+                                            -
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "right"
+                                        }}>
+                                            ₹{item.price.toFixed(2)}
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "center"
+                                        }}>
+                                            {item.quantity}
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "right"
+                                        }}>
+                                            ₹{itemPrice.toFixed(2)}
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "right"
+                                        }}>
+                                            -
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "right"
+                                        }}>
+                                            ₹{netAmount.toFixed(2)}
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "center"
+                                        }}>
+                                            GST
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "right"
+                                        }}>
+                                            {item.gstRate}%
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "right"
+                                        }}>
+                                            ₹{taxAmount.toFixed(2)}
+                                        </td>
+                                        <td style={{
+                                            border: "1px solid #d1d5db",
+                                            padding: "8px",
+                                            textAlign: "right",
+                                            fontWeight: "600"
+                                        }}>
                                             ₹{(netAmount + taxAmount).toFixed(2)}
                                         </td>
                                     </tr>
@@ -266,27 +484,59 @@ export function InvoiceDownloadButton({
                 </div>
 
                 {/* Totals */}
-                <div className="flex justify-end mt-6">
-                    <div className="w-80 space-y-2 text-sm">
-                        <div className="flex justify-between border-b-2 border-gray-300 pb-2">
-                            <span className="font-semibold">Subtotal:</span>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginBottom: "24px"
+                }}>
+                    <div style={{
+                        width: "320px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                        fontSize: "14px"
+                    }}>
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            borderBottom: "2px solid #d1d5db",
+                            paddingBottom: "8px"
+                        }}>
+                            <span style={{ fontWeight: "600" }}>Subtotal:</span>
                             <span>₹{totals.subtotal.toFixed(2)}</span>
                         </div>
                         {totals.discount > 0 && (
-                            <div className="flex justify-between">
-                                <span className="font-semibold">Discount:</span>
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "space-between"
+                            }}>
+                                <span style={{ fontWeight: "600" }}>Discount:</span>
                                 <span>-₹{totals.discount.toFixed(2)}</span>
                             </div>
                         )}
-                        <div className="flex justify-between">
-                            <span className="font-semibold">Taxable Amount:</span>
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "space-between"
+                        }}>
+                            <span style={{ fontWeight: "600" }}>Taxable Amount:</span>
                             <span>₹{totals.taxableAmount.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between">
-                            <span className="font-semibold">GST (9% + 9%):</span>
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "space-between"
+                        }}>
+                            <span style={{ fontWeight: "600" }}>GST (9% + 9%):</span>
                             <span>₹{totals.totalGst.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between bg-gray-100 p-2 border-t-2 border-gray-300 pt-2 font-bold text-base">
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            backgroundColor: "#f3f4f6",
+                            padding: "8px",
+                            borderTop: "2px solid #d1d5db",
+                            fontWeight: "bold",
+                            fontSize: "16px"
+                        }}>
                             <span>Total Amount:</span>
                             <span>₹{totals.finalAmount.toFixed(2)}</span>
                         </div>
@@ -294,35 +544,81 @@ export function InvoiceDownloadButton({
                 </div>
 
                 {/* Amount in Words */}
-                <div className="mt-4 text-sm">
-                    <p>
-                        <span className="font-semibold">Amount in words:</span> {amountToWords(totals.finalAmount)}
+                <div style={{
+                    marginBottom: "24px",
+                    fontSize: "14px"
+                }}>
+                    <p style={{ margin: "0" }}>
+                        <span style={{ fontWeight: "600" }}>Amount in words:</span> {amountToWords(totals.finalAmount)}
                     </p>
                 </div>
 
                 {/* Signature Section */}
-                <div className="flex justify-end mt-8">
-                    <div className="text-center">
-                        <div className="h-12 w-24 border-t border-gray-400 mt-4"></div>
-                        <p className="text-sm font-semibold mt-2">Authorized Signatory</p>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginBottom: "32px"
+                }}>
+                    <div style={{ textAlign: "center" }}>
+                        <div style={{
+                            height: "48px",
+                            width: "96px",
+                            borderTop: "1px solid #9ca3af",
+                            marginBottom: "16px"
+                        }}></div>
+                        <p style={{
+                            fontSize: "14px",
+                            fontWeight: "600",
+                            margin: "0"
+                        }}>
+                            Authorized Signatory
+                        </p>
                     </div>
                 </div>
 
                 {/* Notes */}
                 {notes && (
-                    <div className="mt-6 p-4 bg-gray-50 text-sm">
-                        <p className="font-semibold mb-2">Additional Notes:</p>
-                        <p>{notes}</p>
+                    <div style={{
+                        marginBottom: "24px",
+                        padding: "16px",
+                        backgroundColor: "#f9fafb",
+                        fontSize: "14px"
+                    }}>
+                        <p style={{
+                            fontWeight: "600",
+                            marginBottom: "8px",
+                            margin: "0 0 8px 0"
+                        }}>
+                            Additional Notes:
+                        </p>
+                        <p style={{ margin: "0" }}>{notes}</p>
                     </div>
                 )}
 
                 {/* Terms and Conditions */}
                 {termsConditions && termsConditions.length > 0 && (
-                    <div className="mt-6 pt-4 border-t-2 border-gray-300 text-xs">
-                        <p className="font-semibold mb-2">Terms and Conditions:</p>
-                        <ul className="space-y-1">
+                    <div style={{
+                        marginTop: "24px",
+                        paddingTop: "16px",
+                        borderTop: "2px solid #d1d5db",
+                        fontSize: "12px"
+                    }}>
+                        <p style={{
+                            fontWeight: "600",
+                            marginBottom: "8px",
+                            margin: "0 0 8px 0"
+                        }}>
+                            Terms and Conditions:
+                        </p>
+                        <ul style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "4px",
+                            margin: "0",
+                            paddingLeft: "20px"
+                        }}>
                             {termsConditions.map((term, idx) => (
-                                <li key={idx}>
+                                <li key={idx} style={{ margin: "0" }}>
                                     {idx + 1}. {term}
                                 </li>
                             ))}
@@ -331,9 +627,12 @@ export function InvoiceDownloadButton({
                 )}
             </div>
 
-            <Button onClick={downloadPDF} variant="default" size="sm">
-                Download Invoice
-            </Button>
+            {/* Download Button - Only show in dev mode */}
+            {mode === "dev" && (
+                <Button onClick={downloadPDF} variant="default" size="sm">
+                    Download Invoice
+                </Button>
+            )}
         </>
     )
 }
