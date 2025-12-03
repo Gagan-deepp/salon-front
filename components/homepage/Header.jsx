@@ -16,6 +16,8 @@ const Header = () => {
         { name: "Industries", href: "#industries" },
         { name: "Pricing", href: "#pricing" },
         { name: "FAQ", href: "#faq" },
+        { name: "Contact Us", href: "/contact" },
+
     ];
 
     const isScrolled = scrollY > 50;
