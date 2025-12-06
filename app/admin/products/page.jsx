@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
 import { ProductFilter } from "@/components/admin/product/product-filter"
+import { auth } from "@/lib/auth"
 
 
 export default async function ProductsPage({ searchParams }) {
 
   const searchP = await searchParams
+  const { user } = await auth()
   const result = await getProducts({
     page: searchP.page || 1,
     limit: searchP.limit || 10,
@@ -21,7 +23,7 @@ export default async function ProductsPage({ searchParams }) {
 
   console.log("\n\n Products result ===> ", result.data.data)
 
-  const products = result.data.data
+  const products = result.data.data || []
 
   return (
     <div className="p-6">
@@ -30,12 +32,12 @@ export default async function ProductsPage({ searchParams }) {
           <h1 className="text-3xl font-bold ">Products</h1>
           <p className="text-gray-600">Manage your product inventory</p>
         </div>
-        <CreateProductDialog>
+        {(user?.role === "SUPER_ADMIN" || user?.role === "SAAS_OWNER") && <CreateProductDialog>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Product
           </Button>
-        </CreateProductDialog>
+        </CreateProductDialog>}
       </div>
 
 

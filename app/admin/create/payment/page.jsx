@@ -525,7 +525,7 @@ export default function CreatePaymentPage() {
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <Label className="text-sm font-medium">Provider Name</Label>
+                              <Label className="text-sm font-medium">Salon Expert</Label>
                               <Select
                                 value={service.providerId}
                                 onValueChange={(value) => {
@@ -547,7 +547,7 @@ export default function CreatePaymentPage() {
                                 }}
                               >
                                 <SelectTrigger className="mt-1">
-                                  <SelectValue placeholder="Select provider" />
+                                  <SelectValue placeholder="Select Salon Expert" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {providers.map((provider) => (

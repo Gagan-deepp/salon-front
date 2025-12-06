@@ -59,7 +59,7 @@ export async function getServices(params) {
     console.log("getServices response", res.data)
     return { success: true, data: res.data }
   } catch (error) {
-    console.error("getServices error", error)
+    console.error("getServices error", error.response?.data)
     return { success: false, error: error.response?.data?.message || "getServices failed" }
   }
 }

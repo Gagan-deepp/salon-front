@@ -20,6 +20,7 @@ import {
   Calendar,
   Trash2,
 } from "lucide-react"
+import { useSession } from "next-auth/react"
 
 const CATEGORY_LABELS = {
   HAIR_CARE: "Hair Care",
@@ -32,6 +33,7 @@ const CATEGORY_LABELS = {
 
 export function ProductDetails({ product }) {
   const router = useRouter()
+  const { data: session } = useSession()
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
@@ -83,18 +85,21 @@ export function ProductDetails({ product }) {
               Update Stock
             </Button>
           </StockUpdateDialog>
-          <DeleteProductDialog product={product}>
-            <Button variant="outline">
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete
-            </Button>
-          </DeleteProductDialog>
-          <EditProductDialog product={product}>
-            <Button>
-              <Edit className="w-4 h-4 mr-2" />
-              Edit
-            </Button>
-          </EditProductDialog>
+          {session.user.role === "SUPER_ADMIN" && (
+            <>
+              <DeleteProductDialog product={product}>
+                <Button variant="outline">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </Button>
+              </DeleteProductDialog>
+              <EditProductDialog product={product}>
+                <Button>
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              </EditProductDialog>
+            </>)}
         </div>
       </div>
       <Tabs defaultValue="overview" className="space-y-4">
@@ -164,6 +169,11 @@ export function ProductDetails({ product }) {
                 <div>
                   <p className="font-medium">Category</p>
                   <p className="text-sm text-muted-foreground">{CATEGORY_LABELS[product.category]}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="font-medium">Type</p>
+                  <p className="text-sm text-muted-foreground">{product.type || "Not specified"}</p>
                 </div>
                 <Separator />
                 <div>

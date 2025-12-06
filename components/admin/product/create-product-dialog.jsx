@@ -56,6 +56,7 @@ export function CreateProductDialog({ children }) {
     const payload = {
       name: formData.get("name"),
       category: formData.get("category"),
+      type: formData.get("type"),
       brand: formData.get("brand"),
       description: formData.get("description"),
       sku: formData.get("sku"),
@@ -97,7 +98,7 @@ export function CreateProductDialog({ children }) {
         </DialogHeader>
 
         <form action={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Product Name *</Label>
               <Input id="name" name="name" required />
@@ -114,6 +115,18 @@ export function CreateProductDialog({ children }) {
                       {category.label}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="type">Type *</Label>
+              <Select name="type" required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Product Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="retails"> Retails </SelectItem>
+                  <SelectItem value="consumables"> Consumables </SelectItem>
                 </SelectContent>
               </Select>
             </div>

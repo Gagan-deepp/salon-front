@@ -76,6 +76,8 @@ export default async function PaymentsPage({ searchParams }) {
     search: searchP.search || "",
     status: searchP.status || "",
     paymentMode: searchP.paymentMode || "",
+    startDate: searchP.startDate || "",
+    endDate: searchP.endDate || "",
   }
 
   const result = user.role === "SUPER_ADMIN" ? await getAllPayments(params) : user.role === "CASHIER" ? await getCashierPayments(params, user.id) : await getFranchisePayments(params)

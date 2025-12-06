@@ -24,6 +24,7 @@ import {
   Calculator,
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useSession } from "next-auth/react"
 
 const getRoleIcon = (role) => {
   switch (role) {
@@ -53,6 +54,8 @@ const getRoleBadgeVariant = (role) => {
 
 export function UserTable({ users, currentPage, totalPages, total, searchParams }) {
   const router = useRouter()
+  const { data: session } = useSession()
+  console.log("Session Data in user table:", session);
   const urlSearchParams = useSearchParams()
 
   const [searchTerm, setSearchTerm] = useState(searchParams?.search || "")
@@ -172,7 +175,7 @@ export function UserTable({ users, currentPage, totalPages, total, searchParams 
                   <TableHead>Status</TableHead>
                   <TableHead>Commission</TableHead>
                   <TableHead>Last Login</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  {session.user.role === "SUPER_ADMIN" && <TableHead className="text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -223,7 +226,7 @@ export function UserTable({ users, currentPage, totalPages, total, searchParams 
                         )}
                       </TableCell>
                       <TableCell>{user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}</TableCell>
-                      <TableCell className="text-right">
+                      {session.user.role === "SUPER_ADMIN" && <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
@@ -245,7 +248,7 @@ export function UserTable({ users, currentPage, totalPages, total, searchParams 
                             </DeleteUserDialog>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </TableCell>
+                      </TableCell>}
                     </TableRow>
                   ))
                 )}

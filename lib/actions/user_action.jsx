@@ -64,7 +64,7 @@ export async function getUserById(userId) {
         console.log("getUserById response", res.data)
         return { success: true, data: res.data }
     } catch (error) {
-        console.error("getUserById error", error)
+        console.error("getUserById error", error.response?.data)
         return { success: false, error: error.response?.data?.message || "getUserById failed" }
     }
 }

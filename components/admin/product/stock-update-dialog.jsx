@@ -37,7 +37,8 @@ export function StockUpdateDialog({ children, product }) {
 
     const payload = {
       quantity: Number.parseInt(formData.get("addStock")),
-      operation: formData.get("operation")
+      operation: formData.get("operation"),
+      reason: formData.get("reason") || "Stock update via admin panel"
     }
 
     const result = await updateProductStock(product._id, payload)
@@ -100,6 +101,16 @@ export function StockUpdateDialog({ children, product }) {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="reason">Reason *</Label>
+            <Input
+              id="reason"
+              name="reason"
+              type="text"
+              placeholder="Reason for stock update"
+              required />
           </div>
 
           <div className="space-y-2">

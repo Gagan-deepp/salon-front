@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
   Dialog,
@@ -19,11 +19,64 @@ import { createFranchise } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
 import { useSession } from "next-auth/react"
 
+// Indian States and Cities data
+const INDIAN_STATES = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+  "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+  "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+  "Uttar Pradesh", "Uttarakhand", "West Bengal",
+  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+]
+
 export function CreateFranchiseDialog({ children, companyId }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [selectedState, setSelectedState] = useState("")
+  const [cities, setCities] = useState([])
+  const [loadingCities, setLoadingCities] = useState(false)
   const router = useRouter()
   const { data: session } = useSession()
+
+  // Fetch cities when state is selected
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!selectedState) {
+        setCities([])
+        return
+      }
+
+      setLoadingCities(true)
+      try {
+        // Using countriesnow API for Indian cities
+        const response = await fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            country: "India",
+            state: selectedState
+          })
+        })
+        
+        const data = await response.json()
+        if (data.error) {
+          console.error("Error fetching cities:", data.msg)
+          setCities([])
+        } else {
+          setCities(data.data || [])
+        }
+      } catch (error) {
+        console.error("Failed to fetch cities:", error)
+        setCities([])
+      } finally {
+        setLoadingCities(false)
+      }
+    }
+
+    fetchCities()
+  }, [selectedState])
 
   const handleSubmit = async (formData) => {
     setLoading(true)
@@ -100,16 +153,57 @@ export function CreateFranchiseDialog({ children, companyId }) {
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="city">City *</Label>
-              <Input id="city" name="city" required />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="state">State *</Label>
-              <Input id="state" name="state" required />
+              <Select 
+                name="state" 
+                required 
+                onValueChange={(value) => setSelectedState(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select state" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[200px]">
+                  {INDIAN_STATES.map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="pincode">Pincode</Label>
-              <Input id="pincode" name="pincode" />
+              <Label htmlFor="city">City *</Label>
+              <Select 
+                name="city" 
+                required 
+                disabled={!selectedState || loadingCities}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={loadingCities ? "Loading..." : selectedState ? "Select city" : "Select state first"} />
+                </SelectTrigger>
+                <SelectContent className="max-h-[200px]">
+                  {cities.length > 0 ? (
+                    cities.map((city) => (
+                      <SelectItem key={city} value={city}>
+                        {city}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="none" disabled>No cities available</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="pincode">Pincode *</Label>
+              <Input 
+                id="pincode" 
+                name="pincode" 
+                maxLength={6}
+                pattern="[0-9]{6}"
+                placeholder="000000"
+                required
+              />
             </div>
           </div>
 

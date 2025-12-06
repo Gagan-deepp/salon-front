@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
 import { ServiceFilter } from "@/components/admin/service/service-filter"
+import { auth } from "@/lib/auth"
 
 
 export default async function ServicesPage({ searchParams }) {
 
   const searchP = await searchParams
+  const { user } = await auth()
   const result = await getServices({
     page: searchP.page || 1,
     limit: searchP.limit || 10,
@@ -21,7 +23,7 @@ export default async function ServicesPage({ searchParams }) {
 
   console.log("\n\Services result ===> ", result.data.data)
 
-  const services = result.data.data
+  const services = result.data.data || []
 
   return (
     <div className="p-6">
@@ -30,12 +32,12 @@ export default async function ServicesPage({ searchParams }) {
           <h1 className="text-3xl font-bold ">Services</h1>
           <p className="text-gray-600">Manage your beauty and wellness services</p>
         </div>
-        <CreateServiceDialog>
+        {(user?.role === "SUPER_ADMIN" || user?.role === "SAAS_OWNER") && <CreateServiceDialog>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Service
           </Button>
-        </CreateServiceDialog>
+        </CreateServiceDialog>}
       </div>
 
       <ServiceFilter

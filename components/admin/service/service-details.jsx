@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { EditServiceDialog } from "./edit-service-dialog"
 import { DeleteServiceDialog } from "./delete-service-dialog"
 import { ArrowLeft, Edit, Clock, DollarSign, Users, Percent, Calendar, Scissors, Trash2 } from "lucide-react"
+import { useSession } from "next-auth/react"
 
 const CATEGORY_LABELS = {
   HAIR_CUT: "Hair Cut",
@@ -30,6 +31,7 @@ const ROLE_LABELS = {
 
 export function ServiceDetails({ service }) {
   const router = useRouter()
+  const { data: session } = useSession()
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
@@ -76,7 +78,7 @@ export function ServiceDetails({ service }) {
             </div>
           </div>
         </div>
-        <div className="flex space-x-2">
+        { session.user.role === "SUPER_ADMIN" && <div className="flex space-x-2">
           <DeleteServiceDialog service={service}>
             <Button variant="outline">
               <Trash2 className="w-4 h-4 mr-2" />
@@ -89,7 +91,7 @@ export function ServiceDetails({ service }) {
               Edit
             </Button>
           </EditServiceDialog>
-        </div>
+        </div>}
       </div>
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>

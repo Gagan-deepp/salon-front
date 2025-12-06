@@ -36,35 +36,34 @@ export function ServiceFilter({ initialSearchTerm, initialCategoryFilter, initia
 
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
+    // Combine all filters into a single useEffect to prevent multiple API calls
     useEffect(() => {
-        const current = new URLSearchParams(Array.from(searchParams.entries()))
+        const params = new URLSearchParams()
+        
+        // Add search param
         if (debouncedSearchTerm) {
-            current.set("search", debouncedSearchTerm)
-        } else {
-            current.delete("search")
+            params.set("search", debouncedSearchTerm)
         }
-        router.push(`?${current.toString()}`)
-    }, [debouncedSearchTerm, router, searchParams])
-
-    useEffect(() => {
-        const current = new URLSearchParams(Array.from(searchParams.entries()))
+        
+        // Add category param
         if (categoryFilter && categoryFilter !== "all") {
-            current.set("category", categoryFilter)
-        } else {
-            current.delete("category")
+            params.set("category", categoryFilter)
         }
-        router.push(`?${current.toString()}`)
-    }, [categoryFilter, router, searchParams])
-
-    useEffect(() => {
-        const current = new URLSearchParams(Array.from(searchParams.entries()))
+        
+        // Add role param
         if (roleFilter && roleFilter !== "all") {
-            current.set("role", roleFilter)
-        } else {
-            current.delete("role")
+            params.set("role", roleFilter)
         }
-        router.push(`?${current.toString()}`)
-    }, [roleFilter, router, searchParams])
+        
+        // Preserve other existing params (like page, limit)
+        const currentPage = searchParams.get("page")
+        const currentLimit = searchParams.get("limit")
+        if (currentPage) params.set("page", currentPage)
+        if (currentLimit) params.set("limit", currentLimit)
+        
+        const query = params.toString()
+        router.push(`/admin/services${query ? `?${query}` : ""}`)
+    }, [debouncedSearchTerm, categoryFilter, roleFilter, router])
 
 
     return (
