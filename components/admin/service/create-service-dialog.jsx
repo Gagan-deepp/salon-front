@@ -21,16 +21,13 @@ import { getFranchises } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
 
 const CATEGORIES = [
-  { value: "HAIR_CUT", label: "Hair Cut" },
-  { value: "HAIR_COLOR", label: "Hair Color" },
-  { value: "FACIAL", label: "Facial" },
-  { value: "MASSAGE", label: "Massage" },
-  { value: "MANICURE", label: "Manicure" },
-  { value: "PEDICURE", label: "Pedicure" },
-  { value: "THREADING", label: "Threading" },
-  { value: "WAXING", label: "Waxing" },
-  { value: "BRIDAL", label: "Bridal" },
-  { value: "OTHER", label: "Other" },
+  { value: "Hair", label: "Hair" },
+  { value: "Skin", label: "Skin" },
+  { value: "Nails", label: "Nails" },
+  { value: "Makeup", label: "Makeup" },
+  { value: "Spa", label: "Spa" },
+  { value: "Body_Care", label: "Body Care" },
+  { value: "Others", label: "Others" },
 ]
 
 const ROLES = [
@@ -75,6 +72,7 @@ export function CreateServiceDialog({ children }) {
     const payload = {
       name: formData.get("name"),
       category: formData.get("category"),
+      type: formData.get("type"),
       description: formData.get("description"),
       duration: Number.parseInt(formData.get("duration")),
       price: Number.parseFloat(formData.get("price")),
@@ -108,10 +106,10 @@ export function CreateServiceDialog({ children }) {
         </DialogHeader>
 
         <form action={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Service Name *</Label>
-              <Input id="name" name="name" required />
+              <Input id="name" name="name" required placeholder="Enter service name" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="category">Category *</Label>
@@ -128,11 +126,23 @@ export function CreateServiceDialog({ children }) {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="type">Type *</Label>
+              <Select name="type" required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Service Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="technical"> Technical </SelectItem>
+                  <SelectItem value="non-technical"> Non Technical </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea id="description" name="description" rows={3} />
+            <Textarea id="description" name="description" rows={3} placeholder="Enter service description" />
           </div>
 
           <div className="space-y-2">

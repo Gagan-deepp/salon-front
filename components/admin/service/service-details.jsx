@@ -11,16 +11,13 @@ import { ArrowLeft, Edit, Clock, DollarSign, Users, Percent, Calendar, Scissors,
 import { useSession } from "next-auth/react"
 
 const CATEGORY_LABELS = {
-  HAIR_CUT: "Hair Cut",
-  HAIR_COLOR: "Hair Color",
-  FACIAL: "Facial",
-  MASSAGE: "Massage",
-  MANICURE: "Manicure",
-  PEDICURE: "Pedicure",
-  THREADING: "Threading",
-  WAXING: "Waxing",
-  BRIDAL: "Bridal",
-  OTHER: "Other",
+  Hair: "Hair",
+  Skin: "Skin",
+  Nails: "Nails",
+  Makeup: "Makeup",
+  Spa: "Spa",
+  Body_Care: "Body Care",
+  Others: "Others",
 }
 
 const ROLE_LABELS = {
@@ -70,15 +67,18 @@ export function ServiceDetails({ service }) {
           </Button>
           <div className="my-4" >
             <h1 className="text-3xl font-bold ">{service.name}</h1>
-            <div className="flex items-center space-x-2 mt-1">
+            <div className="flex items-center space-x-2 mt-4">
               <Badge variant="outline">{CATEGORY_LABELS[service.category]}</Badge>
               <Badge variant={service.isActive ? "default" : "destructive"}>
                 {service.isActive ? "Active" : "Inactive"}
               </Badge>
+              <Badge variant="secondary">
+                {service.code}
+              </Badge>
             </div>
           </div>
         </div>
-        { session.user.role === "SUPER_ADMIN" && <div className="flex space-x-2">
+        {session.user.role === "SUPER_ADMIN" && <div className="flex space-x-2">
           <DeleteServiceDialog service={service}>
             <Button variant="outline">
               <Trash2 className="w-4 h-4 mr-2" />
