@@ -18,11 +18,12 @@ async function ServiceData({ id }) {
   return <ServiceDetails service={service} />;
 }
 
-export default function ServicePage({ params }) {
+export default async function ServicePage({ params }) {
+  const id = (await params).id;
   return (
     <div className="p-6">
       <Suspense fallback={<ServiceDetailsSkeleton />}>
-        <ServiceData id={params.id} />
+        <ServiceData id={id} />
       </Suspense>
     </div>
   );

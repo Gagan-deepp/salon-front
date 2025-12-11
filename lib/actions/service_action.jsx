@@ -124,7 +124,7 @@ export async function getServiceById(serviceId) {
     console.log("getServiceById response", res.data)
     return { success: true, data: res.data }
   } catch (error) {
-    console.error("getServiceById error", error)
+    console.error("getServiceById error", error.response?.data)
     return { success: false, error: error.response?.data?.message || "getServiceById failed" }
   }
 }
