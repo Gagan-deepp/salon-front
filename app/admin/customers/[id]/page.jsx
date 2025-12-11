@@ -17,11 +17,11 @@ async function CustomerData({ id }) {
   return <CustomerDetails customer={customer} />;
 }
 
-export default function CustomerPage({ params }) {
+export default async function CustomerPage({ params }) {
   return (
     <div className="p-6">
       <Suspense fallback={<CustomerDetailsSkeleton />}>
-        <CustomerData id={params.id} />
+        <CustomerData id={(await params).id} />
       </Suspense>
     </div>
   );

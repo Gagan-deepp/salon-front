@@ -84,12 +84,12 @@ export function CustomerDetails({ customer }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col items-start">
           <Button variant="ghost" size="sm" onClick={() => router.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <div>
+          <div className="my-4" >
             <h1 className="text-3xl font-bold ">{customer.name}</h1>
             <div className="flex items-center space-x-2 mt-1">
               <Badge variant="outline">{customer.phone}</Badge>
@@ -98,6 +98,9 @@ export function CustomerDetails({ customer }) {
               </Badge>
               {customer.gender && (
                 <Badge variant="secondary">{GENDER_LABELS[customer.gender]}</Badge>
+              )}
+              {customer.code && (
+                <Badge variant="secondary">{customer.code}</Badge>
               )}
             </div>
           </div>
