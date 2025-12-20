@@ -88,7 +88,7 @@ export async function getFranchisePayments(params) {
     console.log("getFranchisePayments response", res.data)
     return { success: true, data: res.data }
   } catch (error) {
-    console.error("getFranchisePayments error", error)
+    console.error("getFranchisePayments error", error.response?.data)
     return { success: false, error: error.response?.data?.message || "getFranchisePayments failed" }
   }
 }

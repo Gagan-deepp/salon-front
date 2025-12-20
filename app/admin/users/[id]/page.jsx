@@ -35,11 +35,11 @@ async function UserData({ userId }) {
   }
 }
 
-export default function UserDetailsPage({ params }) {
+export default async function UserDetailsPage({ params }) {
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <Suspense fallback={<UserDetailsSkeleton />}>
-        <UserData userId={params.id} />
+        <UserData userId={(await params).id} />
       </Suspense>
     </div>
   )

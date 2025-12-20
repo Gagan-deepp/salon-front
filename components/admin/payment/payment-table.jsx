@@ -1,21 +1,17 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import PaginationNumberless from "@/components/customized/pagination/pagination-12"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Eye, ChevronLeft, ChevronRight } from "lucide-react"
+import { Eye } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 
-export function PaymentTable({ payments, currentPage, totalPages, total }) {
+export function PaymentTable({ payments, pagination, total }) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const handlePageChange = (newPage) => {
-    const params = new URLSearchParams(searchParams)
-    params.set("page", newPage.toString())
-    router.push(`/admin/payments?${params.toString()}`)
-  }
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -111,34 +107,8 @@ export function PaymentTable({ payments, currentPage, totalPages, total }) {
         </Table>
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-500">
-            Page {currentPage} of {totalPages}
-          </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-              {ChevronRight && <ChevronRight className="w-4 h-4 ml-2" />}
-            </Button>
-          </div>
-        </div>
-      )}
+      <PaginationNumberless pagination={pagination} />
+
     </div>
   )
 }

@@ -9,7 +9,6 @@ import { auth } from "@/lib/auth"
 
 async function CustomerList({ searchParams }) {
 
-  const { user } = await auth()
   const searchP = await searchParams
 
   const params = {
@@ -20,15 +19,23 @@ async function CustomerList({ searchParams }) {
     isActive: searchP.isActive || true,
   }
 
-  console.log("\n\n Customer params ===> ", params)
-
   const result = await getCustomers(params)
 
-  console.log("\n\n Customer result ===> ", result.data.data)
+  console.log("\n\n Customer result ===> ", result.data)
 
   const customers = result.data.data.customers
+  const pagination = result.data.data.pagination
 
-  return <CustomerTable customers={customers} />;
+  return <CustomerTable
+    customers={customers}
+    pagination={
+      {
+        page: searchP.page ? parseInt(searchP.page) : 1,
+        limit: searchP.limit ? parseInt(searchP.limit) : 10,
+        total: pagination.total || 0,
+        totalPages: pagination.totalPages || 0,
+      }
+    } />;
 }
 
 export default function CustomersPage({ searchParams }) {

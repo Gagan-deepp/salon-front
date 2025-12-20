@@ -1,5 +1,6 @@
 "use client"
 
+import PaginationNumberless from "@/components/customized/pagination/pagination-12"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -18,7 +19,7 @@ const CATEGORIES = [
   { value: "OTHER", label: "Other" },
 ]
 
-export function ProductTable({ products }) {
+export function ProductTable({ products, pagination }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("")
   const router = useRouter()
@@ -70,7 +71,7 @@ export function ProductTable({ products }) {
 
   return (
     <div className="space-y-4">
-    
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -150,6 +151,8 @@ export function ProductTable({ products }) {
           </TableBody>
         </Table>
       </div>
+
+      <PaginationNumberless pagination={pagination} />
     </div>
   );
 }

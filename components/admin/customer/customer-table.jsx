@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal, Search, Eye, Edit, Trash2, Phone, Mail, MapPin, Star } from 'lucide-react'
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/ui/card"
+import PaginationNumberless from "@/components/customized/pagination/pagination-12"
 
 const GENDERS = [
   { value: "MALE", label: "Male" },
@@ -18,7 +19,7 @@ const GENDERS = [
   { value: "OTHER", label: "Other" },
 ]
 
-export function CustomerTable({ customers }) {
+export function CustomerTable({ customers, pagination }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [genderFilter, setGenderFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
@@ -251,6 +252,7 @@ export function CustomerTable({ customers }) {
           </TableBody>
         </Table>
       </div>
+      <PaginationNumberless pagination={pagination} />
     </div>
   );
 }

@@ -21,9 +21,10 @@ export default async function ProductsPage({ searchParams }) {
     lowStock: searchP.lowStock || "",
   })
 
-  console.log("\n\n Products result ===> ", result.data.data)
+  console.log("\n\n Products result ===> ", result.data)
 
   const products = result.data.data || []
+  const pagination = result.data.pagination || {}
 
   return (
     <div className="p-6">
@@ -47,7 +48,17 @@ export default async function ProductsPage({ searchParams }) {
       />
 
       <Suspense fallback={<TableSkeleton />}>
-        <ProductTable products={products} />
+        <ProductTable
+          products={products}
+          pagination={
+            {
+              page: searchP.page ? parseInt(searchP.page) : 1,
+              limit: searchP.limit ? parseInt(searchP.limit) : 10,
+              total: pagination.total || 0,
+              totalPages: pagination.totalPages || 0,
+            }
+          }
+        />
       </Suspense>
     </div>
   );

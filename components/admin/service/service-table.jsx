@@ -1,15 +1,13 @@
 "use client"
 
+import PaginationNumberless from "@/components/customized/pagination/pagination-12"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Clock, Eye, MoreHorizontal, Search } from "lucide-react"
+import { Clock, Eye, MoreHorizontal } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
 
 const CATEGORIES = [
   { value: "HAIR_CUT", label: "Hair Cut" },
@@ -30,7 +28,7 @@ const ROLES = [
   { value: "MANAGER", label: "Manager" },
 ]
 
-export function ServiceTable({ services }) {
+export function ServiceTable({ services, pagination }) {
   const router = useRouter()
 
   if (services.length === 0) {
@@ -151,6 +149,8 @@ export function ServiceTable({ services }) {
           </TableBody>
         </Table>
       </div>
+
+      <PaginationNumberless pagination={pagination} />
     </div>
   );
 }

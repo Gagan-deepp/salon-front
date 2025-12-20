@@ -8,16 +8,13 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 const CATEGORIES = [
-    { value: "HAIR_CUT", label: "Hair Cut" },
-    { value: "HAIR_COLOR", label: "Hair Color" },
-    { value: "FACIAL", label: "Facial" },
-    { value: "MASSAGE", label: "Massage" },
-    { value: "MANICURE", label: "Manicure" },
-    { value: "PEDICURE", label: "Pedicure" },
-    { value: "THREADING", label: "Threading" },
-    { value: "WAXING", label: "Waxing" },
-    { value: "BRIDAL", label: "Bridal" },
-    { value: "OTHER", label: "Other" },
+    { value: "Hair", label: "Hair" },
+    { value: "Skin", label: "Skin" },
+    { value: "Nails", label: "Nails" },
+    { value: "Makeup", label: "Makeup" },
+    { value: "Spa", label: "Spa" },
+    { value: "Body_Care", label: "Body Care" },
+    { value: "Others", label: "Others" },
 ]
 
 const ROLES = [
@@ -39,28 +36,28 @@ export function ServiceFilter({ initialSearchTerm, initialCategoryFilter, initia
     // Combine all filters into a single useEffect to prevent multiple API calls
     useEffect(() => {
         const params = new URLSearchParams()
-        
+
         // Add search param
         if (debouncedSearchTerm) {
             params.set("search", debouncedSearchTerm)
         }
-        
+
         // Add category param
         if (categoryFilter && categoryFilter !== "all") {
             params.set("category", categoryFilter)
         }
-        
+
         // Add role param
         if (roleFilter && roleFilter !== "all") {
             params.set("role", roleFilter)
         }
-        
+
         // Preserve other existing params (like page, limit)
         const currentPage = searchParams.get("page")
         const currentLimit = searchParams.get("limit")
         if (currentPage) params.set("page", currentPage)
         if (currentLimit) params.set("limit", currentLimit)
-        
+
         const query = params.toString()
         router.push(`/admin/services${query ? `?${query}` : ""}`)
     }, [debouncedSearchTerm, categoryFilter, roleFilter, router])
