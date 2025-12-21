@@ -22,6 +22,8 @@ export default async function CompaniesPage({ searchParams }) {
 
   const companies = result.data.data.companies
 
+  console.log("companies that we are passing",companies)
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">

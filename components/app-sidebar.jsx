@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import {
   BadgeIndianRupee,
   Briefcase,
@@ -12,28 +13,27 @@ import {
   SquareTerminal,
   Telescope,
   UserCheck,
-  UserCircle
+  UserCircle,
+  Package2Icon
 } from "lucide-react"
 
 import rynoxLogo from "@/assets/rynox-logo.png"
 import { NavUser } from "@/components/nav-user"
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail, } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
 
-
-
-export function AppSidebar({
-  ...props
-}) {
+export function AppSidebar({ ...props }) {
   const pathName = usePathname()
-  const { data: session } = useSession()
-  console.debug("Full session object:", JSON.stringify(session, null, 2))
+  const { data: session, status } = useSession()
+  
+  // Loading state until session loads
+  const [isLoading, setIsLoading] = useState(true)
+  const [sideMenus, setSideMenus] = useState([])
 
-  console.debug("AppSidebar session ==> ", session)
-
+  // Role-based menu data
   const adminData = {
     user: {
       name: session?.user?.name || "Admin",
@@ -95,7 +95,6 @@ export function AppSidebar({
         ],
       },
     ],
-
     cashier: [
       {
         title: "Create Payment",
@@ -108,7 +107,6 @@ export function AppSidebar({
         icon: BadgeIndianRupee
       },
     ],
-
     saas_owner: [
       {
         title: "Companies",
@@ -119,12 +117,7 @@ export function AppSidebar({
         title: "Subscription",
         url: "/admin/subscription",
         icon: DollarSign
-      },
-      {
-        title: "Offers",
-        url: "/admin/offers",
-        icon: DollarSign
-      },
+      }
     ],
     navMain: [
       {
@@ -168,6 +161,11 @@ export function AppSidebar({
         icon: DollarSign
       },
       {
+        title: "Packages",
+        url: "/admin/packages",
+        icon: Package2Icon
+      },
+      {
         title: "Reports",
         url: "#",
         icon: SquareTerminal,
@@ -193,50 +191,110 @@ export function AppSidebar({
     ],
   }
 
-  const sideMenus = session?.user?.role === "FRANCHISE_OWNER" ? adminData.franchise_owner : session?.user?.role === "CASHIER" ? adminData.cashier : session?.user?.role === "SAAS_OWNER" ? adminData.saas_owner : adminData.navMain
+  // Set menus based on role once session loads
+  useEffect(() => {
+    if (status === 'loading') {
+      setIsLoading(true)
+      return
+    }
 
+    if (status === 'authenticated' && session?.user?.role) {
+      console.log("✅ Role loaded:", session.user.role)
+      
+      const roleMenus = {
+        "FRANCHISE_OWNER": adminData.franchise_owner,
+        "CASHIER": adminData.cashier,
+        "SAAS_OWNER": adminData.saas_owner,
+      }[session.user.role] || adminData.navMain
+      
+      setSideMenus(roleMenus)
+      setIsLoading(false)
+      console.log("✅ Menu set for role:", session.user.role, roleMenus.length, "items")
+    } else {
+      // No session or unknown role - show minimal menu or loading
+      setSideMenus([])
+      setIsLoading(false)
+    }
+  }, [status, session?.user?.role])
 
+  // Show loading skeleton while role-based menus load
+  if (isLoading || status === 'loading') {
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <div className="flex items-center space-x-2 p-4">
+            <div className="animate-pulse rounded-full h-8 w-8 bg-muted" />
+            <div className="animate-pulse h-6 w-24 bg-muted rounded" />
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {[1, 2, 3].map((i) => (
+                  <SidebarMenuItem key={i}>
+                    <SidebarMenuButton className="animate-pulse">
+                      <div className="h-4 w-4 bg-muted rounded" />
+                      <div className="h-5 w-20 bg-muted rounded ml-2" />
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <div className="p-4 space-y-2">
+            <div className="animate-pulse h-4 w-32 bg-muted rounded" />
+            <div className="animate-pulse h-3 w-24 bg-muted rounded" />
+          </div>
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    )
+  }
 
   return (
     <Sidebar collapsible="icon" {...props}>
-
-
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" asChild >
+            <SidebarMenuButton 
+              size="lg" 
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" 
+              asChild
+            >
               <div>
-                <Link href="/" className="flex items-center space-x-2 group w-full justify-start" >
+                <Link href="/" className="flex items-center space-x-2 group w-full justify-start">
                   <img
                     src={rynoxLogo.src}
                     alt="Rynox"
-                    className="h-8  w-auto"
+                    className="h-8 w-auto"
                   />
                 </Link>
-
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-
             <SidebarMenu>
               {sideMenus.map((item) => {
-
-                let isActive = pathName === item.url
+                const isActive = pathName === item.url
                 return (
-                  item.items ?
+                  item.items ? (
                     <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
-                      <SidebarMenuItem key={item.title} >
+                      <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuSubButton tooltip={item.title} className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}>
+                          <SidebarMenuSubButton 
+                            tooltip={item.title} 
+                            className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
+                          >
                             {item.icon && <item.icon className="size-2" />}
-                            <span className="text-base" >{item.title}</span>
+                            <span className="text-base">{item.title}</span>
                             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                           </SidebarMenuSubButton>
                         </CollapsibleTrigger>
@@ -245,8 +303,8 @@ export function AppSidebar({
                             {item.items?.map((subItem) => (
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton asChild className="!py-4">
-                                  <Link href={subItem.url} >
-                                    <span className="text-sm" >{subItem.title}</span>
+                                  <Link href={subItem.url}>
+                                    <span className="text-sm">{subItem.title}</span>
                                   </Link>
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
@@ -255,14 +313,19 @@ export function AppSidebar({
                         </CollapsibleContent>
                       </SidebarMenuItem>
                     </Collapsible>
-                    : <SidebarMenuItem key={item.title}  >
-                      <SidebarMenuButton asChild className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`} >
-                        <Link href={item.url} >
-                          <item.icon className="size-2" />
-                          <span className="text-base" >{item.title}</span>
+                  ) : (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton 
+                        asChild 
+                        className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
+                      >
+                        <Link href={item.url}>
+                          {item.icon && <item.icon className="size-2" />}
+                          <span className="text-base">{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
+                  )
                 )
               })}
             </SidebarMenu>
@@ -270,11 +333,10 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-
       <SidebarFooter>
         <NavUser user={adminData.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  );
+  )
 }

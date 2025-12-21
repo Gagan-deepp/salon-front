@@ -4,23 +4,18 @@ import { getCompany } from "@/lib/actions/company_action"
 import { CompanyDetails } from "@/components/admin/company/company-details"
 import { CompanyDetailsSkeleton } from "@/components/admin/company/company-details-skeleton"
 
-async function CompanyData({ companyId }) {
+async function CompanyData({ id }) {
   try {
-    console.log("🔍 Fetching company data for:", companyId)
-    
-    
-    const result = await getCompany(companyId)
-    
-    console.log("📊 Company API result:", result)
+    console.log("🔍 Loading company:", id)
+    const result = await getCompany(id)
     
     if (!result.success || !result.data) {
-      console.error("❌ Company not found or API error:", result.error)
+      console.log("❌ Company not found")
       notFound()
     }
 
     const company = result.data.data
-    console.log("✅ Company data loaded:", company.name)
-
+    console.log("✅ Company loaded:", company.name)
     return <CompanyDetails company={company} />
   } catch (error) {
     console.error("❌ Error loading company:", error)
@@ -28,29 +23,34 @@ async function CompanyData({ companyId }) {
   }
 }
 
-export default function CompanyPage({ params }) {
-  console.log("🎯 Company page params:", params)
+// ✅ Next.js 15: params is a Promise - AWAIT IT!
+export default async function CompanyPage({ params }) {
+  // Await params to get the id
+  const { id } = await params
+  
+  console.log("🎯 Company ID:", id)
   
   return (
     <div className="p-6">
       <Suspense fallback={<CompanyDetailsSkeleton />}>
-        <CompanyData companyId={params.companyId} />
+        <CompanyData id={id} />
       </Suspense>
     </div>
   )
 }
 
-// Optional: Add metadata generation
+// ✅ Metadata also needs to await params
 export async function generateMetadata({ params }) {
-  const companyId = params.Id
+  const { id } = await params
   
   try {
-    const result = await getCompany(companyId)
+    const result = await getCompany(id)
     
     if (result.success && result.data) {
+      const company = result.data.data
       return {
-        title: `${result.data.name} - Company Details`,
-        description: `View details for ${result.data.name} (${companyId})`
+        title: `${company.name} - Company Details`,
+        description: `View details for ${company.name}`
       }
     }
   } catch (error) {

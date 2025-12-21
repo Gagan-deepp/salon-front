@@ -93,7 +93,7 @@ const handleView = (companyId) => {
                 <TableRow
                   key={company._id}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => handleView(company.companyId)}>
+                  onClick={() => handleView(company._id)}>
                   <TableCell>
                     <div className="space-y-1">
                       <div className="font-medium">{company.name}</div>

@@ -39,7 +39,7 @@ const SUBSCRIPTION_STATUS = {
 
 export function CompanyDetails({ company }) {
   const router = useRouter()
-
+  console.log("company=0=-=-=-=-=-",company)
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -63,14 +63,14 @@ export function CompanyDetails({ company }) {
     return SUBSCRIPTION_STATUS[status] || SUBSCRIPTION_STATUS['INACTIVE']
   }
 
-  const planDetails = getPlanDetails(company.subscription?.plan)
-  const statusDetails = getStatusDetails(company.subscription?.status)
+  const planDetails = getPlanDetails(company.data.subscription?.plan)
+  const statusDetails = getStatusDetails(company.data.subscription?.status)
 
   // Calculate usage percentages
-  const userUsagePercent = company.stats?.users ? 
-    (company.stats.users.current / company.stats.users.limit) * 100 : 0
-  const franchiseUsagePercent = company.stats?.franchises ? 
-    (company.stats.franchises.current / company.stats.franchises.limit) * 100 : 0
+  const userUsagePercent = company.data.stats?.users ? 
+    (company.data.stats.users.current / company.data.stats.users.limit) * 100 : 0
+  const franchiseUsagePercent = company.data.stats?.franchises ? 
+    (company.data.stats.franchises.current / company.data.stats.franchises.limit) * 100 : 0
 
   return (
     <div className="space-y-6">
@@ -84,9 +84,10 @@ export function CompanyDetails({ company }) {
           <div className="my-4">
             <div className="flex items-center gap-3 mb-2">
               <Building2 className="w-8 h-8 text-blue-600" />
+              
               <div>
-                <h1 className="text-3xl font-bold">{company.name}</h1>
-                <p className="text-lg text-muted-foreground">{company.companyId}</p>
+                <h1 className="text-3xl font-bold">{company.data.name}</h1>
+                <p className="text-lg text-muted-foreground">{company.data.companyId}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 mt-2">
@@ -96,8 +97,8 @@ export function CompanyDetails({ company }) {
               <Badge variant={statusDetails.variant}>
                 {statusDetails.label}
               </Badge>
-              <Badge variant={company.isActive ? "default" : "destructive"}>
-                {company.isActive ? "Active" : "Inactive"}
+              <Badge variant={company.data.isActive ? "default" : "destructive"}>
+                {company.data.isActive ? "Active" : "Inactive"}
               </Badge>
             </div>
           </div>
@@ -135,7 +136,7 @@ export function CompanyDetails({ company }) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {formatCurrency(company.subscription?.monthlyPrice || 0)}
+                  {formatCurrency(company.data.subscription?.monthlyPrice || 0)}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   per month
@@ -150,7 +151,7 @@ export function CompanyDetails({ company }) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {company.stats?.users?.current || 0}/{company.stats?.users?.limit || 0}
+                  {company.data.stats?.users?.current || 0}/{company.data.stats?.users?.limit || 0}
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                   <div 
@@ -171,7 +172,7 @@ export function CompanyDetails({ company }) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {company.stats?.franchises?.current || 0}/{company.stats?.franchises?.limit || 0}
+                  {company.data.stats?.franchises?.current || 0}/{company.data.stats?.franchises?.limit || 0}
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                   <div 
@@ -192,10 +193,10 @@ export function CompanyDetails({ company }) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-purple-600">
-                  {formatCurrency(company.stats?.revenue?.monthly || 0)}
+                  {formatCurrency(company.data.stats?.revenue?.monthly || 0)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {company.stats?.revenue?.totalTransactions || 0} transactions
+                  {company.data.stats?.revenue?.totalTransactions || 0} transactions
                 </p>
               </CardContent>
             </Card>
@@ -213,19 +214,19 @@ export function CompanyDetails({ company }) {
               <CardContent className="space-y-4">
                 <div>
                   <p className="font-medium">Company Name</p>
-                  <p className="text-sm text-muted-foreground">{company.name}</p>
+                  <p className="text-sm text-muted-foreground">{company.data.name}</p>
                 </div>
                 <Separator />
                 <div>
                   <p className="font-medium">Company ID</p>
-                  <p className="text-sm text-muted-foreground font-mono">{company.companyId}</p>
+                  <p className="text-sm text-muted-foreground font-mono">{company.data.companyId}</p>
                 </div>
                 <Separator />
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-muted-foreground" />
                   <div>
                     <p className="font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">{company.email}</p>
+                    <p className="text-sm text-muted-foreground">{company.data.email}</p>
                   </div>
                 </div>
                 <Separator />
@@ -233,10 +234,10 @@ export function CompanyDetails({ company }) {
                   <Phone className="w-4 h-4 text-muted-foreground" />
                   <div>
                     <p className="font-medium">Phone</p>
-                    <p className="text-sm text-muted-foreground">{company.phone}</p>
+                    <p className="text-sm text-muted-foreground">{company.data.phone}</p>
                   </div>
                 </div>
-                {company.address && (
+                {company.data.address && (
                   <>
                     <Separator />
                     <div className="flex items-start gap-2">
@@ -245,11 +246,11 @@ export function CompanyDetails({ company }) {
                         <p className="font-medium">Address</p>
                         <p className="text-sm text-muted-foreground">
                           {[
-                            company.address.street,
-                            company.address.city,
-                            company.address.state,
-                            company.address.country,
-                            company.address.zipCode
+                            company.data.address.street,
+                            company.data.address.city,
+                            company.data.address.state,
+                            company.data.address.country,
+                            company.data.address.zipCode
                           ].filter(Boolean).join(', ')}
                         </p>
                       </div>
@@ -270,14 +271,14 @@ export function CompanyDetails({ company }) {
               <CardContent className="space-y-4">
                 <div>
                   <p className="font-medium">Owner Name</p>
-                  <p className="text-sm text-muted-foreground">{company.owner?.name}</p>
+                  <p className="text-sm text-muted-foreground">{company.data.owner?.name}</p>
                 </div>
                 <Separator />
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-muted-foreground" />
                   <div>
                     <p className="font-medium">Owner Email</p>
-                    <p className="text-sm text-muted-foreground">{company.owner?.email}</p>
+                    <p className="text-sm text-muted-foreground">{company.data.owner?.email}</p>
                   </div>
                 </div>
                 <Separator />
@@ -285,13 +286,13 @@ export function CompanyDetails({ company }) {
                   <Phone className="w-4 h-4 text-muted-foreground" />
                   <div>
                     <p className="font-medium">Owner Phone</p>
-                    <p className="text-sm text-muted-foreground">{company.owner?.phone}</p>
+                    <p className="text-sm text-muted-foreground">{company.data.owner?.phone}</p>
                   </div>
                 </div>
                 <Separator />
                 <div>
                   <p className="font-medium">Registration Date</p>
-                  <p className="text-sm text-muted-foreground">{formatDate(company.createdAt)}</p>
+                  <p className="text-sm text-muted-foreground">{formatDate(company.data.createdAt)}</p>
                 </div>
               </CardContent>
             </Card>
@@ -319,28 +320,28 @@ export function CompanyDetails({ company }) {
                 </div>
                 <div className="flex justify-between">
                   <span>Monthly Price</span>
-                  <span className="font-medium">{formatCurrency(company.subscription?.monthlyPrice || 0)}</span>
+                  <span className="font-medium">{formatCurrency(company.data.subscription?.monthlyPrice || 0)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Start Date</span>
                   <span className="font-medium">
-                    {company.subscription?.startDate ? formatDate(company.subscription.startDate) : 'N/A'}
+                    {company.data.subscription?.startDate ? formatDate(company.data.subscription.startDate) : 'N/A'}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>End Date</span>
                   <span className="font-medium">
-                    {company.subscription?.endDate ? formatDate(company.subscription.endDate) : 'N/A'}
+                    {company.data.subscription?.endDate ? formatDate(company.data.subscription.endDate) : 'N/A'}
                   </span>
                 </div>
                 <Separator />
                 <div className="flex justify-between">
                   <span className="font-medium">Max Users</span>
-                  <span className="font-bold">{company.subscription?.maxUsers || 0}</span>
+                  <span className="font-bold">{company.data.subscription?.maxUsers || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Max Locations</span>
-                  <span className="font-bold">{company.subscription?.maxFranchises || 0}</span>
+                  <span className="font-bold">{company.data.subscription?.maxFranchises || 0}</span>
                 </div>
               </CardContent>
             </Card>
@@ -352,31 +353,31 @@ export function CompanyDetails({ company }) {
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
                   <span>Current Users</span>
-                  <span className="font-medium">{company.stats?.users?.current || 0}</span>
+                  <span className="font-medium">{company.data.stats?.users?.current || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Remaining Users</span>
-                  <span className="font-medium text-green-600">{company.stats?.users?.remaining || 0}</span>
+                  <span className="font-medium text-green-600">{company.data.stats?.users?.remaining || 0}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between">
                   <span>Current Locations</span>
-                  <span className="font-medium">{company.stats?.franchises?.current || 0}</span>
+                  <span className="font-medium">{company.data.stats?.franchises?.current || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Remaining Locations</span>
-                  <span className="font-medium text-green-600">{company.stats?.franchises?.remaining || 0}</span>
+                  <span className="font-medium text-green-600">{company.data.stats?.franchises?.remaining || 0}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between">
                   <span>Monthly Revenue</span>
                   <span className="font-medium text-purple-600">
-                    {formatCurrency(company.stats?.revenue?.monthly || 0)}
+                    {formatCurrency(company.data.stats?.revenue?.monthly || 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Total Transactions</span>
-                  <span className="font-medium">{company.stats?.revenue?.totalTransactions || 0}</span>
+                  <span className="font-medium">{company.data.stats?.revenue?.totalTransactions || 0}</span>
                 </div>
               </CardContent>
             </Card>
@@ -391,7 +392,7 @@ export function CompanyDetails({ company }) {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-blue-600">
-                  {((company.stats?.users?.current || 0) / (company.stats?.users?.limit || 1) * 100).toFixed(1)}%
+                  {((company.data.stats?.users?.current || 0) / (company.data.stats?.users?.limit || 1) * 100).toFixed(1)}%
                 </div>
                 <p className="text-sm text-muted-foreground">Capacity Utilized</p>
                 <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
@@ -409,7 +410,7 @@ export function CompanyDetails({ company }) {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-green-600">
-                  {((company.stats?.franchises?.current || 0) / (company.stats?.franchises?.limit || 1) * 100).toFixed(1)}%
+                  {((company.data.stats?.franchises?.current || 0) / (company.data.stats?.franchises?.limit || 1) * 100).toFixed(1)}%
                 </div>
                 <p className="text-sm text-muted-foreground">Locations Active</p>
                 <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
@@ -427,11 +428,11 @@ export function CompanyDetails({ company }) {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-purple-600">
-                  {formatCurrency(company.stats?.revenue?.monthly || 0)}
+                  {formatCurrency(company.data.stats?.revenue?.monthly || 0)}
                 </div>
                 <p className="text-sm text-muted-foreground">This Month</p>
                 <div className="text-xs text-muted-foreground mt-1">
-                  {company.stats?.revenue?.totalTransactions || 0} transactions
+                  {company.data.stats?.revenue?.totalTransactions || 0} transactions
                 </div>
               </CardContent>
             </Card>
@@ -447,20 +448,20 @@ export function CompanyDetails({ company }) {
                   <div className="flex justify-between">
                     <span className="text-sm">Subscription Revenue</span>
                     <span className="text-sm font-medium">
-                      {formatCurrency(company.subscription?.monthlyPrice || 0)}/month
+                      {formatCurrency(company.data.subscription?.monthlyPrice || 0)}/month
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Business Revenue</span>
                     <span className="text-sm font-medium">
-                      {formatCurrency(company.stats?.revenue?.monthly || 0)}/month
+                      {formatCurrency(company.data.stats?.revenue?.monthly || 0)}/month
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Average per Transaction</span>
                     <span className="text-sm font-medium">
                       {formatCurrency(
-                        (company.stats?.revenue?.monthly || 0) / (company.stats?.revenue?.totalTransactions || 1)
+                        (company.data.stats?.revenue?.monthly || 0) / (company.data.stats?.revenue?.totalTransactions || 1)
                       )}
                     </span>
                   </div>
@@ -468,16 +469,16 @@ export function CompanyDetails({ company }) {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">Active Since</span>
-                    <span className="text-sm font-medium">{formatDate(company.createdAt)}</span>
+                    <span className="text-sm font-medium">{formatDate(company.data.createdAt)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Last Updated</span>
-                    <span className="text-sm font-medium">{formatDate(company.updatedAt)}</span>
+                    <span className="text-sm font-medium">{formatDate(company.data.updatedAt)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Account Status</span>
-                    <Badge variant={company.isActive ? "default" : "destructive"}>
-                      {company.isActive ? "Active" : "Inactive"}
+                    <Badge variant={company.data.isActive ? "default" : "destructive"}>
+                      {company.data.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </div>
                 </div>
@@ -499,11 +500,11 @@ export function CompanyDetails({ company }) {
                 <div>
                   <p className="font-medium">Account Status</p>
                   <p className="text-sm text-muted-foreground">
-                    Current account is {company.isActive ? 'active' : 'inactive'}
+                    Current account is {company.data.isActive ? 'active' : 'inactive'}
                   </p>
                 </div>
-                <Badge variant={company.isActive ? "default" : "destructive"}>
-                  {company.isActive ? "Active" : "Inactive"}
+                <Badge variant={company.data.isActive ? "default" : "destructive"}>
+                  {company.data.isActive ? "Active" : "Inactive"}
                 </Badge>
               </div>
               <Separator />

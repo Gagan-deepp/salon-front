@@ -4,7 +4,7 @@ import { auth } from "./lib/auth";
 const routePermissions = [
     // Most specific routes first - SaaS Owner routes
     {
-        paths: ['/admin/companies', '/admin/subscription', '/admin/offers'], // Changed from /admin/company to /admin/companies
+        paths: ['/admin/companies', '/admin/subscription'], // Changed from /admin/company to /admin/companies
         allowedRoles: ['SAAS_OWNER'],
     },
 
@@ -16,19 +16,19 @@ const routePermissions = [
 
     // Franchise Owner and above routes
     {
-        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/users','/admin/offers'],
+        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/users','/admin/offers','/admin/packages'],
         allowedRoles: ['FRANCHISE_OWNER', 'SUPER_ADMIN'], // Removed CASHIER for most routes
     },
 
     // Super Admin only routes
     {
-        paths: ['/admin/branches','/admin/offers'], // Super admin specific routes
+        paths: ['/admin/branches','/admin/offers','/admin/packages'], // Super admin specific routes
         allowedRoles: ['SUPER_ADMIN'],
     },
 
     // General admin dashboard - most permissive, should be last
     {
-        paths: ['/admin'],
+        paths: ['/admin','/admin/offers'],
         allowedRoles: ['SUPER_ADMIN', 'FRANCHISE_OWNER', 'CASHIER'], // All admin users can access base dashboard
     },
 ];

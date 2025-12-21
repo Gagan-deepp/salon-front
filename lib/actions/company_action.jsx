@@ -85,6 +85,7 @@ export async function getSaaSDashboard() {
 export async function getCompany(companyId) {
   try {
     const headers = await getAuthHeaders()
+    console.log("company in api ====================",companyId)
     const res = await axios.get(`${BASE_URL}/companies/${companyId}`, { headers })
     console.log("getCompany response", res.data)
     return { success: true, data: res.data }
