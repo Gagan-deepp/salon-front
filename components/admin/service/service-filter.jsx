@@ -58,6 +58,8 @@ export function ServiceFilter({ initialSearchTerm, initialCategoryFilter, initia
         if (currentPage) params.set("page", currentPage)
         if (currentLimit) params.set("limit", currentLimit)
 
+        params.set("page", "1")
+
         const query = params.toString()
         router.push(`/admin/services${query ? `?${query}` : ""}`)
     }, [debouncedSearchTerm, categoryFilter, roleFilter, router])

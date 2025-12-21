@@ -25,12 +25,7 @@ export default async function PaymentsPage({ searchParams }) {
     endDate: searchP.endDate || "",
   }
 
-  const result = user.role === "SUPER_ADMIN" ? await getAllPayments(params) : user.role === "CASHIER" ? await getCashierPayments(params, user.id) : await getFranchisePayments(params)
 
-  console.debug("Payment Data Result ==> ", result.data.data)
-  const payments = result.success ? result.data.data || [] : []
-  const pagination = result.success ? result.data.pagination || {} : {}
-  const total = result.success ? result.data.data.length || 0 : 0
 
   return (
     <div className="space-y-6 p-8">
@@ -55,25 +50,45 @@ export default async function PaymentsPage({ searchParams }) {
       <PaymentFilters />
 
       {/* Payments Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Payment History</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<TableSkeleton />}>
-            <PaymentTable payments={payments}
-              pagination={
-                {
-                  page: searchP.page ? parseInt(searchP.page) : 1,
-                  limit: searchP.limit ? parseInt(searchP.limit) : 10,
-                  total: pagination.total || 0,
-                  totalPages: pagination.totalPages || 0,
-                }
-              }
-              total={total} />
-          </Suspense>
-        </CardContent>
-      </Card>
+      <Suspense key={JSON.stringify(params)} fallback={<TableSkeleton />}>
+        <PaymentTableWrapper
+          params={params}
+          user={user}
+        />
+      </Suspense>
+
     </div>
+  )
+}
+
+
+
+const PaymentTableWrapper = async ({ params, user }) => {
+
+  const result = user.role === "SUPER_ADMIN" ? await getAllPayments(params) : user.role === "CASHIER" ? await getCashierPayments(params, user.id) : await getFranchisePayments(params)
+
+  console.debug("Payment Data Result ==> ", result.data.data)
+  const payments = result.success ? result.data.data || [] : []
+  const pagination = result.success ? result.data.pagination || {} : {}
+  const total = result.success ? result.data.data.length || 0 : 0
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">Payment History</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Suspense fallback={<TableSkeleton />}>
+          <PaymentTable payments={payments}
+            pagination={
+              {
+                page: params.page ? parseInt(params.page) : 1,
+                limit: params.limit ? parseInt(params.limit) : 10,
+                totalPages: pagination.totalPages || 0,
+              }
+            }
+            total={total} />
+        </Suspense>
+      </CardContent>
+    </Card>
   )
 }

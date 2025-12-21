@@ -55,8 +55,9 @@ export async function createService(payload) {
 export async function getServices(params) {
   try {
     const headers = await getAuthHeaders()
+    console.log("getServices params", params)
     const res = await axios.get(`${BASE_URL}/services`, { params, headers })
-    console.log("getServices response", res.data)
+    // console.log("getServices response", res.data)
     return { success: true, data: res.data }
   } catch (error) {
     console.error("getServices error", error.response?.data)

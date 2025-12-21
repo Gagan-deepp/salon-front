@@ -18,7 +18,7 @@ export function OfferFilter({ initialSearchTerm, initialStatusFilter, initialAct
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams)
-    
+
     if (searchTerm) {
       params.set("search", searchTerm)
     } else {
@@ -38,7 +38,7 @@ export function OfferFilter({ initialSearchTerm, initialStatusFilter, initialAct
     }
 
     params.set("page", "1") // Reset to first page on filter change
-
+    params.set("page", "1")
     router.push(`/admin/offers?${params.toString()}`)
   }, [searchTerm, statusFilter, activeOnly, router, searchParams])
 
@@ -80,8 +80,8 @@ export function OfferFilter({ initialSearchTerm, initialStatusFilter, initialAct
         </Select>
 
         {/* Clear Filters */}
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={handleClearFilters}
           className="w-full md:w-auto"
         >

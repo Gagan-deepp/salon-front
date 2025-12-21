@@ -1,11 +1,10 @@
-import { Suspense } from "react"
-import { getAllCustomers, getCustomers } from "@/lib/actions/customer_action"
-import { CustomerTable } from "@/components/admin/customer/customer-table"
 import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog"
-import { Button } from "@/components/ui/button"
-import { Plus } from 'lucide-react'
+import { CustomerTable } from "@/components/admin/customer/customer-table"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
-import { auth } from "@/lib/auth"
+import { Button } from "@/components/ui/button"
+import { getCustomers } from "@/lib/actions/customer_action"
+import { Plus } from 'lucide-react'
+import { Suspense } from "react"
 
 async function CustomerList({ searchParams }) {
 
@@ -13,15 +12,13 @@ async function CustomerList({ searchParams }) {
 
   const params = {
     page: searchP.page || 1,
-    limit: searchP.limit || 10,
+    limit: searchP.limit || 30,
     search: searchP.search || "",
     gender: searchP.gender || "",
     isActive: searchP.isActive || true,
   }
 
   const result = await getCustomers(params)
-
-  console.log("\n\n Customer result ===> ", result.data)
 
   const customers = result.data.data.customers
   const pagination = result.data.data.pagination

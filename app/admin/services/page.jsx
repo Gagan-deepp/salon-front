@@ -15,13 +15,13 @@ export default async function ServicesPage({ searchParams }) {
   const { user } = await auth()
   const result = await getServices({
     page: searchP.page || 1,
-    limit: searchP.limit || 10,
+    limit: searchP.limit || 30,
     search: searchP.search || "",
     category: searchP.category || "",
     role: searchP.role || "",
   })
 
-  console.log("\n\Services result ===> ", result.data)
+  // console.log("\n\Services result ===> ", result.data)
 
   const services = result.data.data || []
   const pagination = result.data.pagination || {}

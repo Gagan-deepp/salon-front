@@ -7,6 +7,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 function Pagination({
   className,
@@ -47,7 +48,7 @@ function PaginationLink({
   ...props
 }) {
   return (
-    <a
+    <Link
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
       data-active={isActive}

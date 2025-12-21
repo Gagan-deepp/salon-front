@@ -28,23 +28,25 @@ export function ProductFilter({ initialSearchTerm, initialCategoryFilter }) {
     // Combine all filters into a single useEffect to prevent multiple API calls
     useEffect(() => {
         const params = new URLSearchParams()
-        
+
         // Add search param
         if (debouncedSearchTerm) {
             params.set("search", debouncedSearchTerm)
         }
-        
+
         // Add category param
         if (categoryFilter && categoryFilter !== "all") {
             params.set("category", categoryFilter)
         }
-        
+
         // Preserve other existing params (like page, limit)
         const currentPage = searchParams.get("page")
         const currentLimit = searchParams.get("limit")
         if (currentPage) params.set("page", currentPage)
         if (currentLimit) params.set("limit", currentLimit)
-        
+
+        params.set("page", "1") // Reset to first page on filter change
+
         const query = params.toString()
         router.push(`/admin/products${query ? `?${query}` : ""}`)
     }, [debouncedSearchTerm, categoryFilter, router])

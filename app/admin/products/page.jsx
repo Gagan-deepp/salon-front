@@ -15,7 +15,7 @@ export default async function ProductsPage({ searchParams }) {
   const { user } = await auth()
   const result = await getProducts({
     page: searchP.page || 1,
-    limit: searchP.limit || 10,
+    limit: searchP.limit || 30,
     search: searchP.search || "",
     category: searchP.category || "",
     lowStock: searchP.lowStock || "",

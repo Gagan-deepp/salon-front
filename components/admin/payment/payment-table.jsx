@@ -6,11 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Eye } from "lucide-react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 
-export function PaymentTable({ payments, pagination, total }) {
+export function PaymentTable({ payments, pagination }) {
   const router = useRouter()
-  const searchParams = useSearchParams()
 
 
   const getStatusBadge = (status) => {
@@ -52,12 +51,6 @@ export function PaymentTable({ payments, pagination, total }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-500">
-          Showing {payments.length} of {total} payments
-        </div>
-      </div>
-
       <div className="border rounded-lg">
         <Table>
           <TableHeader>

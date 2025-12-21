@@ -31,22 +31,22 @@ export function PaymentFilters() {
     // Combine all filters into a single useEffect to prevent multiple API calls
     useEffect(() => {
         const params = new URLSearchParams()
-        
+
         // Add search param
         if (debouncedSearchTerm) {
             params.set("search", debouncedSearchTerm)
         }
-        
+
         // Add status param
         if (statusFilter && statusFilter !== "all") {
             params.set("status", statusFilter)
         }
-        
+
         // Add payment mode param
         if (paymentModeFilter && paymentModeFilter !== "all") {
             params.set("paymentMode", paymentModeFilter)
         }
-        
+
         // Add date params
         if (startDate) {
             params.set("startDate", format(startDate, "yyyy-MM-dd"))
@@ -54,13 +54,15 @@ export function PaymentFilters() {
         if (endDate) {
             params.set("endDate", format(endDate, "yyyy-MM-dd"))
         }
-        
+
         // Preserve pagination
         const currentPage = searchParams.get("page")
         const currentLimit = searchParams.get("limit")
         if (currentPage) params.set("page", currentPage)
         if (currentLimit) params.set("limit", currentLimit)
-        
+
+        params.set("page", "1")
+
         const query = params.toString()
         router.push(`/admin/payments${query ? `?${query}` : ""}`)
     }, [debouncedSearchTerm, statusFilter, paymentModeFilter, startDate, endDate, router])

@@ -22,21 +22,21 @@ const SUBSCRIPTION_STATUS = [
   { value: "EXPIRED", label: "Expired" },
 ]
 
-export function CompanyFilter({ 
-  initialSearchTerm = "", 
-  initialStatusFilter = "all", 
-  initialPlanFilter = "all" 
+export function CompanyFilter({
+  initialSearchTerm = "",
+  initialStatusFilter = "all",
+  initialPlanFilter = "all"
 }) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
+
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm)
   const [statusFilter, setStatusFilter] = useState(initialStatusFilter)
   const [planFilter, setPlanFilter] = useState(initialPlanFilter)
 
   const updateURL = (newParams) => {
     const params = new URLSearchParams(searchParams.toString())
-    
+
     Object.entries(newParams).forEach(([key, value]) => {
       if (value && value !== "all" && value !== "") {
         params.set(key, value)
@@ -44,12 +44,12 @@ export function CompanyFilter({
         params.delete(key)
       }
     })
-    
+
     params.delete("page") // Reset to first page when filtering
-    
+    params.set("page", "1")
     const queryString = params.toString()
     const url = queryString ? `?${queryString}` : ""
-    
+
     router.push(`/admin/companies${url}`)
   }
 
@@ -88,7 +88,7 @@ export function CompanyFilter({
           />
         </div>
       </div>
-      
+
       <Select value={statusFilter} onValueChange={setStatusFilter}>
         <SelectTrigger className="w-full sm:w-[180px]">
           <SelectValue placeholder="Filter by status" />
