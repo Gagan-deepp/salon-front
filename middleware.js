@@ -16,7 +16,7 @@ const routePermissions = [
 
     // Franchise Owner and above routes
     {
-        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/users','/admin/offers','/admin/packages'],
+        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/users','/admin/offers','/admin/packages','/admin/appointments'],
         allowedRoles: ['FRANCHISE_OWNER', 'SUPER_ADMIN'], // Removed CASHIER for most routes
     },
 

@@ -14,7 +14,8 @@ import {
   Telescope,
   UserCheck,
   UserCircle,
-  Package2Icon
+  Package2Icon,
+  User2Icon
 } from "lucide-react"
 
 import rynoxLogo from "@/assets/rynox-logo.png"
@@ -70,6 +71,11 @@ export function AppSidebar({ ...props }) {
         title: "Users",
         url: "/admin/users",
         icon: UserCheck,
+      },
+      {
+        title: "Appointments",
+        url: "/admin/appointments",
+        icon: User2Icon,
       },
       {
         title: "Reports",
