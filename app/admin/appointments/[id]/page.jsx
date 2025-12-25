@@ -25,22 +25,13 @@ export default function AppointmentPage() {
       
       console.log("🔍 Loading appointment:", params.id)
       
-      // ✅ Now localStorage works (client-side)
-    //   const token = localStorage.getItem('token')
-      
-    
-      
-      console.log("localstorage", token)
+
 
       console.log("params.id",params.id)
 
       const response = await fetch(
         `${BASE_URL}/appointments/getAppointment/${params.id}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
+
       )
 
       console.log("📡 Response status:", response.status)
