@@ -26,13 +26,9 @@ export default function AppointmentPage() {
       console.log("🔍 Loading appointment:", params.id)
       
       // ✅ Now localStorage works (client-side)
-      const token = localStorage.getItem('token')
+    //   const token = localStorage.getItem('token')
       
-      if (!token) {
-        toast.error("Authentication required")
-        router.push('/login')
-        return
-      }
+    
       
       console.log("localstorage", token)
 
