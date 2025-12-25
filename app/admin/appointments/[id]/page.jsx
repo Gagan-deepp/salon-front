@@ -19,6 +19,9 @@ export default function AppointmentPage() {
   const fetchAppointment = async () => {
     try {
       setLoading(true)
+      const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://localhost:8080/api"    
       
       console.log("🔍 Loading appointment:", params.id)
       
@@ -36,7 +39,7 @@ export default function AppointmentPage() {
       console.log("params.id",params.id)
 
       const response = await fetch(
-        `http://localhost:8080/api/appointments/getAppointment/${params.id}`,
+        `${BASE_URL}/appointments/getAppointment/${params.id}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`

@@ -14,6 +14,10 @@ import { useRouter } from "next/navigation"
 export default function AppointmentsPage() {
   const router = useRouter()
   const { data: session } = useSession()
+
+  const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://localhost:8080/api"    
   
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
@@ -63,7 +67,7 @@ export default function AppointmentsPage() {
       
 
       const response = await fetch(
-        `http://localhost:8080/api/appointments/getAllappointments?${params}`,
+        `${BASE_URL}/appointments/getAllappointments?${params}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`

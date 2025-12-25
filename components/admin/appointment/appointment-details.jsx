@@ -45,8 +45,12 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
     try {
       setSaving(true)
 
+        const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://localhost:8080/api"   
+
       const response = await fetch(
-        `http://localhost:8080/api/appointments/updateappointments/${appointment._id}/status`,
+        `${BASE_URL}/appointments/updateappointments/${appointment._id}/status`,
         {
           method: 'PATCH',
           headers: {
