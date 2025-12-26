@@ -119,7 +119,7 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
               <Label htmlFor="gender">Gender</Label>
               <Select name="gender">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select gender" />
+                  <SelectValue placeholder="Select gender *" />
                 </SelectTrigger>
                 <SelectContent>
                   {GENDERS.map((gender) => (
@@ -139,7 +139,10 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="franchiseId">Franchise *</Label>
-              <Select name="franchiseId" required disabled={session?.user?.role !== "SUPER_ADMIN"} value={session?.user?.role !== "SUPER_ADMIN" ? session?.franchiseId : ""}>
+              {session?.user?.role !== "SUPER_ADMIN" && (
+                <Input type="hidden" name="franchiseId" value={session?.franchiseId || ""} />
+              )}
+              <Select name={session?.user?.role === "SUPER_ADMIN" ? "franchiseId" : undefined} required disabled={session?.user?.role !== "SUPER_ADMIN"} value={session?.user?.role !== "SUPER_ADMIN" ? session?.franchiseId : ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select franchise" />
                 </SelectTrigger>

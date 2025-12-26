@@ -25,13 +25,15 @@ async function getAuthHeaders() {
 export async function createCustomer(payload) {
   try {
     const headers = await getAuthHeaders()
+
+    console.debug("createCustomer payload", payload)
     const res = await axios.post(`${BASE_URL}/customers`, payload, { headers })
     console.log("createCustomer response", res.data)
     revalidatePath("/admin/customers")
     revalidatePath("/admin/create/payments")
     return { success: true, data: res.data }
   } catch (error) {
-    console.error("createCustomer error", error)
+    console.error("createCustomer error", error.response?.data)
     return { success: false, error: error.response?.data?.message || "createCustomer failed" }
   }
 }
