@@ -8,7 +8,7 @@ const Testimonials = () => {
         {
             name: "Sarah Johnson",
             role: "Owner, Luxe Salon & Spa",
-            content: "Rynox transformed how we handle billing. We've reduced invoice errors by 95% and saved 10+ hours weekly. The automated reminders have improved our payment collection rate significantly.",
+            content: "RYY-NOX transformed how we handle billing. We've reduced invoice errors by 95% and saved 10+ hours weekly. The automated reminders have improved our payment collection rate significantly.",
             rating: 5,
             image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
         },
@@ -36,7 +36,7 @@ const Testimonials = () => {
         {
             name: "Emma Williams",
             role: "Manager, Serenity Day Spa",
-            content: "From package deals to gift certificates, Rynox handles everything beautifully. Our revenue has increased by 30% since implementing their system. Highly recommend!",
+            content: "From package deals to gift certificates, RYY-NOX handles everything beautifully. Our revenue has increased by 30% since implementing their system. Highly recommend!",
             rating: 5,
             image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
         },
@@ -63,7 +63,7 @@ const Testimonials = () => {
                         Loved by <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Thousands</span> of Businesses
                     </h2>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        See what business owners are saying about Rynox
+                        See what business owners are saying about RYY-NOX
                     </p>
                 </div>
 

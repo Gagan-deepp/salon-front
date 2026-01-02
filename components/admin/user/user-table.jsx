@@ -171,10 +171,12 @@ export function UserTable({ users, currentPage, totalPages, total, searchParams 
                 <TableRow>
                   <TableHead>User</TableHead>
                   <TableHead>Role</TableHead>
+                  <TableHead>Designation</TableHead>
                   <TableHead>Franchise</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Commission</TableHead>
                   <TableHead>Last Login</TableHead>
+                  
                   {session.user.role === "SUPER_ADMIN" && <TableHead className="text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
@@ -207,6 +209,12 @@ export function UserTable({ users, currentPage, totalPages, total, searchParams 
                         <Badge variant={getRoleBadgeVariant(user.role)} className="flex items-center gap-1 w-fit">
                           {getRoleIcon(user.role)}
                           {user.role?.replace("_", " ")}
+                        </Badge>
+                      </TableCell>
+                       <TableCell>
+                        <Badge variant={getRoleBadgeVariant(user.role)} className="flex items-center gap-1 w-fit">
+                          {getRoleIcon(user.role)}
+                          {user.designation?.replace("_", " ")}
                         </Badge>
                       </TableCell>
                       <TableCell>{user.franchiseId?.name || "N/A"}</TableCell>

@@ -14,6 +14,19 @@ import { Loader2 } from "lucide-react"
 import { getFranchises } from "@/lib/actions/franchise_action"
 import { useSession } from "next-auth/react"
 
+const DESIGNATIONS = [
+  'Salon Manager',
+  'Receptionist',
+  'Senior Hairstylist',
+  'Junior Hairstylist',
+  'Senior Beautician',
+  'Junior Beautician',
+  'Nail Artist',
+  'Housekeeping Staff',
+  'Others'
+]
+
+
 async function fetchFranchises() {
   const result = await getFranchises({ limit: 100 })
   return result.success ? result.data.data : []
@@ -50,6 +63,7 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
         phone: formData.get("phone"),
         password: formData.get("password"),
         role: role,
+        designation: formData.get("designation"), // ✅ NEW
         isActive: formData.get("isActive") === "on",
         companyId: session?.companyId || null,
       }
@@ -123,6 +137,21 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
                   <SelectItem value="FRANCHISE_OWNER">Franchise Owner</SelectItem>
                   <SelectItem value="CASHIER">Cashier</SelectItem>
                   <SelectItem value="PROVIDER">Provider</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+              <div className="space-y-2">
+              <Label htmlFor="designation">Designation *</Label>
+              <Select name="designation" required defaultValue="Others">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select designation" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DESIGNATIONS.map((designation) => (
+                    <SelectItem key={designation} value={designation}>
+                      {designation}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

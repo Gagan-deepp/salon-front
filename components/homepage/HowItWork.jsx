@@ -16,7 +16,7 @@ const HowItWorks = () => {
             icon: Package,
             title: "Advanced Stock Usage Tracking",
             benefit: "Identify the true cost per ticket.",
-            description: "Go deeper than inventory counts. Rynox shows the exact stock value consumed for every service, maximizing your yield and service margins.",
+            description: "Go deeper than inventory counts. RYY-NOX shows the exact stock value consumed for every service, maximizing your yield and service margins.",
             gradient: "from-primary to-secondary",
         },
         {

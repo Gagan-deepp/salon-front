@@ -26,7 +26,7 @@ const Hero = () => {
 
                     {/* Subheading */}
                     <p className="text-base md:text-lg text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-                        Go beyond POS. Rynox centralizes every store, standardizes pricing, and delivers real-time profitability analytics — from 1 to 500 locations.
+                        Go beyond POS. RYY-NOX centralizes every store, standardizes pricing, and delivers real-time profitability analytics — from 1 to 500 locations.
                     </p>
 
                     {/* CTA Buttons */}

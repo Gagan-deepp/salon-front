@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import rynoxLogo from "@/assets/rynox-logo.png";
+import rynoxLogo from "@/assets/new-logo-png.png";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import Link from "next/link";
 
@@ -58,7 +58,7 @@ const Header = () => {
                             <img
                                 src={rynoxLogo.src}
                                 alt="Rynox"
-                                className="h-8 md:h-10 w-auto transition-transform group-hover:scale-105"
+                                className="h-24 md:h-22 w-auto transition-transform group-hover:scale-105"
                             />
                         </a>
 

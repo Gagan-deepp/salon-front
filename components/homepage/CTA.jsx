@@ -13,7 +13,7 @@ const CTA = () => {
 
                         <div className="relative z-10">
                             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
-                                Command, Control & Scale — <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">With Rynox.</span>
+                                Command, Control & Scale — <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">With RYY-NOX.</span>
                             </h2>
                             <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
                                 Experience the only system trusted by India's fastest-growing salon and retail chains to unify and maximize their franchise network.

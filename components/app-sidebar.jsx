@@ -18,7 +18,7 @@ import {
   User2Icon
 } from "lucide-react"
 
-import rynoxLogo from "@/assets/rynox-logo.png"
+import rynoxLogo from "@/assets/new-logo-png.png"
 import { NavUser } from "@/components/nav-user"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar"
 import { useSession } from "next-auth/react"
@@ -266,7 +266,7 @@ export function AppSidebar({ ...props }) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton 
-              size="lg" 
+              size="xl" 
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" 
               asChild
             >
@@ -275,7 +275,7 @@ export function AppSidebar({ ...props }) {
                   <img
                     src={rynoxLogo.src}
                     alt="Rynox"
-                    className="h-8 w-auto"
+                    className="h-22 w-auto"
                   />
                 </Link>
               </div>

@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/login-form";
-import rynoxLogo from "@/assets/rynox-logo.png";
+import rynoxLogo from "@/assets/new-logo-png.png";
 
 
 export default function Page() {
@@ -11,7 +11,7 @@ export default function Page() {
           <img
             src={rynoxLogo.src}
             alt="Rynox"
-            className="h-8 md:h-10 w-auto transition-transform group-hover:scale-105"
+            className="h-18 md:h-22 w-auto transition-transform group-hover:scale-105"
           />
         </a>
         <LoginForm />

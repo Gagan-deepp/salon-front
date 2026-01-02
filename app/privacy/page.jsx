@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator"
 import { Shield, Mail, Calendar, FileText, Info } from "lucide-react"
 
 export const metadata = {
-  title: "Privacy Policy | Rynox",
+  title: "Privacy Policy | RYY-NOX",
   description: "Privacy Policy describing how we collect, handle, store, and use information",
 }
 

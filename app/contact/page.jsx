@@ -3,8 +3,8 @@ import { Separator } from "@/components/ui/separator"
 import { Mail, MapPin, Phone, Globe, Info, ArrowLeft } from "lucide-react"
 
 export const metadata = {
-  title: "Contact Us | Rynox",
-  description: "Contact Rynox for software, services, subscriptions, and support queries",
+  title: "Contact Us | RYY-NOX",
+  description: "Contact RYY-NOX for software, services, subscriptions, and support queries",
 }
 
 export default function ContactPage() {

@@ -95,7 +95,7 @@ const Features = () => {
                 {/* CTA Section */}
                 <div className="text-center animate-fade-in" style={{ animationDelay: '600ms' }}>
                     <Button variant="hero" size="xl" className="group shadow-2xl">
-                        See How Rynox Command Center Works
+                        See How RYY-NOX Command Center Works
                         <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                 </div>

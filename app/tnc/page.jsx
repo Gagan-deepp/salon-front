@@ -4,8 +4,8 @@ import { Separator } from "@/components/ui/separator"
 import { FileText, Calendar, ArrowLeftCircle, Shield, AlertTriangle, MapPin, Phone, Mail, Globe, Info } from "lucide-react"
 
 export const metadata = {
-  title: "Terms & Conditions | Rynox",
-  description: "Terms & Conditions for using the Rynox salon management and billing platform.",
+  title: "Terms & Conditions | RYY-NOX",
+  description: "Terms & Conditions for using the RYY-NOX salon management and billing platform.",
 }
 
 export default function TermsPage() {
@@ -25,7 +25,7 @@ export default function TermsPage() {
             <p className="text-sm">Last Updated: Dec, 2025</p>
           </div>
           <p className="text-center mt-4 text-blue-50 max-w-2xl mx-auto">
-            Welcome to Rynox, a cloud-based salon management and billing software developed and maintained by Vicino Tech.
+            Welcome to RYY-NOX, a cloud-based salon management and billing software developed and maintained by Vicino Tech.
             These Terms &amp; Conditions govern your use of our platform, applications, and related digital services.
           </p>
         </div>
@@ -42,7 +42,7 @@ export default function TermsPage() {
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction &amp; Acceptance of Terms</h2>
                   <p className="text-gray-700 leading-relaxed">
-                    By accessing or using the Rynox Platform in any capacity, you confirm that you have read, understood, and
+                    By accessing or using the RYY-NOX Platform in any capacity, you confirm that you have read, understood, and
                     agreed to these Terms. These Terms form a binding contract between you and Vicino Tech and apply to all
                     modules including billing, booking, inventory, CRM, subscriptions, staff tracking, analytics, and integrations.
                   </p>
@@ -61,7 +61,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">2. Eligibility to Use the Platform</h2>
               <p className="text-gray-700 leading-relaxed">
-                To access and use Rynox, you must:
+                To access and use RYY-NOX, you must:
               </p>
               <ul className="list-disc list-inside space-y-2 text-gray-700">
                 <li>Be 18 years or older.</li>
@@ -80,7 +80,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">3. Account Registration &amp; User Responsibilities</h2>
               <p className="text-gray-700 leading-relaxed">
-                To use Rynox, you must create an account with accurate business details (name, salon location, GST, staff roles, etc.).
+                To use RYY-NOX, you must create an account with accurate business details (name, salon location, GST, staff roles, etc.).
                 Once registered, you are responsible for all activity under your account.
               </p>
 
@@ -104,7 +104,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">4. Subscription Plans, Billing &amp; Payment Terms</h2>
               <p className="text-gray-700 leading-relaxed">
-                Rynox operates on a subscription-based model with plans that vary by features and usage. All payments are processed
+                RYY-NOX operates on a subscription-based model with plans that vary by features and usage. All payments are processed
                 securely via third-party gateways such as Razorpay.
               </p>
 
@@ -117,7 +117,7 @@ export default function TermsPage() {
 
               <h3 className="font-semibold text-gray-900 mt-4">4.2 Payment Processing</h3>
               <p className="text-gray-700 leading-relaxed">
-                Payments are handled by secure third-party providers. Rynox does not store card or sensitive payment details.
+                Payments are handled by secure third-party providers. RYY-NOX does not store card or sensitive payment details.
               </p>
 
               <h3 className="font-semibold text-gray-900 mt-4">4.3 Non-Payment or Late Payment</h3>
@@ -138,7 +138,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">5. Use of the Platform – Permissions &amp; Restrictions</h2>
               <p className="text-gray-700 leading-relaxed">
-                Rynox grants you a limited, non-transferable license to use the Platform solely to operate your salon or business.
+                RYY-NOX grants you a limited, non-transferable license to use the Platform solely to operate your salon or business.
                 You agree NOT to:
               </p>
               <ul className="list-disc list-inside space-y-2 text-gray-700">
@@ -159,12 +159,12 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">6. Data Storage, Processing &amp; Ownership</h2>
               <p className="text-gray-700 leading-relaxed">
-                Rynox manages and stores salon data including billing, customer profiles, packages, staff details, inventory, and reports.
+                RYY-NOX manages and stores salon data including billing, customer profiles, packages, staff details, inventory, and reports.
               </p>
 
               <h3 className="font-semibold text-gray-900 mt-4">6.1 Data Ownership</h3>
               <p className="text-gray-700 leading-relaxed">
-                All business and customer data belongs to your salon or business. Rynox only processes, structures, and displays this data.
+                All business and customer data belongs to your salon or business. RYY-NOX only processes, structures, and displays this data.
               </p>
 
               <h3 className="font-semibold text-gray-900 mt-4">6.2 Data Responsibilities</h3>
@@ -186,7 +186,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">7. Third-Party Integrations</h2>
               <p className="text-gray-700 leading-relaxed">
-                Rynox may integrate with payment gateways, SMS providers, WhatsApp Business APIs, email services, and cloud backups.
+                RYY-NOX may integrate with payment gateways, SMS providers, WhatsApp Business APIs, email services, and cloud backups.
                 We are not responsible for:
               </p>
               <ul className="list-disc list-inside space-y-2 text-gray-700">
@@ -206,7 +206,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-gray-900">8. Software Availability &amp; Updates</h2>
               <h3 className="font-semibold text-gray-900">8.1 Service Availability</h3>
               <p className="text-gray-700 leading-relaxed">
-                While we aim for high uptime, Rynox may be temporarily unavailable due to maintenance, upgrades, or issues beyond our control.
+                While we aim for high uptime, RYY-NOX may be temporarily unavailable due to maintenance, upgrades, or issues beyond our control.
                 We will attempt to provide prior notice for planned maintenance.
               </p>
 
@@ -222,11 +222,11 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">9. Intellectual Property Rights</h2>
               <p className="text-gray-700 leading-relaxed">
-                All intellectual property in Rynox, including software code, UI design, workflows, documentation, branding, and trademarks,
+                All intellectual property in RYY-NOX, including software code, UI design, workflows, documentation, branding, and trademarks,
                 belongs exclusively to Vicino Tech.
               </p>
               <p className="text-gray-700 leading-relaxed">
-                You may not modify, reproduce, resell, or distribute any part of the Platform, nor use the Rynox brand without explicit permission.
+                You may not modify, reproduce, resell, or distribute any part of the Platform, nor use the RYY-NOX brand without explicit permission.
               </p>
             </section>
 
@@ -258,7 +258,7 @@ export default function TermsPage() {
 
               <h3 className="font-semibold text-gray-900 mt-4">10.4 Package Expiry</h3>
               <p className="text-gray-700 leading-relaxed">
-                If a package has an expiry date, Rynox automatically marks it as expired after that date. Expired balances become non-redeemable
+                If a package has an expiry date, RYY-NOX automatically marks it as expired after that date. Expired balances become non-redeemable
                 unless your internal policy allows a manual override.
               </p>
             </section>
@@ -270,19 +270,19 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-gray-900">11. Refunds, Cancellations &amp; Expiration</h2>
               <h3 className="font-semibold text-gray-900">11.1 Subscription Refunds</h3>
               <p className="text-gray-700 leading-relaxed">
-                As Rynox is a digital subscription service, payments are generally non-refundable. Limited exceptions may be considered in case
+                As RYY-NOX is a digital subscription service, payments are generally non-refundable. Limited exceptions may be considered in case
                 of severe technical issues.
               </p>
 
               <h3 className="font-semibold text-gray-900 mt-4">11.2 Customer Package Refunds (Salon Responsibility)</h3>
               <p className="text-gray-700 leading-relaxed">
-                If your salon decides to refund a customer&apos;s package, this is entirely your business decision. Rynox does not refund your
+                If your salon decides to refund a customer&apos;s package, this is entirely your business decision. RYY-NOX does not refund your
                 end customers on your behalf.
               </p>
 
               <h3 className="font-semibold text-gray-900 mt-4">11.3 Subscription Cancellation</h3>
               <p className="text-gray-700 leading-relaxed">
-                You may cancel your Rynox subscription at any time. Access generally continues until the end of the current billing cycle.
+                You may cancel your RYY-NOX subscription at any time. Access generally continues until the end of the current billing cycle.
               </p>
             </section>
 
@@ -292,7 +292,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">12. Limitation of Liability</h2>
               <p className="text-gray-700 leading-relaxed">
-                To the maximum extent permitted by law, Rynox and Vicino Tech are not liable for:
+                To the maximum extent permitted by law, RYY-NOX and Vicino Tech are not liable for:
               </p>
               <ul className="list-disc list-inside space-y-2 text-gray-700">
                 <li>Loss of business, revenue, profit, or reputation.</li>
@@ -312,7 +312,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">13. Indemnification</h2>
               <p className="text-gray-700 leading-relaxed">
-                You agree to indemnify and hold harmless Rynox and Vicino Tech from claims, damages, or losses arising from:
+                You agree to indemnify and hold harmless RYY-NOX and Vicino Tech from claims, damages, or losses arising from:
               </p>
               <ul className="list-disc list-inside space-y-2 text-gray-700">
                 <li>Misuse of the Platform.</li>
@@ -329,7 +329,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">14. Termination of Service</h2>
               <p className="text-gray-700 leading-relaxed">
-                We may suspend or terminate your access to Rynox if:
+                We may suspend or terminate your access to RYY-NOX if:
               </p>
               <ul className="list-disc list-inside space-y-2 text-gray-700">
                 <li>You violate these Terms.</li>
@@ -350,7 +350,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-gray-900">15. Modifications to Terms</h2>
               <p className="text-gray-700 leading-relaxed">
                 These Terms may be updated periodically to reflect regulatory changes, product improvements, or operational needs.
-                Continued use of Rynox after such updates implies acceptance of the revised Terms.
+                Continued use of RYY-NOX after such updates implies acceptance of the revised Terms.
               </p>
             </section>
 
@@ -371,7 +371,7 @@ export default function TermsPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">17. Contact Information</h2>
               <p className="text-gray-700 leading-relaxed">
-                For questions, clarifications, or support related to these Terms or to Rynox:
+                For questions, clarifications, or support related to these Terms or to RYY-NOX:
               </p>
 
               <div className="grid md:grid-cols-2 gap-6 mt-6">
@@ -405,10 +405,10 @@ export default function TermsPage() {
                     <h3 className="font-semibold text-gray-900">Email</h3>
                   </div>
                   <a 
-                    href="mailto:rynox0001@gmail.com"
+                    href="mailto:RYY-NOX0001@gmail.com"
                     className="inline-flex items-center gap-2 text-primary font-medium hover:text-primary/80 transition-colors"
                   >
-                    rynox0001@gmail.com
+                    RYY-NOX0001@gmail.com
                   </a>
                 </div>
 

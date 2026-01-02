@@ -52,7 +52,7 @@ const Integrations = () => {
 
                     <div className="text-center mt-8 sm:mt-10 md:mt-12">
                         <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 px-4">
-                            Rynox connects effortlessly with the financial, marketing, and operational tools your
+                            RYY-NOX connects effortlessly with the financial, marketing, and operational tools your
                             business already uses for unified data flow
                         </p>
 

@@ -10,7 +10,7 @@ const Promise = () => {
             icon: Rocket,
             title: "Future-Proof Scalability",
             headline: "Expand effortlessly.",
-            description: "Rynox is built on a robust architecture that supports adding 1 or 100 stores overnight without performance lag or switching systems.",
+            description: "RYY-NOX is built on a robust architecture that supports adding 1 or 100 stores overnight without performance lag or switching systems.",
             gradient: "from-blue-500 to-cyan-500",
         },
         {
@@ -51,7 +51,7 @@ const Promise = () => {
                         </span>
                     </div>
                     <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                        Future-Proof Your Growth <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">With Rynox</span>
+                        Future-Proof Your Growth <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">With RYY-NOX</span>
                     </h2>
                 </div>
 
@@ -99,7 +99,7 @@ const Promise = () => {
                         <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                     <p className="text-sm text-muted-foreground mt-4">
-                        Get a personalized demo and see how Rynox can transform your franchise
+                        Get a personalized demo and see how RYY-NOX can transform your franchise
                     </p>
                 </div>
             </div>

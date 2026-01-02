@@ -23,7 +23,7 @@ const Footer = () => {
                 <div className="mb-10 sm:mb-12">
                     <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10 border-2 border-primary/20 rounded-2xl p-6 sm:p-8 text-center">
                         <p className="text-base sm:text-lg md:text-xl font-semibold text-foreground mb-2">
-                            Join 50,000+ businesses transforming operations with Rynox.
+                            Join 50,000+ businesses transforming operations with RYY-NOX.
                         </p>
                         <p className="text-xs sm:text-sm text-muted-foreground">
                             Trusted by India's leading salon and retail chains
@@ -70,7 +70,7 @@ const Footer = () => {
                 {/* Bottom bar */}
                 <div className="pt-6 sm:pt-8 border-t border-border/50">
                     <div className="flex flex-col md:flex-row justify-between items-center text-xs sm:text-sm text-muted-foreground gap-3">
-                        <p className="text-center md:text-left">© 2025 Rynox. All rights reserved.</p>
+                        <p className="text-center md:text-left">© 2025 RYY-NOX. All rights reserved.</p>
                         <div className="flex flex-wrap gap-4 sm:gap-6 justify-center">
                             <a href="#terms" className="hover:text-primary transition-colors whitespace-nowrap">Terms</a>
                             <a href="/privacy" className="hover:text-primary transition-colors whitespace-nowrap">Privacy Policy</a>

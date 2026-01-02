@@ -10,16 +10,16 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 const FAQ = () => {
     const faqs = [
         {
-            question: "How does Rynox help me enforce standards across my franchise network?",
-            answer: "Rynox's Centralized Price Lock feature allows you to control pricing, services, and promotions from a single master dashboard. Any updates you make are instantly pushed to all franchise locations, ensuring complete brand standardization. Our Franchise Profit Audit tools let you monitor compliance in real-time, tracking performance indicators and identifying any deviations from your standards across the entire network.",
+            question: "How does RYY-NOX help me enforce standards across my franchise network?",
+            answer: "RYY-NOX's Centralized Price Lock feature allows you to control pricing, services, and promotions from a single master dashboard. Any updates you make are instantly pushed to all franchise locations, ensuring complete brand standardization. Our Franchise Profit Audit tools let you monitor compliance in real-time, tracking performance indicators and identifying any deviations from your standards across the entire network.",
         },
         {
             question: "Can I restrict store-level access to only their own data?",
-            answer: "Absolutely. Rynox Enterprise tiers include sophisticated role-based access controls. You can define granular permissions for each user and location, ensuring franchise owners and staff only see data relevant to their specific store. Meanwhile, corporate administrators maintain full visibility across the network. This security architecture protects sensitive profitability data while empowering local teams with the information they need.",
+            answer: "Absolutely. RYY-NOX Enterprise tiers include sophisticated role-based access controls. You can define granular permissions for each user and location, ensuring franchise owners and staff only see data relevant to their specific store. Meanwhile, corporate administrators maintain full visibility across the network. This security architecture protects sensitive profitability data while empowering local teams with the information they need.",
         },
         {
             question: "Do you offer data migration from my existing POS software?",
-            answer: "Yes! Our Dedicated Launch Team provides white-glove data migration services for all Enterprise customers. We handle the complex process of transferring your customer data, service catalogs, pricing structures, and historical records from your existing system to Rynox. Our specialists work closely with your team to ensure a seamless transition with zero data loss and minimal disruption to your operations.",
+            answer: "Yes! Our Dedicated Launch Team provides white-glove data migration services for all Enterprise customers. We handle the complex process of transferring your customer data, service catalogs, pricing structures, and historical records from your existing system to RYY-NOX. Our specialists work closely with your team to ensure a seamless transition with zero data loss and minimal disruption to your operations.",
         },
         {
             question: "How does the per-store fee work above the 20-unit Enterprise limit?",
@@ -27,7 +27,7 @@ const FAQ = () => {
         },
         {
             question: "How secure is my sensitive customer and profitability data?",
-            answer: "Security is our top priority. Rynox uses enterprise-grade cloud infrastructure with 256-bit SSL encryption, multi-factor authentication, and role-based access controls. Your data is hosted on secure, redundant servers with 24x7 monitoring and automated backups. We're fully compliant with industry standards including PCI DSS and GDPR, and we conduct regular third-party security audits to ensure your customer and financial data remains protected at all times.",
+            answer: "Security is our top priority. RYY-NOX uses enterprise-grade cloud infrastructure with 256-bit SSL encryption, multi-factor authentication, and role-based access controls. Your data is hosted on secure, redundant servers with 24x7 monitoring and automated backups. We're fully compliant with industry standards including PCI DSS and GDPR, and we conduct regular third-party security audits to ensure your customer and financial data remains protected at all times.",
         },
     ];
 
