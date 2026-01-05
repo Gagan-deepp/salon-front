@@ -1,35 +1,58 @@
-"use client"
+"use client";
 
-import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog"
-import { DiscountDialog } from "@/components/admin/payment/discount-dialog"
-import { PaymentDialog } from "@/components/admin/payment/payment-dialog"
-import { ProductCard } from "@/components/admin/payment/product-card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getCustomersDropdown } from "@/lib/actions/customer_action"
-import { calculatePaymentAmount, createPayment, validatePromoCode } from "@/lib/actions/payment_action"
-import { getProducts } from "@/lib/actions/product_action"
-import { getServices } from "@/lib/actions/service_action"
-import { getUsers } from "@/lib/actions/user_action"
-import { Calculator, IndianRupee, Loader2, Plus, Receipt, Tag, Trash } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
+import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog";
+import { DiscountDialog } from "@/components/admin/payment/discount-dialog";
+import { PaymentDialog } from "@/components/admin/payment/payment-dialog";
+import { ProductCard } from "@/components/admin/payment/product-card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getCustomersDropdown } from "@/lib/actions/customer_action";
+import {
+  calculatePaymentAmount,
+  createPayment,
+  validatePromoCode,
+} from "@/lib/actions/payment_action";
+import { getProducts } from "@/lib/actions/product_action";
+import { getServices } from "@/lib/actions/service_action";
+import { getUsers } from "@/lib/actions/user_action";
+import {
+  Calculator,
+  IndianRupee,
+  User,
+  Loader2,
+  Plus,
+  Receipt,
+  Tag,
+  Trash,
+  Search,
+  Phone,
+  X
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function CreatePaymentPage() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const [customers, setCustomers] = useState([])
-  const [providers, setProviders] = useState([])
-  const [services, setServices] = useState([])
-  const [products, setProducts] = useState([])
+  const [customers, setCustomers] = useState([]);
+  const [providers, setProviders] = useState([]);
+  const [services, setServices] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [customerSearchText, setCustomerSearchText] = useState("");
 
   const [calculations, setCalculations] = useState({
     subtotal: 0,
@@ -47,7 +70,7 @@ export default function CreatePaymentPage() {
       total: 0,
     },
     finalAmount: 0,
-  })
+  });
 
   const [formData, setFormData] = useState({
     customerId: "",
@@ -57,49 +80,50 @@ export default function CreatePaymentPage() {
       percentage: 0,
       promoCode: "",
     },
-  })
+  });
 
   // Fetch dropdown data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [customersRes, servicesRes, productsRes, providerRes] = await Promise.all([
-          getCustomersDropdown({ limit: 100 }),
-          getServices({ limit: 100 }),
-          getProducts({ limit: 100 }),
-          getUsers({ page: 1, limit: 100, isActive: true }),
-        ])
+        const [customersRes, servicesRes, productsRes, providerRes] =
+          await Promise.all([
+            getCustomersDropdown({ limit: 100 }),
+            getServices({ limit: 100 }),
+            getProducts({ limit: 100 }),
+            getUsers({ page: 1, limit: 100, isActive: true }),
+          ]);
 
-        console.debug("Customer res data ===> ", customersRes.data)
-        console.debug("Service res data ===> ", servicesRes.data)
-        console.debug("Product res data ===> ", productsRes.data)
-        console.debug("providerRes  data ===> ", providerRes.data)
+        console.debug("Customer res data ===> ", customersRes.data);
+        console.debug("Service res data ===> ", servicesRes.data);
+        console.debug("Product res data ===> ", productsRes.data);
+        console.debug("providerRes  data ===> ", providerRes.data);
 
         if (customersRes.success && customersRes.data.data?.length > 0) {
-          setCustomers(customersRes.data.data)
+          setCustomers(customersRes.data.data);
         }
         if (servicesRes.success && servicesRes.data.data?.length > 0) {
-          setServices(servicesRes.data.data)
+          setServices(servicesRes.data.data);
         }
         if (productsRes.success && productsRes.data.data?.length > 0) {
-          setProducts(productsRes.data.data)
+          setProducts(productsRes.data.data);
         }
         if (providerRes.success && providerRes.data.data?.length > 0) {
-          setProviders(providerRes.data.data)
+          setProviders(providerRes.data.data);
         }
       } catch (error) {
-        console.error("Failed to fetch dropdown data:", error)
-        console.log("Using dummy data for testing")
+        console.error("Failed to fetch dropdown data:", error);
+        console.log("Using dummy data for testing");
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   // Calculate amounts when services/products/discount change
   useEffect(() => {
     if (formData.services.length > 0 || formData.products.length > 0) {
-      calculateAmounts()
+      calculateAmounts();
     } else {
       setCalculations({
         subtotal: 0,
@@ -108,9 +132,9 @@ export default function CreatePaymentPage() {
         discount: { percentage: 0, amount: 0, promoCode: "" },
         gst: { cgst: 0, sgst: 0, igst: 0, total: 0 },
         finalAmount: 0,
-      })
+      });
     }
-  }, [formData.services, formData.products, formData.discount.percentage])
+  }, [formData.services, formData.products, formData.discount.percentage]);
 
   const calculateAmounts = async () => {
     try {
@@ -120,34 +144,34 @@ export default function CreatePaymentPage() {
         discountPercentage: formData.discount.percentage,
         promoCode: formData.discount.promoCode,
         discount: formData.discount,
-      }
+      };
 
-      const result = await calculatePaymentAmount(payload)
+      const result = await calculatePaymentAmount(payload);
       if (result.success) {
-        setCalculations(result.data.data)
+        setCalculations(result.data.data);
       } else {
-        calculateAmountsLocally()
+        calculateAmountsLocally();
       }
     } catch (error) {
-      console.error("Failed to calculate amounts:", error.response)
-      calculateAmountsLocally()
+      console.error("Failed to calculate amounts:", error.response);
+      calculateAmountsLocally();
     }
-  }
+  };
 
   const calculateAmountsLocally = () => {
-    const servicesSubtotal = servicesTotal()
-    const productsSubtotal = productTotal()
-    const subtotal = servicesSubtotal + productsSubtotal
+    const servicesSubtotal = servicesTotal();
+    const productsSubtotal = productTotal();
+    const subtotal = servicesSubtotal + productsSubtotal;
 
-    const discountAmount = (subtotal * formData.discount.percentage) / 100
-    const amountAfterDiscount = subtotal - discountAmount
+    const discountAmount = (subtotal * formData.discount.percentage) / 100;
+    const amountAfterDiscount = subtotal - discountAmount;
 
     // Calculate GST (18% total - 9% CGST + 9% SGST)
-    const gstAmount = (amountAfterDiscount * 18) / 100
-    const cgst = gstAmount / 2
-    const sgst = gstAmount / 2
+    const gstAmount = (amountAfterDiscount * 18) / 100;
+    const cgst = gstAmount / 2;
+    const sgst = gstAmount / 2;
 
-    const finalAmount = amountAfterDiscount + gstAmount
+    const finalAmount = amountAfterDiscount + gstAmount;
 
     setCalculations({
       subtotal,
@@ -165,37 +189,37 @@ export default function CreatePaymentPage() {
         total: gstAmount,
       },
       finalAmount,
-    })
-  }
+    });
+  };
 
   const servicesTotal = () => {
     return formData.services.reduce((total, service) => {
-      return total + service.price * service.quantity
-    }, 0)
-  }
+      return total + service.price * service.quantity;
+    }, 0);
+  };
 
   const handleRemoveService = (serviceId) => {
     setFormData((prev) => ({
       ...prev,
       services: prev.services.filter((s) => s.serviceId !== serviceId),
-    }))
-  }
+    }));
+  };
 
   const productTotal = () => {
     return formData.products.reduce((total, product) => {
-      return total + product.price * product.quantity
-    }, 0)
-  }
+      return total + product.price * product.quantity;
+    }, 0);
+  };
 
   const handlePromoCodeValidation = async () => {
-    if (!formData.discount.promoCode || calculations.subtotal === 0) return
+    if (!formData.discount.promoCode || calculations.subtotal === 0) return;
 
     try {
       const result = await validatePromoCode({
         promoCode: formData.discount.promoCode,
         amount: calculations.subtotal,
         customerId: formData.customerId,
-      })
+      });
 
       if (result.success) {
         setFormData((prev) => ({
@@ -204,61 +228,73 @@ export default function CreatePaymentPage() {
             ...prev.discount,
             percentage: result.data.discountPercentage,
           },
-        }))
-        toast.success(`Promo code applied! Discount: ₹${result.data.discountAmount}`)
+        }));
+        toast.success(
+          `Promo code applied! Discount: ₹${result.data.discountAmount}`
+        );
       } else {
-        toast.warning(`Promo code applied! Discount: ₹${result.error}`)
+        toast.warning(`Promo code applied! Discount: ₹${result.error}`);
       }
     } catch (error) {
-      toast.error(`Failed to validate promo code`)
+      toast.error(`Failed to validate promo code`);
     }
-  }
+  };
 
   const handleCustomerCreated = (newCustomer) => {
-    setCustomers((prevCustomers) => [newCustomer, ...prevCustomers])
+    setCustomers((prevCustomers) => [newCustomer, ...prevCustomers]);
     setFormData((prevFormData) => ({
       ...prevFormData,
       customerId: newCustomer._id,
-    }))
-  }
+    }));
+  };
 
   const handleDiscountApply = (discountData) => {
     setFormData((prev) => ({
       ...prev,
       discount: discountData,
-    }))
-  }
+    }));
+  };
 
   const handlePaymentComplete = async (paymentData) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const payload = {
         ...formData,
         ...paymentData,
         amounts: calculations,
-      }
+      };
 
-      const result = await createPayment(payload)
+      const result = await createPayment(payload);
 
-      console.log("Create payment result ==> ", result)
+      console.log("Create payment result ==> ", result);
       if (result.success) {
         // Get the invoice/payment data from the result (now populated!)
-        const invoice = result.data.invoice
-        const payment = result.data.payment
+        const invoice = result.data.invoice;
+        const payment = result.data.payment;
 
         // Get selected customer for fallback
-        const selectedCustomer = customers.find((c) => c._id === formData.customerId)
+        const selectedCustomer = customers.find(
+          (c) => c._id === formData.customerId
+        );
 
         // Prepare the invoice data - now using populated data from backend
         const invoiceData = {
           customerInfo: {
             name: invoice.customerId?.name || selectedCustomer?.name || "N/A",
-            phoneNumber: invoice.customerId?.phone || selectedCustomer?.phone || "N/A",
+            phoneNumber:
+              invoice.customerId?.phone || selectedCustomer?.phone || "N/A",
             email: invoice.customerId?.email || selectedCustomer?.email || "",
-            address: invoice.customerId?.address || selectedCustomer?.address || "",
+            address:
+              invoice.customerId?.address || selectedCustomer?.address || "",
             modeOfPayment: payment.paymentMode || "N/A",
-            placeOfSupply: paymentData.placeOfSupply || invoice.customerId?.address?.state || "N/A",
-            placeOfDelivery: paymentData.placeOfDelivery || invoice.customerId?.address?.city || "N/A",
+            placeOfSupply:
+              paymentData.placeOfSupply ||
+              invoice.customerId?.address?.state ||
+              "N/A",
+            placeOfDelivery:
+              paymentData.placeOfDelivery ||
+              invoice.customerId?.address?.city ||
+              "N/A",
           },
           sellerInfo: {
             companyName: invoice.franchiseId?.name || "N/A",
@@ -275,53 +311,54 @@ export default function CreatePaymentPage() {
             orderNumber: payment._id || invoice._id,
             orderDate: new Date(invoice.createdAt).toLocaleDateString("en-IN"),
             invoiceNumber: invoice.invoiceNumber,
-            invoiceDate: new Date(invoice.createdAt).toLocaleDateString("en-IN"),
+            invoiceDate: new Date(invoice.createdAt).toLocaleDateString(
+              "en-IN"
+            ),
             gstNumber: invoice.franchiseId?.gstNumber || "N/A",
             panNumber: invoice.franchiseId?.panNumber || "N/A",
             cinNumber: invoice.franchiseId?.cinNumber || "N/A",
           },
           items: [
-            ...formData.services.map(s => ({
+            ...formData.services.map((s) => ({
               serviceName: s.serviceName,
               price: s.price,
               quantity: s.quantity,
-              gstRate: s.gstRate || 18
+              gstRate: s.gstRate || 18,
             })),
-            ...formData.products.map(p => ({
+            ...formData.products.map((p) => ({
               productName: p.productName,
               price: p.price,
               quantity: p.quantity,
-              gstRate: p.gstRate || 18
-            }))
+              gstRate: p.gstRate || 18,
+            })),
           ],
           discount: {
             percentage: calculations.discount.percentage,
-            amount: calculations.discount.amount
-          }
-        }
+            amount: calculations.discount.amount,
+          },
+        };
 
-        const response = await fetch('/api/send-invoice', {
-          method: 'POST',
+        const response = await fetch("/api/send-invoice", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(invoiceData),
-        })
+        });
 
-        const res = await response.json()
-        console.log("invoice response ==> ", res)
-        toast.success(`Payment created successfully`)
+        const res = await response.json();
+        console.log("invoice response ==> ", res);
+        toast.success(`Payment created successfully`);
         // router.push("/admin/payments")
       } else {
-        toast.warning(result.error)
+        toast.warning(result.error);
       }
     } catch (error) {
-      toast.error(`Failed to create payment`)
+      toast.error(`Failed to create payment`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
+  };
 
   return (
     <div className="space-y-6 p-6">
@@ -332,7 +369,7 @@ export default function CreatePaymentPage() {
         </div>
 
         {/* Header Dialogs */}
-        <div className="flex md:flex-row gap-4 items-center" >
+        <div className="flex md:flex-row gap-4 items-center">
           <CreateCustomerDialog handleCustomerCreated={handleCustomerCreated}>
             <Button type="button">
               <Plus className="w-4 h-4 mr-2" />
@@ -340,16 +377,24 @@ export default function CreatePaymentPage() {
             </Button>
           </CreateCustomerDialog>
 
-          {(calculations.subtotal > 0 || servicesTotal() + productTotal() > 0) && (
+          {(calculations.subtotal > 0 ||
+            servicesTotal() + productTotal() > 0) && (
             <div className="space-y-4">
               <DiscountDialog
                 discount={formData.discount}
-                subtotal={calculations.subtotal || servicesTotal() + productTotal()}
+                subtotal={
+                  calculations.subtotal || servicesTotal() + productTotal()
+                }
                 customerId={formData.customerId}
                 onApply={handleDiscountApply}
                 onValidatePromo={handlePromoCodeValidation}
               >
-                <Button type="button" variant="default" size="sm" className="w-full">
+                <Button
+                  type="button"
+                  variant="default"
+                  size="sm"
+                  className="w-full"
+                >
                   <Tag className="w-4 h-4 mr-2" />
                   Apply Discount
                 </Button>
@@ -368,14 +413,24 @@ export default function CreatePaymentPage() {
             loading={loading}
           >
             <Button
-              disabled={!formData.customerId || (calculations.subtotal === 0 && servicesTotal() + productTotal() === 0)}
+              disabled={
+                !formData.customerId ||
+                (calculations.subtotal === 0 &&
+                  servicesTotal() + productTotal() === 0)
+              }
               className="min-w-[120px]"
             >
-              {loading ? <> <Loader2 className="animate-spin" /> Processing... </> : <>
-                <IndianRupee className="w-4 h-4 mr-2" />
-                Make Payment
-              </>}
-
+              {loading ? (
+                <>
+                  {" "}
+                  <Loader2 className="animate-spin" /> Processing...{" "}
+                </>
+              ) : (
+                <>
+                  <IndianRupee className="w-4 h-4 mr-2" />
+                  Make Payment
+                </>
+              )}
             </Button>
           </PaymentDialog>
         </div>
@@ -386,33 +441,99 @@ export default function CreatePaymentPage() {
         <Card className="flex-1 lg:flex-[2] p-6 rounded-lg shadow-sm">
           <ScrollArea className="h-[calc(100vh-250px)] pr-4">
             <div className="space-y-6 p-2">
-              {/* Customer Selection */}
+             
               <div className="space-y-3">
                 <Label htmlFor="customer" className="text-base font-medium">
                   Customer *
                 </Label>
-                <Select
-                  value={formData.customerId}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, customerId: value }))}
-                  required
-                >
-                  <SelectTrigger className="h-20 ring-2 ring-border">
-                    <SelectValue placeholder="Select customer" />
-                  </SelectTrigger>
-                  <SelectContent>
+
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <Search className="w-5 h-5 text-gray-400" />
+                  </div>
+
+                  <input
+                    id="customer-search"
+                    type="text"
+                    list="customers-datalist"
+                    placeholder="Search customer by name or phone..."
+                    className="w-[50%] h-10 ring-2 ring-border rounded-md pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={customerSearchText}
+                    onChange={(e) => {
+                      const searchValue = e.target.value;
+                      setCustomerSearchText(searchValue);
+
+                      // Find customer by exact name or phone match
+                      const foundCustomer = customers.find(
+                        (c) =>
+                          c.name.toLowerCase() === searchValue.toLowerCase() ||
+                          c.phone === searchValue ||
+                          `${c.name} - ${c.phone}` === searchValue
+                      );
+
+                      if (foundCustomer) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          customerId: foundCustomer._id,
+                        }));
+                      } else {
+                        setFormData((prev) => ({ ...prev, customerId: "" }));
+                      }
+                    }}
+                    onFocus={() => {
+                      // Clear on focus for better UX
+                      if (formData.customerId) {
+                        setCustomerSearchText("");
+                      }
+                    }}
+                    required
+                  />
+
+                  <datalist id="customers-datalist">
                     {customers.map((customer) => (
-                      <SelectItem key={customer._id} value={customer._id}>
-                        <div className="flex gap-2">
-                          <span className="font-medium">{customer.name}</span>
-                          <span className="text-sm text-gray-500">{customer.phone}</span>
-                        </div>
-                      </SelectItem>
+                      <option
+                        key={customer._id}
+                        value={`${customer.name} - ${customer.phone}`}
+                      />
                     ))}
-                  </SelectContent>
-                </Select>
+                  </datalist>
+                </div>
+
+                {/* {formData.customerId && (
+                  <div className="flex items-center gap-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <User className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-blue-900">
+                        {
+                          customers.find((c) => c._id === formData.customerId)
+                            ?.name
+                        }
+                      </p>
+                      <p className="text-sm text-blue-700 flex items-center gap-1">
+                        <Phone className="w-3 h-3" />
+                        {
+                          customers.find((c) => c._id === formData.customerId)
+                            ?.phone
+                        }
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setFormData((prev) => ({ ...prev, customerId: "" }));
+                        setCustomerSearchText("");
+                      }}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )} */}
               </div>
-
-
               <Tabs defaultValue="services" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="services">Services</TabsTrigger>
@@ -420,7 +541,6 @@ export default function CreatePaymentPage() {
                 </TabsList>
 
                 <TabsContent value="services" className="space-y-4 mt-4">
-
                   <Card>
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between">
@@ -445,7 +565,7 @@ export default function CreatePaymentPage() {
                                   quantity: 1,
                                 },
                               ],
-                            }))
+                            }));
                           }}
                         >
                           <Plus className="w-4 h-4 mr-2" />
@@ -455,29 +575,37 @@ export default function CreatePaymentPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {formData.services.map((service, index) => (
-                        <div key={index} className="p-4 border rounded-lg space-y-4">
+                        <div
+                          key={index}
+                          className="p-4 border rounded-lg space-y-4"
+                        >
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div className="md:col-span-2 lg:col-span-1">
-                              <Label className="text-sm font-medium">Service</Label>
+                              <Label className="text-sm font-medium">
+                                Service
+                              </Label>
                               <Select
                                 value={service.serviceId}
                                 onValueChange={(value) => {
-                                  const selectedService = services.find((s) => s._id === value)
+                                  const selectedService = services.find(
+                                    (s) => s._id === value
+                                  );
                                   if (selectedService) {
                                     setFormData((prev) => ({
                                       ...prev,
                                       services: prev.services.map((s, i) =>
                                         i === index
                                           ? {
-                                            ...s,
-                                            serviceId: value,
-                                            serviceName: selectedService.name,
-                                            price: selectedService.price,
-                                            duration: selectedService.duration,
-                                          }
-                                          : s,
+                                              ...s,
+                                              serviceId: value,
+                                              serviceName: selectedService.name,
+                                              price: selectedService.price,
+                                              duration:
+                                                selectedService.duration,
+                                            }
+                                          : s
                                       ),
-                                    }))
+                                    }));
                                   }
                                 }}
                               >
@@ -489,7 +617,9 @@ export default function CreatePaymentPage() {
                                     <SelectItem key={s._id} value={s._id}>
                                       <div className="flex flex-col">
                                         <span>{s.name}</span>
-                                        <span className="text-sm text-gray-500">₹{s.price}</span>
+                                        <span className="text-sm text-gray-500">
+                                          ₹{s.price}
+                                        </span>
                                       </div>
                                     </SelectItem>
                                   ))}
@@ -497,7 +627,9 @@ export default function CreatePaymentPage() {
                               </Select>
                             </div>
                             <div>
-                              <Label className="text-sm font-medium">Price</Label>
+                              <Label className="text-sm font-medium">
+                                Price
+                              </Label>
                               <input
                                 type="number"
                                 className="mt-1 w-full px-3 py-2 border rounded-md "
@@ -506,7 +638,9 @@ export default function CreatePaymentPage() {
                               />
                             </div>
                             <div>
-                              <Label className="text-sm font-medium">Quantity</Label>
+                              <Label className="text-sm font-medium">
+                                Quantity
+                              </Label>
                               <input
                                 type="number"
                                 min="1"
@@ -516,33 +650,45 @@ export default function CreatePaymentPage() {
                                   setFormData((prev) => ({
                                     ...prev,
                                     services: prev.services.map((s, i) =>
-                                      i === index ? { ...s, quantity: Number.parseInt(e.target.value) || 1 } : s,
+                                      i === index
+                                        ? {
+                                            ...s,
+                                            quantity:
+                                              Number.parseInt(e.target.value) ||
+                                              1,
+                                          }
+                                        : s
                                     ),
-                                  }))
+                                  }));
                                 }}
                               />
                             </div>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <Label className="text-sm font-medium">Salon Expert</Label>
+                              <Label className="text-sm font-medium">
+                                Salon Expert
+                              </Label>
                               <Select
                                 value={service.providerId}
                                 onValueChange={(value) => {
-                                  const selectedProvider = providers.find((p) => p._id === value)
+                                  const selectedProvider = providers.find(
+                                    (p) => p._id === value
+                                  );
                                   if (selectedProvider) {
                                     setFormData((prev) => ({
                                       ...prev,
                                       services: prev.services.map((s, i) =>
                                         i === index
                                           ? {
-                                            ...s,
-                                            providerId: value,
-                                            providerName: selectedProvider.name,
-                                          }
-                                          : s,
+                                              ...s,
+                                              providerId: value,
+                                              providerName:
+                                                selectedProvider.name,
+                                            }
+                                          : s
                                       ),
-                                    }))
+                                    }));
                                   }
                                 }}
                               >
@@ -551,10 +697,17 @@ export default function CreatePaymentPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                   {providers.map((provider) => (
-                                    <SelectItem key={provider._id} value={provider._id}>
+                                    <SelectItem
+                                      key={provider._id}
+                                      value={provider._id}
+                                    >
                                       <div className="flex gap-2">
-                                        <span className="font-medium">{provider.name}</span>
-                                        <span className="text-sm text-gray-500">{provider.role}</span>
+                                        <span className="font-medium">
+                                          {provider.name}
+                                        </span>
+                                        <span className="text-sm text-gray-500">
+                                          {provider.role}
+                                        </span>
                                       </div>
                                     </SelectItem>
                                   ))}
@@ -563,16 +716,23 @@ export default function CreatePaymentPage() {
                             </div>
                             <div className="flex items-end justify-between">
                               <div className="flex-1 mr-4">
-                                <Label className="text-sm font-medium">Total</Label>
+                                <Label className="text-sm font-medium">
+                                  Total
+                                </Label>
                                 <div className="text-lg font-semibold text-green-600 mt-1">
-                                  ₹{(service.price * service.quantity).toFixed(2)}
+                                  ₹
+                                  {(service.price * service.quantity).toFixed(
+                                    2
+                                  )}
                                 </div>
                               </div>
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                onClick={() => handleRemoveService(service.serviceId)}
+                                onClick={() =>
+                                  handleRemoveService(service.serviceId)
+                                }
                                 className="text-red-600 hover:text-red-700 cursor-pointer"
                               >
                                 <Trash className="w-4 h-4 " />
@@ -586,8 +746,12 @@ export default function CreatePaymentPage() {
                           <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                             <Plus className="w-8 h-8 text-gray-400" />
                           </div>
-                          <p className="text-lg font-medium">No services added yet</p>
-                          <p className="text-sm">Click "Add Service" to get started</p>
+                          <p className="text-lg font-medium">
+                            No services added yet
+                          </p>
+                          <p className="text-sm">
+                            Click "Add Service" to get started
+                          </p>
                         </div>
                       )}
                     </CardContent>
@@ -597,7 +761,11 @@ export default function CreatePaymentPage() {
                 </TabsContent>
 
                 <TabsContent value="products" className="space-y-4 mt-4">
-                  <ProductCard setFormData={setFormData} products={products} formData={formData} />
+                  <ProductCard
+                    setFormData={setFormData}
+                    products={products}
+                    formData={formData}
+                  />
                 </TabsContent>
               </Tabs>
             </div>
@@ -620,14 +788,21 @@ export default function CreatePaymentPage() {
                   <div className="space-y-3">
                     <div className="font-semibold">Services:</div>
                     {formData.services.map((service, index) => (
-                      <div key={index} className="flex justify-between text-sm  p-4 rounded-lg bg-muted">
+                      <div
+                        key={index}
+                        className="flex justify-between text-sm  p-4 rounded-lg bg-muted"
+                      >
                         <div className="flex-1">
-                          <div className="font-medium">{service.serviceName || `Service ${index + 1}`}</div>
+                          <div className="font-medium">
+                            {service.serviceName || `Service ${index + 1}`}
+                          </div>
                           <div className="text-gray-500">
                             ₹{service.price} × {service.quantity}
                           </div>
                         </div>
-                        <div className="font-medium">₹{(service.price * service.quantity).toFixed(2)}</div>
+                        <div className="font-medium">
+                          ₹{(service.price * service.quantity).toFixed(2)}
+                        </div>
                       </div>
                     ))}
                     <div className="flex justify-between font-medium border-t pt-3">
@@ -642,14 +817,21 @@ export default function CreatePaymentPage() {
                   <div className="space-y-3">
                     <div className="font-semibold">Products:</div>
                     {formData.products.map((product, index) => (
-                      <div key={index} className="flex justify-between text-sm  p-4 rounded-lg bg-muted">
+                      <div
+                        key={index}
+                        className="flex justify-between text-sm  p-4 rounded-lg bg-muted"
+                      >
                         <div className="flex-1">
-                          <div className="font-medium">{product.productName || `Product ${index + 1}`}</div>
+                          <div className="font-medium">
+                            {product.productName || `Product ${index + 1}`}
+                          </div>
                           <div className="text-gray-500">
                             ₹{product.price} × {product.quantity}
                           </div>
                         </div>
-                        <div className="font-medium">₹{(product.price * product.quantity).toFixed(2)}</div>
+                        <div className="font-medium">
+                          ₹{(product.price * product.quantity).toFixed(2)}
+                        </div>
                       </div>
                     ))}
                     <div className="flex justify-between font-medium border-t pt-3">
@@ -664,14 +846,21 @@ export default function CreatePaymentPage() {
                 {/* Subtotal */}
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Subtotal:</span>
-                  <span>₹{(calculations?.subtotal || servicesTotal() + productTotal()).toFixed(2)}</span>
+                  <span>
+                    ₹
+                    {(
+                      calculations?.subtotal || servicesTotal() + productTotal()
+                    ).toFixed(2)}
+                  </span>
                 </div>
 
                 {/* Discount */}
                 {calculations.discount.amount > 0 && (
                   <div className="flex justify-between text-green-600 font-medium">
                     <div className="flex items-center space-x-2">
-                      <span>Discount ({calculations.discount.percentage}%)</span>
+                      <span>
+                        Discount ({calculations.discount.percentage}%)
+                      </span>
                       {calculations.discount.promoCode && (
                         <Badge variant="secondary" className="text-xs">
                           {calculations?.discount?.promoCode}
@@ -686,7 +875,12 @@ export default function CreatePaymentPage() {
                 {calculations.discount.amount > 0 && (
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>Amount after discount:</span>
-                    <span>₹{(calculations.subtotal - calculations.discount.amount).toFixed(2)}</span>
+                    <span>
+                      ₹
+                      {(
+                        calculations.subtotal - calculations.discount.amount
+                      ).toFixed(2)}
+                    </span>
                   </div>
                 )}
 
@@ -716,23 +910,29 @@ export default function CreatePaymentPage() {
                 <div className="flex justify-between text-xl font-bold">
                   <span>Final Amount:</span>
                   <span className="text-green-600">
-                    ₹{(calculations.finalAmount || servicesTotal() + productTotal()).toFixed(2)}
+                    ₹
+                    {(
+                      calculations.finalAmount ||
+                      servicesTotal() + productTotal()
+                    ).toFixed(2)}
                   </span>
                 </div>
 
-
-                {calculations.subtotal === 0 && servicesTotal() + productTotal() === 0 && (
-                  <div className="text-center py-12 text-gray-500">
-                    <Calculator className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg font-medium">No items added</p>
-                    <p className="text-sm">Click on service or product cards to add them</p>
-                  </div>
-                )}
+                {calculations.subtotal === 0 &&
+                  servicesTotal() + productTotal() === 0 && (
+                    <div className="text-center py-12 text-gray-500">
+                      <Calculator className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium">No items added</p>
+                      <p className="text-sm">
+                        Click on service or product cards to add them
+                      </p>
+                    </div>
+                  )}
               </div>
             </ScrollArea>
           </div>
         </Card>
       </div>
     </div>
-  )
+  );
 }
