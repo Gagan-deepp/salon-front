@@ -10,12 +10,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import CreatePackageModal from "@/components/packages/CreatePackageModal"
 import PackageCard from "@/components/packages/PackageCard"
 import { getPackages } from "@/lib/actions/package_actions"
+import { useSession } from "next-auth/react"
 
 export default function PackagesPage() {
+  const { data: session } = useSession()
+  const user = session?.user
+
   const [packages, setPackages] = useState([])
   const [loading, setLoading] = useState(true)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  
+
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState("ALL")
@@ -176,10 +180,12 @@ export default function PackagesPage() {
               <PackageIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No packages found</h3>
               <p className="text-gray-600 mb-6">Create your first package to get started</p>
-              <Button onClick={() => setIsCreateModalOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Package
-              </Button>
+              {(user?.role === "SUPER_ADMIN" || user?.role === "SAAS_OWNER") && (
+                <Button onClick={() => setIsCreateModalOpen(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Package
+                </Button>
+              )}
             </CardContent>
           </Card>
         ) : (

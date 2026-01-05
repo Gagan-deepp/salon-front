@@ -46,8 +46,8 @@ export async function getMetrics(franchiseId) {
         console.log("franchise metrics :", res.data)
         return res.data
     } catch (error) {
-        console.error("getSalesData error", error)
-        return { success: false, error: error.response?.data?.message || "getSalesData failed" }
+        console.error("get metrics error", error.response?.data)
+        return { success: false, error: error.response?.data?.message || "getMetrics failed" }
     }
 }
 

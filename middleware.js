@@ -40,15 +40,15 @@ export const config = {
 export async function middleware(request) {
     const pathname = request.nextUrl.pathname;
 
-    console.debug("🔍 Middleware processing:", pathname);
+    // console.debug("🔍 Middleware processing:", pathname);
 
     // Handle home page redirects for logged-in users
     if (pathname === "/" || pathname === "/login") {
         const session = await auth().catch(() => null);
         if (session?.user) {
             const role = session.user.role;
-            console.debug("📝 Session user in middleware ==> ", session);
-            console.debug("👤 User role in middleware ==> ", role);
+            // console.debug("📝 Session user in middleware ==> ", session);
+            // console.debug("👤 User role in middleware ==> ", role);
 
             // Redirect based on role
             const roleRedirects = {
@@ -79,7 +79,7 @@ export async function middleware(request) {
         route.paths.some((path) => {
             // Exact match or starts with path
             const isMatch = pathname === path || pathname.startsWith(path + '/');
-            console.debug(`\t\t Checking ${path} against ${pathname}: ${isMatch}`);
+            // console.debug(`\t\t Checking ${path} against ${pathname}: ${isMatch}`);
             return isMatch;
         })
     );
@@ -100,10 +100,10 @@ export async function middleware(request) {
 
     // Check if user role is allowed
     const isAllowed = matched.allowedRoles.includes(userRole);
-    console.debug("\n\t Role check:", userRole, "allowed:", matched.allowedRoles, "result:", isAllowed);
+    // console.debug("\n\t Role check:", userRole, "allowed:", matched.allowedRoles, "result:", isAllowed);
 
     if (!isAllowed) {
-        console.debug("❌ Role not allowed, redirecting to login");
+        // console.debug("❌ Role not allowed, redirecting to login");
         return NextResponse.redirect(new URL('/', request.url));
     }
 

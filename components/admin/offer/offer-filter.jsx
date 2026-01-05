@@ -17,30 +17,35 @@ export function OfferFilter({ initialSearchTerm, initialStatusFilter, initialAct
   const [activeOnly, setActiveOnly] = useState(initialActiveOnly)
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams)
+    // Debounce search input
+    const timeoutId = setTimeout(() => {
+      const params = new URLSearchParams(searchParams)
 
-    if (searchTerm) {
-      params.set("search", searchTerm)
-    } else {
-      params.delete("search")
-    }
+      if (searchTerm) {
+        params.set("search", searchTerm)
+      } else {
+        params.delete("search")
+      }
 
-    if (statusFilter && statusFilter !== "all") {
-      params.set("status", statusFilter)
-    } else {
-      params.delete("status")
-    }
+      if (statusFilter && statusFilter !== "all") {
+        params.set("status", statusFilter)
+      } else {
+        params.delete("status")
+      }
 
-    if (activeOnly) {
-      params.set("activeOnly", "true")
-    } else {
-      params.delete("activeOnly")
-    }
+      if (activeOnly) {
+        params.set("activeOnly", "true")
+      } else {
+        params.delete("activeOnly")
+      }
 
-    params.set("page", "1") // Reset to first page on filter change
-    params.set("page", "1")
-    router.push(`/admin/offers?${params.toString()}`)
-  }, [searchTerm, statusFilter, activeOnly, router, searchParams])
+      params.set("page", "1") // Reset to first page on filter change
+      
+      router.push(`/admin/offers?${params.toString()}`)
+    }, 500) // 500ms debounce delay
+
+    return () => clearTimeout(timeoutId)
+  }, [searchTerm, statusFilter, activeOnly, router])
 
   const handleClearFilters = () => {
     setSearchTerm("")

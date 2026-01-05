@@ -45,7 +45,7 @@ export async function getOffer(offerId) {
     console.log("✅ Offer fetched successfully")
     return { success: true, data: res.data }
   } catch (error) {
-    console.error("❌ getOffer error:", error)
+    console.error("❌ getOffer error:", error.response?.data)
     return { 
       success: false, 
       error: error.response?.data?.message || "Failed to fetch offer"

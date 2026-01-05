@@ -29,7 +29,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collap
 export function AppSidebar({ ...props }) {
   const pathName = usePathname()
   const { data: session, status } = useSession()
-  
+
   // Loading state until session loads
   const [isLoading, setIsLoading] = useState(true)
   const [sideMenus, setSideMenus] = useState([])
@@ -71,6 +71,16 @@ export function AppSidebar({ ...props }) {
         title: "Users",
         url: "/admin/users",
         icon: UserCheck,
+      },
+      {
+        title: "Offers",
+        url: "/admin/offers",
+        icon: DollarSign
+      },
+      {
+        title: "Packages",
+        url: "/admin/packages",
+        icon: Package2Icon
       },
       {
         title: "Appointments",
@@ -206,13 +216,13 @@ export function AppSidebar({ ...props }) {
 
     if (status === 'authenticated' && session?.user?.role) {
       console.log("✅ Role loaded:", session.user.role)
-      
+
       const roleMenus = {
         "FRANCHISE_OWNER": adminData.franchise_owner,
         "CASHIER": adminData.cashier,
         "SAAS_OWNER": adminData.saas_owner,
       }[session.user.role] || adminData.navMain
-      
+
       setSideMenus(roleMenus)
       setIsLoading(false)
       console.log("✅ Menu set for role:", session.user.role, roleMenus.length, "items")
@@ -265,9 +275,9 @@ export function AppSidebar({ ...props }) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton 
-              size="xl" 
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" 
+            <SidebarMenuButton
+              size="xl"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               asChild
             >
               <div>
@@ -295,8 +305,8 @@ export function AppSidebar({ ...props }) {
                     <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuSubButton 
-                            tooltip={item.title} 
+                          <SidebarMenuSubButton
+                            tooltip={item.title}
                             className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
                           >
                             {item.icon && <item.icon className="size-2" />}
@@ -321,8 +331,8 @@ export function AppSidebar({ ...props }) {
                     </Collapsible>
                   ) : (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton 
-                        asChild 
+                      <SidebarMenuButton
+                        asChild
                         className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
                       >
                         <Link href={item.url}>
