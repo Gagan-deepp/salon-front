@@ -1,22 +1,22 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import {
   BadgeIndianRupee,
   Briefcase,
+  BriefcaseBusiness,
   Building2,
   ChevronRight,
   DollarSign,
   LayoutDashboard,
+  Package2Icon,
   ShoppingBasket,
   ShoppingCart,
   SquareTerminal,
   Telescope,
   UserCheck,
-  UserCircle,
-  Package2Icon,
-  User2Icon
+  UserCircle
 } from "lucide-react"
+import { useEffect, useState } from "react"
 
 import rynoxLogo from "@/assets/new-logo-png.png"
 import { NavUser } from "@/components/nav-user"
@@ -85,7 +85,7 @@ export function AppSidebar({ ...props }) {
       {
         title: "Appointments",
         url: "/admin/appointments",
-        icon: User2Icon,
+        icon: BriefcaseBusiness,
       },
       {
         title: "Reports",
@@ -122,6 +122,11 @@ export function AppSidebar({ ...props }) {
         url: "/admin/payments",
         icon: BadgeIndianRupee
       },
+      {
+        title: "Appointments",
+        url: "/admin/appointments",
+        icon: BriefcaseBusiness,
+      },
     ],
     saas_owner: [
       {
@@ -147,7 +152,7 @@ export function AppSidebar({ ...props }) {
         icon: Building2
       },
       {
-        title: "Users",
+        title: "Staff",
         url: "/admin/users",
         icon: UserCheck,
       },
@@ -285,7 +290,7 @@ export function AppSidebar({ ...props }) {
                   <img
                     src={rynoxLogo.src}
                     alt="Rynox"
-                    className="h-22 w-auto"
+                    className="h-10 w-auto"
                   />
                 </Link>
               </div>

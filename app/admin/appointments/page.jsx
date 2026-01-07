@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Calendar, Clock, User, Phone, Search, Filter, Eye, CheckCircle, XCircle, AlertCircle } from "lucide-react"
+import { Loader2, Calendar, Clock, User, Phone, Search, Filter, Eye, CheckCircle, XCircle, AlertCircle, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { BookAppointmentDialog } from "@/components/admin/appointment/book-appointment-dialog"
 
 export default function AppointmentsPage() {
   const router = useRouter()
@@ -122,12 +123,20 @@ export default function AppointmentsPage() {
   })
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between space-y-2">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Appointments</h1>
-          <p className="text-gray-600 mt-1">Manage customer appointments</p>
+          <h2 className="text-3xl font-bold tracking-tight">Appointments</h2>
+          <p className="text-muted-foreground">Manage customer appointments</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <BookAppointmentDialog onAppointmentBooked={fetchAppointments}>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Book Appointment
+            </Button>
+          </BookAppointmentDialog>
         </div>
       </div>
 

@@ -10,25 +10,25 @@ const routePermissions = [
 
     // Cashier specific routes
     {
-        paths: ['/admin/create/payment', '/admin/payments'],
+        paths: ['/admin/create/payment', '/admin/payments', '/admin/appointments'],
         allowedRoles: ['CASHIER', 'FRANCHISE_OWNER', 'SUPER_ADMIN'], // Added hierarchical access
     },
 
     // Franchise Owner and above routes
     {
-        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/users','/admin/offers','/admin/packages','/admin/appointments'],
+        paths: ['/admin/franchise', '/admin/services', '/admin/products', '/admin/customers', '/admin/payments', '/admin/users', '/admin/offers', '/admin/packages', '/admin/appointments'],
         allowedRoles: ['FRANCHISE_OWNER', 'SUPER_ADMIN'], // Removed CASHIER for most routes
     },
 
     // Super Admin only routes
     {
-        paths: ['/admin/branches','/admin/offers','/admin/packages'], // Super admin specific routes
+        paths: ['/admin/branches', '/admin/offers', '/admin/packages'], // Super admin specific routes
         allowedRoles: ['SUPER_ADMIN'],
     },
 
     // General admin dashboard - most permissive, should be last
     {
-        paths: ['/admin','/admin/offers'],
+        paths: ['/admin', '/admin/offers'],
         allowedRoles: ['SUPER_ADMIN', 'FRANCHISE_OWNER', 'CASHIER'], // All admin users can access base dashboard
     },
 ];
