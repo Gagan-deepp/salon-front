@@ -24,7 +24,7 @@ async function UserData({ userId }) {
 
       const refResult = await getUserReferrals(userId, { limit: 5 })
       if (refResult.success) {
-        referrals = refResult.data.referrals || []
+        referrals = refResult?.data?.referrals || []
       }
     }
 
