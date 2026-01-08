@@ -1,67 +1,34 @@
-"use client"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { auth } from "@/lib/auth"
 import {
-  Award,
   Building2,
-  Clock,
   CreditCard,
   Edit,
   IndianRupee,
   Mail,
   MapPin,
   MessageSquare,
-  Percent,
   Phone,
-  Receipt,
-  Target,
   Trash2,
   TrendingUp,
-  Users,
-  Wallet
+  Users
 } from 'lucide-react'
 import { DeleteFranchiseDialog } from "../franchise/delete-franchise-dialog"
 import { EditFranchiseDialog } from "../franchise/edit-franchise-dialog"
 import { CustomerChart } from "./customer-chart"
 import { RevenueChart } from "./revenue-chart"
 
-export function FranchiseDashboard({ metrics, franchise, customerData, salesData }) {
+export async function FranchiseDashboard({ metrics, franchise, customerData, salesData }) {
+  const { user } = await auth()
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
     }).format(amount);
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
-  // Calculate subscription progress
-  const subscriptionProgress = () => {
-    const start = new Date(franchise.subscription.startDate)
-    const end = new Date(franchise.subscription.endDate)
-    const now = new Date()
-    const total = end - start
-    const elapsed = now - start
-    return Math.min(Math.max((elapsed / total) * 100, 0), 100);
-  }
-
-  // Calculate days remaining
-  const daysRemaining = () => {
-    const end = new Date(franchise.subscription.endDate)
-    const now = new Date()
-    const diff = end - now
-    return Math.ceil(diff / (1000 * 60 * 60 * 24));
   }
 
   return (
@@ -95,18 +62,22 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
       </div>
 
       <div className="flex items-center space-x-2">
-        <EditFranchiseDialog franchise={franchise}>
-          <Button variant="outline" size="sm">
-            <Edit className="w-4 h-4 mr-2" />
-            Edit
-          </Button>
-        </EditFranchiseDialog>
-        <DeleteFranchiseDialog franchise={franchise}>
-          <Button variant="outline" size="sm">
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete
-          </Button>
-        </DeleteFranchiseDialog>
+        {(user?.role === "SUPER_ADMIN" || user?.role === "SAAS_OWNER") &&
+          <>
+          <EditFranchiseDialog franchise={franchise}>
+            <Button variant="outline" size="sm">
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
+          </EditFranchiseDialog>
+          <DeleteFranchiseDialog franchise={franchise}>
+            <Button variant="outline" size="sm">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete
+            </Button>
+          </DeleteFranchiseDialog>
+          </>
+        }
       </div>
 
 
@@ -150,11 +121,11 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
         </Card>
       </div>
       <Tabs defaultValue="analytics" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
           {/* <TabsTrigger value="settings">Settings</TabsTrigger> */}
-          <TabsTrigger value="subscription">Subscription</TabsTrigger>
+          {/* <TabsTrigger value="subscription">Subscription</TabsTrigger> */}
           {/* <TabsTrigger value="performance">Performance</TabsTrigger> */}
         </TabsList>
 
@@ -264,7 +235,7 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
           </div>
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-4">
+        {/* <TabsContent value="settings" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
@@ -379,9 +350,9 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        </TabsContent> */}
 
-        <TabsContent value="subscription" className="space-y-4">
+        {/* <TabsContent value="subscription" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
@@ -533,7 +504,7 @@ export function FranchiseDashboard({ metrics, franchise, customerData, salesData
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div >
   );

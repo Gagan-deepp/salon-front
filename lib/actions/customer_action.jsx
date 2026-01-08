@@ -64,7 +64,6 @@ export async function getCustomers(params) {
 
 // 3. Dropdown list  (GET /customers/dropdown?search=&limit=)
 export async function getCustomersDropdown(params) {
-  console.debug("I am in drop down action")
   try {
     const headers = await getAuthHeaders()
     const res = await axios.get(`${BASE_URL}/customers/dropdown`, { params, headers })

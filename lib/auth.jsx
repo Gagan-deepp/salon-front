@@ -10,9 +10,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 password: { label: "Email", type: "password", placeholder: "Enter your password" },
             },
             async authorize(credentials) {
-                console.log("Credentials ==> ", credentials)
                 const result = await login({ email: credentials.email, password: credentials.password })
-                console.log("result of login in auth ==> ", result.data)
 
                 if (!result || !result.success || !result.data) {
                     console.warn("No valid user found")
@@ -65,9 +63,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.companyId = token.companyId
             return session
         },
-        redirect({ baseUrl, token }) {
+        redirect({ baseUrl, token, session }) {
+            console.log("I am in redirect callback")
+            console.log("Session:", session ?? "no session");
+            console.log("baseUrl:", baseUrl);
+            console.log("token:", token);
+
             if (token) { // Token exists on successful sign-in
-                console.log("I am in redirect callback")
                 console.log("Redirecting based on user role:", token.role)
                 switch (token.role) {
                     case 'FRANCHISE_OWNER':

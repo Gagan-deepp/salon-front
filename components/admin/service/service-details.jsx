@@ -100,7 +100,7 @@ export function ServiceDetails({ service }) {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Service Price</CardTitle>
@@ -131,7 +131,7 @@ export function ServiceDetails({ service }) {
                 <p className="text-xs text-muted-foreground">{formatCurrency(commissionAmount)}</p>
               </CardContent>
             </Card>
-            <Card>
+            {/* <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Staff Roles</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
@@ -140,7 +140,7 @@ export function ServiceDetails({ service }) {
                 <div className="text-2xl font-bold">{service.allowedRoles.length}</div>
                 <p className="text-xs text-muted-foreground">Authorized roles</p>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
@@ -167,8 +167,7 @@ export function ServiceDetails({ service }) {
                   <p className="font-medium">Duration</p>
                   <p className="text-sm text-muted-foreground">{formatDuration(service.duration)}</p>
                 </div>
-                <Separator />
-                <div>
+                {/* <div>
                   <p className="font-medium">Allowed Roles</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {service.allowedRoles.map((role) => (
@@ -177,7 +176,7 @@ export function ServiceDetails({ service }) {
                       </Badge>
                     ))}
                   </div>
-                </div>
+                </div> */}
               </CardContent>
             </Card>
 

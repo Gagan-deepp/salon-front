@@ -133,7 +133,7 @@ export function CustomerTable({ customers, pagination }) {
               <TableHead>Customer</TableHead>
               <TableHead>Contact</TableHead>
               <TableHead>Location</TableHead>
-              <TableHead>Loyalty Points</TableHead>
+              {/* <TableHead>Loyalty Points</TableHead> */}
               <TableHead>Visits</TableHead>
               <TableHead>Total Spent</TableHead>
               <TableHead>Status</TableHead>
@@ -182,7 +182,7 @@ export function CustomerTable({ customers, pagination }) {
                     </span>
                   </div>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <div className="text-sm">
                     <div className="flex items-center space-x-1">
                       <Star className="h-3 w-3 text-yellow-500" />
@@ -192,7 +192,7 @@ export function CustomerTable({ customers, pagination }) {
                       Total: {customer.loyaltyPoints?.total || 0}
                     </div>
                   </div>
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <div className="text-sm">
                     <div className="font-medium">{customer.visitHistory?.totalVisits || 0}</div>

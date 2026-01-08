@@ -23,8 +23,8 @@ export default async function ServicesPage({ searchParams }) {
 
   // console.log("\n\Services result ===> ", result.data)
 
-  const services = result.data.data || []
-  const pagination = result.data.pagination || {}
+  const services = result?.data?.data || []
+  const pagination = result?.data?.pagination || {}
 
   return (
     <div className="p-6">

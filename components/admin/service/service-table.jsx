@@ -77,7 +77,7 @@ export function ServiceTable({ services, pagination }) {
               <TableHead>Category</TableHead>
               <TableHead>Duration</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead>Roles</TableHead>
+              {/* <TableHead>Roles</TableHead> */}
               <TableHead>Status</TableHead>
               <TableHead>Commission</TableHead>
               <TableHead className="w-[70px]"></TableHead>
@@ -107,7 +107,7 @@ export function ServiceTable({ services, pagination }) {
                 <TableCell>
                   <span className="font-medium">{formatCurrency(service.price)}</span>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {service.allowedRoles.map((role) => (
                       <Badge key={role} variant="secondary" className="text-xs">
@@ -115,7 +115,7 @@ export function ServiceTable({ services, pagination }) {
                       </Badge>
                     ))}
                   </div>
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Badge variant={service.isActive ? "default" : "destructive"}>
                     {service.isActive ? "Active" : "Inactive"}

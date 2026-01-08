@@ -129,7 +129,7 @@ export function OfferDetails({ offer }) {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="conditions">Conditions</TabsTrigger>
-          <TabsTrigger value="usage">Usage History</TabsTrigger>
+          {/* <TabsTrigger value="usage">Usage History</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -437,7 +437,7 @@ export function OfferDetails({ offer }) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="usage" className="space-y-4">
+        {/* <TabsContent value="usage" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Usage History</CardTitle>
@@ -473,7 +473,7 @@ export function OfferDetails({ offer }) {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   )

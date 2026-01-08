@@ -7,6 +7,7 @@ import {
   Building2,
   ChevronRight,
   DollarSign,
+  Gift,
   LayoutDashboard,
   Package2Icon,
   ShoppingBasket,
@@ -68,14 +69,14 @@ export function AppSidebar({ ...props }) {
         icon: Telescope
       },
       {
-        title: "Users",
+        title: "Staffs",
         url: "/admin/users",
         icon: UserCheck,
       },
       {
         title: "Offers",
         url: "/admin/offers",
-        icon: DollarSign
+        icon: Gift
       },
       {
         title: "Packages",
@@ -152,7 +153,7 @@ export function AppSidebar({ ...props }) {
         icon: Building2
       },
       {
-        title: "Staff",
+        title: "Staffs",
         url: "/admin/users",
         icon: UserCheck,
       },

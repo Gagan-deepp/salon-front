@@ -176,14 +176,14 @@ export function CustomerDetails({ customer }) {
         </Card>
       </div>
       <Tabs defaultValue="profile" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
-          <TabsTrigger value="preferences">Preferences</TabsTrigger>
-          <TabsTrigger value="stats">Statistics</TabsTrigger>
-        </TabsList>
+        {/* <TabsList> */}
+        {/* <TabsTrigger value="profile">Profile</TabsTrigger> */}
+        {/* <TabsTrigger value="history">History</TabsTrigger> */}
+        {/* <TabsTrigger value="preferences">Preferences</TabsTrigger>
+          <TabsTrigger value="stats">Statistics</TabsTrigger> */}
+        {/* </TabsList> */}
 
-        <TabsContent value="profile" className="space-y-4">
+        {/* <TabsContent value="profile" className="space-y-4"> */}
           <div className="grid gap-6 md:grid-cols-2">
             {/* Personal Information */}
             <Card>
@@ -274,7 +274,7 @@ export function CustomerDetails({ customer }) {
 
           <div className="grid gap-6 md:grid-cols-2">
             {/* Loyalty Information */}
-            <Card>
+          {/* <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Star className="w-5 h-5 mr-2" />
@@ -295,7 +295,7 @@ export function CustomerDetails({ customer }) {
                   <span className="font-medium text-red-600">{customer.loyaltyPoints?.redeemed || 0}</span>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Account Information */}
             <Card>
@@ -329,13 +329,13 @@ export function CustomerDetails({ customer }) {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        {/* </TabsContent> */}
 
-        <TabsContent value="history" className="space-y-4">
+        {/* <TabsContent value="history" className="space-y-4">
           <CustomerHistoryTable customerId={customer._id} history={customerHistory} loading={loading} />
-        </TabsContent>
+        </TabsContent> */}
 
-        <TabsContent value="preferences" className="space-y-4">
+        {/* <TabsContent value="preferences" className="space-y-4">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
@@ -378,9 +378,9 @@ export function CustomerDetails({ customer }) {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        </TabsContent> */}
 
-        <TabsContent value="stats" className="space-y-4">
+        {/* <TabsContent value="stats" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
@@ -431,7 +431,7 @@ export function CustomerDetails({ customer }) {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

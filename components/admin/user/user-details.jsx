@@ -109,14 +109,14 @@ export function UserDetails({ user, performance, referrals }) {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
+        {/* <TabsList> */}
+        {/* <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="performance">Performance</TabsTrigger> */}
           {user.role === "CASHIER" && <TabsTrigger value="commission">Commission</TabsTrigger>}
-        </TabsList>
+        {/* </TabsList> */}
 
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* <TabsContent value="overview" className="space-y-4"> */}
+        {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Referrals</CardTitle>
@@ -164,7 +164,7 @@ export function UserDetails({ user, performance, referrals }) {
                 </Card>
               </>
             )}
-          </div>
+          </div> */}
 
           <div className="grid gap-6 md:grid-cols-2">
             {/* User Information */}
@@ -252,9 +252,9 @@ export function UserDetails({ user, performance, referrals }) {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        {/* </TabsContent> */}
 
-        <TabsContent value="performance" className="space-y-4">
+        {/* <TabsContent value="performance" className="space-y-4">
           {performance ? (
             <div className="grid gap-4 md:grid-cols-2">
               <Card>
@@ -284,7 +284,7 @@ export function UserDetails({ user, performance, referrals }) {
               </CardContent>
             </Card>
           )}
-        </TabsContent>
+        </TabsContent> */}
 
         {user.role === "CASHIER" && (
           <TabsContent value="commission" className="space-y-4">

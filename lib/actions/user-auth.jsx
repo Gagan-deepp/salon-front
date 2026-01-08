@@ -24,9 +24,13 @@ export const signinAction = async (prevState, formData) => {
     const password = formData.get("password");
 
     try {
-        await signIn("credentials", { email, password, redirectTo: "/login" })
+        const res = await signIn("credentials", { email, password })
+        console.log("signIn result in action ==> ", res)
+        return res;
 
     } catch (error) {
+
+        console.error("signIn error in action ==> ", JSON.stringify(error))
         if (error instanceof AuthError) {
             switch (error.type) {
                 case 'CredentialsSignin':
@@ -55,7 +59,6 @@ export async function login({ email, password }) {
     try {
         console.debug(`Email in login action : ${email} and password : ${password}`)
         const res = await axios.post(`${BASE_URL}/auth/login`, { email, password })
-        console.log("login response", res.data)
         revalidatePath("/")
         return { success: true, data: res.data }
     } catch (error) {

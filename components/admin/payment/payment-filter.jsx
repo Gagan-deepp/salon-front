@@ -80,9 +80,18 @@ export function PaymentFilters() {
                 <CardTitle className="text-lg">Filters</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 flex-1">
 
-                    <div className="flex items-center gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        {/* <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Input
+                                placeholder="Search payments..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-10"
+                            />
+                        </div>
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="All Status" />
@@ -94,9 +103,9 @@ export function PaymentFilters() {
                                 <SelectItem value="FAILED">Failed</SelectItem>
                                 <SelectItem value="REFUNDED">Refunded</SelectItem>
                             </SelectContent>
-                        </Select>
+                        </Select> */}
                         <Select value={paymentModeFilter} onValueChange={setPaymentModeFilter}>
-                            <SelectTrigger className="w-[200px]">
+                            <SelectTrigger className="w-full">
                                 <SelectValue placeholder="All Payment Modes" />
                             </SelectTrigger>
                             <SelectContent>
@@ -107,8 +116,8 @@ export function PaymentFilters() {
                             </SelectContent>
                         </Select>
                         <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant="outline" className="w-[200px] justify-start text-left font-normal">
+                            <PopoverTrigger asChild className="w-full" >
+                                <Button variant="outline" className="w-[200px] justify-start text-left font-normal w-full">
                                     <CalendarIcon className="mr-2 h-4 w-4" />
                                     {startDate ? format(startDate, "PPP") : "Start Date"}
                                 </Button>
@@ -124,7 +133,7 @@ export function PaymentFilters() {
                         </Popover>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button variant="outline" className="w-[200px] justify-start text-left font-normal">
+                                <Button variant="outline" className="w-[200px] justify-start text-left font-normal w-full">
                                     <CalendarIcon className="mr-2 h-4 w-4" />
                                     {endDate ? format(endDate, "PPP") : "End Date"}
                                 </Button>
@@ -139,21 +148,10 @@ export function PaymentFilters() {
                                 />
                             </PopoverContent>
                         </Popover>
-                        <Button variant="outline" onClick={clearFilters}>
+                        <Button variant="outline" onClick={clearFilters} className="w-[200px]" >
                             <Filter className="w-4 h-4 mr-2" />
                             Clear Filters
                         </Button>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                            <Input
-                                placeholder="Search payments..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10"
-                            />
-                        </div>
                     </div>
                 </div>
             </CardContent>
