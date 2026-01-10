@@ -1,44 +1,41 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:is(.dark *)); */
 
 :root {
-    /* Modern blue color palette for SaaS */
     --background: oklch(0.98 0 0);
     --foreground: oklch(0.1 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.1 0 0);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.1 0 0);
-    /* Primary: Rich tech blue */
-    --primary: oklch(0.4 0.15 250);
+    --primary: oklch(0.35 0.22 275);
     --primary-foreground: oklch(0.98 0 0);
-    /* Secondary: Vibrant accent blue */
-    --secondary: oklch(0.5 0.18 220);
+    --secondary: oklch(0.55 0.2 275);
     --secondary-foreground: oklch(0.98 0 0);
     --muted: oklch(0.94 0 0);
     --muted-foreground: oklch(0.5 0 0);
-    --accent: oklch(0.55 0.2 210);
+    --accent: oklch(0.6 0.25 270);
     --accent-foreground: oklch(0.98 0 0);
     --destructive: oklch(0.577 0.245 27.325);
     --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.92 0.01 250);
+    --border: oklch(0.92 0.01 275);
     --input: oklch(0.96 0 0);
-    --ring: oklch(0.5 0.15 250);
-    --chart-1: oklch(0.5 0.18 220);
-    --chart-2: oklch(0.6 0.15 240);
-    --chart-3: oklch(0.45 0.16 260);
-    --chart-4: oklch(0.55 0.17 210);
-    --chart-5: oklch(0.65 0.14 230);
+    --ring: oklch(0.5 0.22 275);
+        --chart-1: oklch(0.45 0.2 275);
+        --chart-2: oklch(0.5 0.22 280);
+        --chart-3: oklch(0.55 0.2 270);
+        --chart-4: oklch(0.6 0.19 275);
+        --chart-5: oklch(0.65 0.18 285);
     --radius: 0.75rem;
     --sidebar: oklch(0.98 0 0);
     --sidebar-foreground: oklch(0.1 0 0);
-    --sidebar-primary: oklch(0.4 0.15 250);
+    --sidebar-primary: oklch(0.35 0.22 275);
     --sidebar-primary-foreground: oklch(0.98 0 0);
     --sidebar-accent: oklch(0.94 0 0);
     --sidebar-accent-foreground: oklch(0.1 0 0);
     --sidebar-border: oklch(0.92 0 0);
-    --sidebar-ring: oklch(0.5 0.15 250);
+    --sidebar-ring: oklch(0.5 0.22 275);
 }
 
 /* .dark {
@@ -48,33 +45,35 @@
     --card-foreground: oklch(0.95 0 0);
     --popover: oklch(0.15 0 0);
     --popover-foreground: oklch(0.95 0 0);
-    --primary: oklch(0.65 0.18 220);
+    --primary: oklch(0.65 0.22 275);
     --primary-foreground: oklch(0.12 0 0);
-    --secondary: oklch(0.6 0.2 210);
+    --secondary: oklch(0.7 0.2 275);
     --secondary-foreground: oklch(0.12 0 0);
     --muted: oklch(0.25 0 0);
     --muted-foreground: oklch(0.7 0 0);
-    --accent: oklch(0.7 0.19 215);
+    --accent: oklch(0.72 0.25 270);
     --accent-foreground: oklch(0.12 0 0);
     --destructive: oklch(0.396 0.141 25.723);
     --destructive-foreground: oklch(0.637 0.237 25.331);
     --border: oklch(0.22 0 0);
     --input: oklch(0.2 0 0);
-    --ring: oklch(0.65 0.18 220);
-    --chart-1: oklch(0.65 0.18 220);
-    --chart-2: oklch(0.6 0.17 240);
-    --chart-3: oklch(0.7 0.16 260);
-    --chart-4: oklch(0.63 0.19 210);
-    --chart-5: oklch(0.72 0.15 230);
+    --ring: oklch(0.65 0.22 275);
+        --chart-1: oklch(0.65 0.22 275);
+        --chart-2: oklch(0.68 0.2 280);
+        --chart-3: oklch(0.72 0.19 270);
+        --chart-4: oklch(0.7 0.21 275);
+        --chart-5: oklch(0.75 0.2 285);
     --sidebar: oklch(0.15 0 0);
     --sidebar-foreground: oklch(0.95 0 0);
-    --sidebar-primary: oklch(0.65 0.18 220);
+    --sidebar-primary: oklch(0.65 0.22 275);
     --sidebar-primary-foreground: oklch(0.12 0 0);
     --sidebar-accent: oklch(0.25 0 0);
     --sidebar-accent-foreground: oklch(0.95 0 0);
     --sidebar-border: oklch(0.22 0 0);
-    --sidebar-ring: oklch(0.65 0.18 220);
-} */
+    --sidebar-ring: oklch(0.65 0.22 275);
+    }
+    
+    */
 
 @theme inline {
     --font-sans: "Inter", "Inter Fallback";
@@ -123,29 +122,29 @@
         @apply border-border outline-ring/50;
     }
 
-                body {
-                    @apply bg-background text-foreground;
+        body {
+            @apply bg-background text-foreground;
         }
 
-                /* Enhanced typography with stronger font weights */
-                h1,
-                h2,
-                h3,
-                h4,
-                h5,
-                h6 {
-                    @apply font-serif font-bold tracking-tight;
-                }
+        /* Enhanced typography with stronger font weights */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            @apply font-serif font-bold tracking-tight;
+        }
 
-                h1 {
-                    @apply text-4xl md:text-5xl;
-                }
+        h1 {
+            @apply text-4xl md:text-5xl;
+        }
 
-                h2 {
-                    @apply text-3xl md:text-4xl;
+        h2 {
+            @apply text-3xl md:text-4xl;
     }
 
-                p {
-                    @apply font-sans;
+        p {
+            @apply font-sans;
     }
 }

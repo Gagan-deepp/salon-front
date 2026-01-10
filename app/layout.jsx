@@ -9,7 +9,7 @@ const _inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] 
 const _playfairDisplay = Playfair_Display({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800", "900"] })
 
 export const metadata = {
-  title: "Enterprise Billing Platform - RYNOX",
+  title: "RYY-NOX : Enterprise Billing Platform",
   description: "The only billing system built for franchise operations",
 }
 

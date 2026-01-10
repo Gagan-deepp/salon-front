@@ -64,8 +64,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session
         },
         redirect({ url, baseUrl }) {
-            console.debug("Redirect URL:", url);
-            console.debug("Base URL:", baseUrl);
+            // console.debug("Redirect URL:", url);
+            // console.debug("Base URL:", baseUrl);
             return `${baseUrl}/login`;
         },
     },
