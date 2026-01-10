@@ -4,6 +4,8 @@ import {
   BadgeIndianRupee,
   Briefcase,
   BriefcaseBusiness,
+  Package,
+  UserCircle2,
   Building2,
   ChevronRight,
   DollarSign,
@@ -69,7 +71,7 @@ export function AppSidebar({ ...props }) {
         icon: Telescope
       },
       {
-        title: "Staffs",
+        title: "Operators",
         url: "/admin/users",
         icon: UserCheck,
       },
@@ -131,12 +133,12 @@ export function AppSidebar({ ...props }) {
       {
         title: "Buy Package",
         url: "/admin/buy/package",
-        icon: BriefcaseBusiness,
+        icon: Package,
       },
        {
         title: "Buy Membership",
         url: "/admin/purchase/membership",
-        icon: BriefcaseBusiness,
+        icon: UserCircle2,
       }
     ],
     saas_owner: [
@@ -163,7 +165,7 @@ export function AppSidebar({ ...props }) {
         icon: Building2
       },
       {
-        title: "Staffs",
+        title: "Operators",
         url: "/admin/users",
         icon: UserCheck,
       },

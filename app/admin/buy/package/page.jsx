@@ -436,7 +436,7 @@ export default function BuyPackagePage() {
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
                             <span className="text-gray-500">Package Value:</span>
-                            <span>₹{selectedPackage.value}</span>
+                            <span>₹{selectedPackage.totalValue}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-500">Price per unit:</span>
@@ -490,8 +490,8 @@ export default function BuyPackagePage() {
                     <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-800">
                       <p className="font-semibold mb-1">📦 Package Benefits:</p>
                       <p>
-                        Customer will receive ₹{selectedPackage.value * quantity} 
-                        worth of services for just ₹{calculateTotal().toFixed(2)}
+                        Customer will receive ₹{selectedPackage.totalValue * quantity} 
+                          worth of services for just ₹{calculateTotal().toFixed(2)}
                       </p>
                     </div>
                   </>
