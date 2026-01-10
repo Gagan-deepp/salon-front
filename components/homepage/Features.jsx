@@ -39,7 +39,7 @@ const features = [
 
 const Features = () => {
     return (
-        <section id="features" className="py-32 px-4 bg-background relative overflow-hidden">
+        <section id="features" className="py-26 px-4 bg-background relative overflow-hidden">
             {/* Minimal background elements */}
             <div className="absolute top-20 left-1/3 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" />
             <div className="absolute bottom-20 right-1/3 w-80 h-80 bg-secondary/4 rounded-full blur-3xl animate-pulse delay-1000" />
@@ -52,7 +52,7 @@ const Features = () => {
                         Enterprise Command Center
                     </div>
                     <h2 className="text-5xl md:text-6xl font-bold mb-8 leading-tight">
-                        <span className="text-foreground">Total Control. </span>
+                        <span className="text-foreground block">Total Control. </span>
                         <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
                             Zero Chaos.
                         </span>

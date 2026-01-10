@@ -1,8 +1,7 @@
 'use client';
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Rocket, Users, TrendingUp, ArrowRight } from "lucide-react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { ArrowRight, Rocket, Sparkles, TrendingUp, Users } from "lucide-react";
 
 const Promise = () => {
     const promises = [
@@ -11,21 +10,21 @@ const Promise = () => {
             title: "Future-Proof Scalability",
             headline: "Expand effortlessly.",
             description: "RYY-NOX is built on a robust architecture that supports adding 1 or 100 stores overnight without performance lag or switching systems.",
-            gradient: "from-blue-500 to-cyan-500",
+            accent: "primary",
         },
         {
             icon: Users,
             title: "Dedicated Launch Team",
             headline: "Integration, not just installation.",
             description: "Your brand receives a specialist team to manage the complex, standardized rollout across all franchise units, guaranteeing zero chaos.",
-            gradient: "from-purple-500 to-pink-500",
+            accent: "secondary",
         },
         {
             icon: TrendingUp,
             title: "Ongoing Optimization",
             headline: "Maximize Your ROI.",
             description: "We don't stop at setup. Get quarterly operational audits and dedicated account support to ensure you are continually maximizing profit from the platform.",
-            gradient: "from-orange-500 to-red-500",
+            accent: "accent",
         },
     ];
 
@@ -35,70 +34,87 @@ const Promise = () => {
         <section
             id="promise"
             ref={elementRef}
-            className="py-24 px-4 bg-gradient-to-b from-background via-primary/5 to-background relative overflow-hidden"
+            className="py-26 px-4 bg-background relative overflow-hidden"
         >
-            {/* Background decoration */}
-            <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-            <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+            {/* Minimal background elements */}
+            <div className="absolute top-20 left-1/3 w-96 h-96 bg-primary/4 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 right-1/3 w-80 h-80 bg-secondary/3 rounded-full blur-3xl animate-pulse delay-1000" />
             
             <div className="container mx-auto relative z-10">
-                {/* Section Header */}
-                <div className="text-center mb-20 animate-fade-in">
-                    <div className="inline-block mb-4">
-                        <span className="text-sm font-semibold text-primary uppercase tracking-wider bg-primary/10 px-4 py-2 rounded-full">
-                            The Partner Promise
-                        </span>
+                {/* Clean Section Header */}
+                <div className="text-center mb-24">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/8 border border-primary/15 text-sm font-medium text-primary mb-6">
+                        <Sparkles className="w-4 h-4" />
+                        The Partner Promise
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                        Future-Proof Your Growth <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">With RYY-NOX</span>
+                    <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+                        <span className="block text-foreground mb-2">Future-Proof Your Growth</span>
+                        <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+                            With RYY-NOX
+                        </span>
                     </h2>
                 </div>
 
-                {/* Promises Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
-                    {promises.map((promise, index) => (
-                        <Card
-                            key={promise.title}
-                            className={`relative p-8 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-2 border-primary/10 hover:border-primary/30 group cursor-pointer overflow-hidden bg-card/50 backdrop-blur-sm ${
-                                isVisible ? 'animate-fade-in' : 'opacity-0'
-                            }`}
-                            style={{ animationDelay: `${index * 200}ms` }}
-                        >
-                            {/* Gradient overlay on hover */}
-                            <div className={`absolute inset-0 bg-gradient-to-br ${promise.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-                            
-                            <div className="relative z-10">
-                                {/* Icon */}
-                                <div className={`w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:shadow-2xl transition-all duration-300`}>
-                                    <promise.icon className="w-8 h-8 text-white" />
+                {/* Elegant Promises Layout */}
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+                        {promises.map((promise, index) => {
+                            const IconComponent = promise.icon;
+                            const accentColor = promise.accent === 'primary' ? 'primary' :
+                                promise.accent === 'secondary' ? 'secondary' : 'accent';
+
+                            return (
+                                <div
+                                    key={promise.title}
+                                    className={`group relative p-8 bg-card/60 backdrop-blur-sm border border-border/30 rounded-3xl transition-all duration-700 hover:shadow-xl hover:shadow-primary/5 ${accentColor === 'primary' ? 'hover:border-primary/50 hover:bg-gradient-to-br hover:from-primary/8 hover:to-transparent' :
+                                        accentColor === 'secondary' ? 'hover:border-secondary/50 hover:bg-gradient-to-br hover:from-secondary/8 hover:to-transparent' :
+                                            'hover:border-accent/50 hover:bg-gradient-to-br hover:from-accent/8 hover:to-transparent'
+                                        } ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
+                                    style={{ animationDelay: `${index * 200}ms` }}
+                                >
+                                    <div className="relative z-10">
+                                        {/* Minimal Icon */}
+                                        <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-6 ${accentColor === 'primary' ? 'bg-primary/10 text-primary' :
+                                            accentColor === 'secondary' ? 'bg-secondary/10 text-secondary' :
+                                                'bg-accent/10 text-accent'
+                                            } group-hover:scale-110 transition-transform duration-300`}>
+                                            <IconComponent className="w-7 h-7" />
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="space-y-4">
+                                            <h3 className="text-2xl font-bold text-foreground group-hover:text-primary/90 transition-colors duration-300">
+                                                {promise.title}
+                                            </h3>
+
+                                            <p className={`text-lg font-semibold ${accentColor === 'primary' ? 'text-primary/80' :
+                                                accentColor === 'secondary' ? 'text-secondary/80' :
+                                                    'text-accent/80'
+                                                }`}>
+                                                {promise.headline}
+                                            </p>
+
+                                            <p className="text-muted-foreground text-base leading-relaxed font-light">
+                                                {promise.description}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                {/* Content */}
-                                <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
-                                    {promise.title}
-                                </h3>
-                                <p className="text-lg font-semibold text-primary/90 mb-4">
-                                    {promise.headline}
-                                </p>
-                                <p className="text-muted-foreground leading-relaxed">
-                                    {promise.description}
-                                </p>
-
-                                {/* Decorative element */}
-                                <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
-                            </div>
-                        </Card>
-                    ))}
+                            );
+                        })}
+                    </div>
                 </div>
 
-                {/* CTA Section */}
-                <div className="text-center animate-fade-in" style={{ animationDelay: '600ms' }}>
-                    <Button variant="hero" size="xl" className="group shadow-2xl">
+                {/* Refined CTA Section */}
+                <div className="text-center">
+                    <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-primary to-secondary hover:shadow-xl hover:shadow-primary/25 text-primary-foreground font-semibold rounded-2xl px-10 h-16 transition-all duration-300 group mb-4"
+                    >
                         Talk to Our Enterprise Specialists
-                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
                     </Button>
-                    <p className="text-sm text-muted-foreground mt-4">
+                    <p className="text-sm text-muted-foreground font-light">
                         Get a personalized demo and see how RYY-NOX can transform your franchise
                     </p>
                 </div>

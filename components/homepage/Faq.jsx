@@ -5,6 +5,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Sparkles } from "lucide-react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const FAQ = () => {
@@ -37,42 +38,89 @@ const FAQ = () => {
         <section
             id="faq"
             ref={elementRef}
-            className="py-12 sm:py-16 lg:py-20 px-4"
+            className="py-26 px-4 bg-background relative overflow-hidden"
         >
-            <div className="container mx-auto max-w-3xl">
-                <div className="text-center mb-12 sm:mb-16 animate-fade-in">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-                        Your Questions, <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Answered.</span>
+            {/* Minimal background elements */}
+            <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/4 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-secondary/3 rounded-full blur-3xl animate-pulse delay-1000" />
+
+            <div className="container mx-auto max-w-4xl relative z-10">
+                <div className="text-center mb-24">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/8 border border-primary/15 text-sm font-medium text-primary mb-6">
+                        <Sparkles className="w-4 h-4" />
+                        Frequently Asked Questions
+                    </div>
+                    <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+                        <span className="block text-foreground mb-2">Your Questions,</span>
+                        <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+                            Answered.
+                        </span>
                     </h2>
                 </div>
 
                 <div className={`${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
-                    <Accordion type="single" collapsible className="w-full space-y-3 sm:space-y-4">
-                        {faqs.map((faq, index) => (
-                            <AccordionItem
-                                key={index}
-                                value={`item-${index}`}
-                                className="border-2 border-primary/10 rounded-lg px-4 sm:px-6 hover:border-primary/30 transition-colors"
-                            >
-                                <AccordionTrigger className="text-left hover:no-underline py-4 sm:py-5">
-                                    <span className="text-sm sm:text-base font-semibold pr-2">{faq.question}</span>
-                                </AccordionTrigger>
-                                <AccordionContent className="text-sm sm:text-base text-muted-foreground pb-4 sm:pb-5">
-                                    {faq.answer}
-                                </AccordionContent>
-                            </AccordionItem>
-                        ))}
-                    </Accordion>
+                    <div className="space-y-6">
+                        {faqs.map((faq, index) => {
+                            const accentColors = ['primary', 'secondary', 'accent'];
+                            const accentColor = accentColors[index % 3];
+                            const isHighlighted = index === 1; // Highlight second FAQ instead of first
+
+                            return (
+                                <div
+                                    key={index}
+                                    className={`group relative backdrop-blur-sm border transition-all duration-700 hover:shadow-2xl bg-white/80 shadow-black/5 hover:shadow-black/10 hover:border-primary/50 hover:bg-linear-to-br from-primary/20 to-primary/8 border-primary/40 shadow-xl shadow-primary/10 rounded-3xl p-8`}
+                                    style={{
+                                        animationDelay: `${index * 100}ms`,
+                                        transform: `translateY(${isHighlighted ? '0px' : '0px'})`,
+                                    }}
+                                >
+                                    <Accordion type="single" collapsible className="w-full">
+                                        <AccordionItem value={`item-${index}`} className="border-none">
+                                            <AccordionTrigger className="text-left hover:no-underline py-0 [&[data-state=open]>div>.icon]:rotate-45 [&[data-state=open]>div>.plus-h]:opacity-0">
+                                                <div className="flex items-center justify-between w-full pr-4">
+                                                    <h3 className={`text-xl font-bold transition-colors duration-300 ${isHighlighted ? 'text-foreground' : 'text-foreground group-hover:text-primary/90'
+                                                        }`}>
+                                                        {faq.question}
+                                                    </h3>
+                                                    <div className={`icon relative flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ${accentColor === 'primary' ? 'border-primary/30 bg-primary/5' :
+                                                        accentColor === 'secondary' ? 'border-secondary/30 bg-secondary/5' :
+                                                            'border-accent/30 bg-accent/5'
+                                                        }`}>
+                                                        <span className={`plus-v absolute w-0.5 h-4 transition-all duration-300 ${accentColor === 'primary' ? 'bg-primary' :
+                                                            accentColor === 'secondary' ? 'bg-secondary' :
+                                                                'bg-accent'
+                                                            }`} />
+                                                        <span className={`plus-h absolute w-4 h-0.5 transition-all duration-300 ${accentColor === 'primary' ? 'bg-primary' :
+                                                            accentColor === 'secondary' ? 'bg-secondary' :
+                                                                'bg-accent'
+                                                            }`} />
+                                                    </div>
+                                                </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent className="pb-0 pt-6 data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden">
+                                                <div className="space-y-4">
+                                                    <p className={`text-base leading-relaxed font-medium ${isHighlighted ? 'text-foreground/80' : 'text-muted-foreground'
+                                                        }`}>
+                                                        {faq.answer}
+                                                    </p>
+                                                </div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    </Accordion>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
 
-                <div className="mt-8 sm:mt-10 md:mt-12 text-center p-6 sm:p-8 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl sm:rounded-2xl border-2 border-primary/10">
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2">Still have questions?</h3>
-                    <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 px-4">
+                <div className="mt-16 text-center p-8 bg-gradient-to-br from-muted/50 to-muted/20 rounded-3xl border border-border/30">
+                    <h3 className="text-2xl font-bold mb-4 text-foreground">Still have questions?</h3>
+                    <p className="text-base text-muted-foreground mb-6 font-light max-w-md mx-auto">
                         Our team is here to help. Reach out anytime.
                     </p>
                     <a
                         href="#contact"
-                        className="text-sm sm:text-base text-primary hover:text-primary/80 font-medium inline-flex items-center gap-2 group"
+                        className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold rounded-2xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 group"
                     >
                         Contact our support team
                         <span className="group-hover:translate-x-1 transition-transform">→</span>

@@ -3,10 +3,10 @@ import "./index.css"
 import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 
-const inter = Inter({ subsets: ["latin"] })
-const _poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] })
-const _inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] })
-const _playfairDisplay = Playfair_Display({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800", "900"] })
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"]
+})
 
 export const metadata = {
   title: "RYY-NOX : Enterprise Billing Platform",
@@ -16,7 +16,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className={`antialiased ${poppins.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

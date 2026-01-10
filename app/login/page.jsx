@@ -23,7 +23,7 @@ export default function Page() {
         </div>
 
         <div className="w-full text-center flex flex-col gap-4" >
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold" > Welcome back! </h1>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold" > Welcome back! </h1>
           <div className="text-center text-base md:text-base text-foreground/70 max-w-3xl mx-auto leading-relaxed font-medium" >
             <p> Go beyond POS. RYY-NOX centralizes every store </p>
             <p> Login to continue </p>
