@@ -32,72 +32,74 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              form.handleSubmit()
-            }}
-          >
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+        className="space-y-6"
+      >
 
-            <form.Field
-              name="email"
-              children={(field) => (
-                <Field>
-                  <FieldLabel htmlFor="email">Email *</FieldLabel>
-                  <Input
-                    id="email"
-                    placeholder="Enter your email"
-                    disabled={isPending}
-                    value={field.state.value}
-                    onChange={(e) => { field.handleChange(e.target.value) }}
-                    onBlur={field.handleBlur}
-                  />
-                  {field.state.meta.errors.length > 0 && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              )}
-            />
+        <form.Field
+          name="email"
+          children={(field) => (
+            <Field>
+              <Input
+                id="email"
+                placeholder="Username"
+                disabled={isPending}
+                value={field.state.value}
+                onChange={(e) => { field.handleChange(e.target.value) }}
+                onBlur={field.handleBlur}
+                className="h-14 rounded-full border-2 border-border/30 px-6 text-base placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground focus:border-primary/50 transition-colors"
+              />
+              {field.state.meta.errors.length > 0 && <FieldError errors={field.state.meta.errors} />}
+            </Field>
+          )}
+        />
 
 
-            <form.Field
-              name="password"
-              children={(field) => (
-                <Field>
-                  <FieldLabel htmlFor="password">Password *</FieldLabel>
-                  <Input
-                    id="password"
-                    placeholder="Enter your password"
-                    disabled={isPending}
-                    value={field.state.value}
-                    onChange={(e) => { field.handleChange(e.target.value) }}
-                    onBlur={field.handleBlur}
-                  />
-                  {field.state.meta.errors.length > 0 && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              )}
-            />
+        <form.Field
+          name="password"
+          children={(field) => (
+            <Field>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Password"
+                disabled={isPending}
+                value={field.state.value}
+                onChange={(e) => { field.handleChange(e.target.value) }}
+                onBlur={field.handleBlur}
+                className="h-14 rounded-full border-2 border-border/30 px-6 text-base placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground focus:border-primary/50 transition-colors"
+              />
+              {field.state.meta.errors.length > 0 && <FieldError errors={field.state.meta.errors} />}
+            </Field>
+          )}
+        />
 
-            <Button type="submit" disabled={isPending} className="flex-1">
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Logging in...
-                </>
-              ) : (
-                "Login"
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+        <div className="text-right">
+          <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            Forgot Password?
+          </a>
+        </div>
+
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="w-full h-14 rounded-full bg-primary cursor-pointer hover:bg-foreground/90 text-background font-semibold text-base transition-all duration-300"
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Logging in...
+            </>
+          ) : (
+            "Login"
+          )}
+        </Button>
+      </form>
     </div>
   );
 }
