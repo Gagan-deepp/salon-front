@@ -34,6 +34,7 @@ export function CustomerDetails({ customer }) {
         if (historyResult.success) {
           setCustomerHistory(historyResult.data.history || historyResult.data || [])
         }
+        console.log("historyResult",historyResult)
 
         // Load customer stats
         const statsResult = await getCustomerStats(customer._id, {
@@ -95,6 +96,10 @@ export function CustomerDetails({ customer }) {
               <Badge variant="outline">{customer.phone}</Badge>
               <Badge variant={customer.isActive ? "default" : "destructive"}>
                 {customer.isActive ? "Active" : "Inactive"}
+              </Badge>
+
+              <Badge variant={customer.isActive ? "default" : "destructive"}>
+                {customer.isMember ? "Member" : "Non Member"}
               </Badge>
               {customer.gender && (
                 <Badge variant="secondary">{GENDER_LABELS[customer.gender]}</Badge>

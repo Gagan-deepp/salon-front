@@ -1,0 +1,481 @@
+"use client";
+
+import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { getCustomersDropdown } from "@/lib/actions/customer_action";
+import { getOffers } from "@/lib/actions/offer_action"; // You'll need this
+import { purchaseMembership } from "@/lib/actions/membership_action"; // You'll need this
+import {
+  Loader2,
+  Plus,
+  Receipt,
+  Search,
+  Crown,
+  Gift,
+  Percent,
+  Calendar,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+export default function PurchaseMembershipPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const [customers, setCustomers] = useState([]);
+  const [offers, setOffers] = useState([]);
+  const [customerSearchText, setCustomerSearchText] = useState("");
+  const [offerCode, setOfferCode] = useState("");
+
+  const [selectedOffer, setSelectedOffer] = useState(null);
+
+  const [formData, setFormData] = useState({
+    customerId: "",
+    offerId: "",
+    amountPaid: 0,
+    quantity: 1,
+    paymentMode: "CASH",
+    paymentDetails: {},
+    offerCode: "",
+  });
+
+  // Fetch dropdown data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [customersRes, offersRes] = await Promise.all([
+          getCustomersDropdown({ limit: 100 }),
+          getOffers({ limit: 100, status: "ACTIVE", isMembershipOffer: true }),
+        ]);
+
+        if (customersRes.success && customersRes.data.data?.length > 0) {
+          setCustomers(customersRes.data.data);
+        }
+        console.log("offerRes",offersRes)
+        if (offersRes.success && offersRes.data.data.offers?.length > 0) {
+          setOffers(offersRes.data.data.offers);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dropdown data:", error);
+        toast.error("Failed to load data");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleCustomerCreated = (newCustomer) => {
+    setCustomers((prevCustomers) => [newCustomer, ...prevCustomers]);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      customerId: newCustomer._id,
+    }));
+    setCustomerSearchText(`${newCustomer.name} - ${newCustomer.phone}`);
+  };
+
+  const handleOfferSelect = (offerId) => {
+    const offer = offers.find((o) => o._id === offerId);
+    if (offer) {
+      setSelectedOffer(offer);
+      setFormData((prev) => ({
+        ...prev,
+        offerId: offerId,
+        amountPaid: offer.membershipBenefits?.price || 0,
+        quantity: 1,
+      }));
+    }
+  };
+
+  const handleAmountChange = (e) => {
+    const amount = parseFloat(e.target.value) || 0;
+    setFormData((prev) => ({ ...prev, amountPaid: amount }));
+  };
+
+  const handleOfferCodeChange = (e) => {
+    setOfferCode(e.target.value.toUpperCase());
+    setFormData((prev) => ({ ...prev, offerCode: e.target.value.toUpperCase() }));
+  };
+
+  const calculateTotal = () => {
+    if (!selectedOffer) return formData.amountPaid;
+    return formData.amountPaid * formData.quantity;
+  };
+
+  const handlePurchase = async () => {
+    if (!formData.customerId) {
+      toast.error("Please select a customer");
+      return;
+    }
+    if (!formData.offerId) {
+      toast.error("Please select an offer");
+      return;
+    }
+    if (formData.amountPaid <= 0) {
+      toast.error("Please enter valid amount");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await purchaseMembership(formData);
+
+      if (result.success) {
+        toast.success("Membership purchased successfully!");
+        // Reset form
+        setFormData({
+          customerId: "",
+          offerId: "",
+          amountPaid: 0,
+          quantity: 1,
+          paymentMode: "CASH",
+          paymentDetails: {},
+          offerCode: "",
+        });
+        setSelectedOffer(null);
+        setCustomerSearchText("");
+        setOfferCode("");
+      } else {
+        toast.error(result.error || "Failed to purchase membership");
+      }
+    } catch (error) {
+      console.error("Purchase error:", error);
+      toast.error("Failed to purchase membership");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6 p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <Crown className="w-8 h-8 text-yellow-500" />
+            Purchase Membership
+          </h1>
+          <p className="text-gray-600">Convert customer to premium member</p>
+        </div>
+
+        <div className="flex gap-4 items-center flex-wrap">
+          <CreateCustomerDialog handleCustomerCreated={handleCustomerCreated}>
+            <Button type="button">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Customer
+            </Button>
+          </CreateCustomerDialog>
+
+          <Button
+            onClick={handlePurchase}
+            disabled={!formData.customerId || !formData.offerId || loading}
+            className="min-w-[140px]"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <Crown className="w-4 h-4 mr-2" />
+                Buy Membership
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col lg:flex-row h-full gap-6">
+        {/* Left Column - Form */}
+        <Card className="flex-1 lg:flex-[2] p-6 rounded-lg shadow-sm">
+          <ScrollArea className="h-[calc(100vh-250px)] pr-4">
+            <div className="space-y-6 p-2">
+              {/* Customer Selection */}
+              <div className="space-y-3">
+                <Label htmlFor="customer" className="text-base font-medium">
+                  Customer *
+                </Label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <Search className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="customer-search"
+                    type="text"
+                    list="customers-datalist"
+                    placeholder="Search customer by name or phone..."
+                    className="w-full h-10 ring-2 ring-border rounded-md pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={customerSearchText}
+                    onChange={(e) => {
+                      const searchValue = e.target.value;
+                      setCustomerSearchText(searchValue);
+
+                      const foundCustomer = customers.find(
+                        (c) =>
+                          c.name.toLowerCase() === searchValue.toLowerCase() ||
+                          c.phone === searchValue ||
+                          `${c.name} - ${c.phone}` === searchValue
+                      );
+
+                      if (foundCustomer) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          customerId: foundCustomer._id,
+                        }));
+                      } else {
+                        setFormData((prev) => ({ ...prev, customerId: "" }));
+                      }
+                    }}
+                    required
+                  />
+                  <datalist id="customers-datalist">
+                    {customers.map((customer) => (
+                      <option
+                        key={customer._id}
+                        value={`${customer.name} - ${customer.phone}`}
+                      />
+                    ))}
+                  </datalist>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Offer Selection */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">Membership Offers *</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {offers.map((offer) => (
+                    <div
+                      key={offer._id}
+                      onClick={() => handleOfferSelect(offer._id)}
+                      className={`
+                        p-6 border-2 rounded-xl cursor-pointer transition-all group hover:shadow-lg
+                        ${
+                          selectedOffer?._id === offer._id
+                            ? "border-yellow-400 bg-yellow-50 shadow-lg ring-2 ring-yellow-200"
+                            : "border-gray-200 hover:border-yellow-300 hover:bg-yellow-25"
+                        }
+                      `}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-yellow-100 rounded-lg">
+                            <Crown className="w-6 h-6 text-yellow-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-xl">{offer.name}</h3>
+                            <p className="text-sm text-yellow-700 font-medium">
+                              {offer.offerCode}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                          {offer.offerType}
+                        </Badge>
+                      </div>
+
+                      <p className="text-gray-600 mb-4 line-clamp-2">{offer.description}</p>
+
+                      {offer.membershipBenefits && (
+                        <div className="space-y-2 mb-4">
+                          <div className="flex justify-between items-center pt-2">
+                            <span className="text-sm text-gray-500">Membership Value:</span>
+                            <span className="font-bold text-lg">₹{offer.membershipBenefits.membershipValue}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-500">Discount:</span>
+                            <span className="font-bold text-green-600 text-lg">
+                              {offer.membershipBenefits.discountPercentage}%
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-sm pt-1">
+                            <span className="text-gray-500 flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              1 Year
+                            </span>
+                            <span className="font-medium">Active</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {offers.length === 0 && (
+                  <div className="text-center py-12 text-gray-500">
+                    <Crown className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <p className="text-lg font-medium">No membership offers available</p>
+                    <p className="text-sm">Please create membership offers first</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Promo Code */}
+              {selectedOffer && (
+                <>
+                  <Separator />
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">Promo Code (Optional)</Label>
+                    <Input
+                      placeholder="Enter promo code if any"
+                      value={offerCode}
+                      onChange={handleOfferCodeChange}
+                      className="h-10"
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Amount */}
+              {selectedOffer && (
+                <>
+                  <Separator />
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">Amount Paid (₹)</Label>
+                    <Input
+                      type="number"
+                      placeholder="Enter amount paid"
+                      value={formData.amountPaid}
+                      onChange={handleAmountChange}
+                      className="h-10 text-lg font-medium"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Payment Mode */}
+              {selectedOffer && (
+                <>
+                  <Separator />
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">Payment Mode *</Label>
+                    <Select
+                      value={formData.paymentMode}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, paymentMode: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select payment mode" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CASH">Cash</SelectItem>
+                        <SelectItem value="CARD">Card</SelectItem>
+                        <SelectItem value="UPI">UPI</SelectItem>
+                        <SelectItem value="NET_BANKING">Net Banking</SelectItem>
+                        <SelectItem value="WALLET">Wallet</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
+            </div>
+          </ScrollArea>
+        </Card>
+
+        {/* Right Column - Summary */}
+        <Card className="lg:flex-1 p-6 rounded-lg shadow-sm">
+          <div className="sticky top-6">
+            <div className="p-4 border-b -mx-6 -mt-6 rounded-t-lg bg-gradient-to-r from-yellow-50 to-orange-50">
+              <h3 className="text-lg font-semibold flex items-center">
+                <Receipt className="w-5 h-5 mr-2 text-yellow-600" />
+                Membership Summary
+              </h3>
+            </div>
+            <ScrollArea className="h-[calc(100vh-350px)] py-4">
+              <div className="space-y-6">
+                {selectedOffer ? (
+                  <>
+                    {/* Selected Offer Details */}
+                    <div className="space-y-3">
+                      <div className="font-semibold text-lg flex items-center gap-2">
+                        <Crown className="w-5 h-5 text-yellow-600" />
+                        {selectedOffer.name}
+                      </div>
+                      <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Membership Value:</span>
+                            <span className="font-bold">₹{selectedOffer.membershipBenefits?.membershipValue}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Discount:</span>
+                            <span className="font-bold text-green-600">
+                              {selectedOffer.membershipBenefits?.discountPercentage}%
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Amount Paid:</span>
+                            <span className="font-bold text-lg">₹{formData.amountPaid.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Quantity:</span>
+                            <span>× {formData.quantity}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Total Calculation */}
+                    <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                      <div className="flex justify-between text-sm">
+                        <span>Amount per membership:</span>
+                        <span>₹{formData.amountPaid.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Quantity:</span>
+                        <span>× {formData.quantity}</span>
+                      </div>
+                      <Separator />
+                      <div className="flex justify-between text-xl font-bold text-yellow-700">
+                        <span>Total Amount:</span>
+                        <span>₹{calculateTotal().toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                      <p className="font-semibold text-green-800 flex items-center gap-2 mb-2">
+                        <Gift className="w-5 h-5" />
+                        Membership Benefits:
+                      </p>
+                      <ul className="text-sm text-green-700 space-y-1">
+                        <li>✅ {selectedOffer.membershipBenefits?.discountPercentage}% discount on all services</li>
+                        <li>✅ Priority booking & appointments</li>
+                        <li>✅ {selectedOffer.membershipBenefits?.membershipValue} worth of services</li>
+                        <li>✅ Valid for 1 year</li>
+                      </ul>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    <Crown className="w-16 h-16 mx-auto mb-4 opacity-50 text-yellow-300" />
+                    <p className="text-lg font-medium">No offer selected</p>
+                    <p className="text-sm">Select a customer and membership offer</p>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}

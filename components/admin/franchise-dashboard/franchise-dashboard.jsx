@@ -107,7 +107,7 @@ export async function FranchiseDashboard({ metrics, franchise, customerData, sal
             <TrendingUp className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics?.average_order_value}</div>
+            <div className="text-2xl font-bold">{formatCurrency(metrics?.average_order_value)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -116,7 +116,7 @@ export async function FranchiseDashboard({ metrics, franchise, customerData, sal
             <CreditCard className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics?.daily_revenue}</div>
+            <div className="text-2xl font-bold">{formatCurrency(metrics?.daily_revenue)}</div>
           </CardContent>
         </Card>
       </div>

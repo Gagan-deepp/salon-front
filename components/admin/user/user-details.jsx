@@ -99,7 +99,21 @@ export function UserDetails({ user, performance, referrals }) {
           </CardContent>
         </Card>
 
-        <Card>
+         <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Kitty
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {formatCurrency(user.kitty || 0)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Monthly earnings</p>
+          </CardContent>
+        </Card>
+
+        {/* <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Pending Commission
@@ -111,7 +125,7 @@ export function UserDetails({ user, performance, referrals }) {
             </div>
             <p className="text-xs text-muted-foreground mt-1">Awaiting payout</p>
           </CardContent>
-        </Card>
+        </Card> */}
 
       </div>
 

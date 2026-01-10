@@ -127,6 +127,12 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
   }
 
   const selectedPackageData = packages.find((p) => p._id === selectedPackage)
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }).format(amount)
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -170,7 +176,7 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
                             <div className="flex-1">
                               <p className="font-medium">{pkg.packageId?.name || "Package"}</p>
                               <p className="text-xs text-gray-500">
-                                {pkg.remainingSessions} / {pkg.totalSessions} sessions remaining
+                               Remaining Balance : {formatCurrency(pkg.remainingValue)} 
                               </p>
                             </div>
                             <Badge variant="secondary" className="ml-2">
