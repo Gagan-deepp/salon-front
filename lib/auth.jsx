@@ -63,49 +63,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.companyId = token.companyId
             return session
         },
-        redirect({ baseUrl, token, session }) {
-            console.log("I am in redirect callback")
-            console.log("Session:", session ?? "no session");
-            console.log("baseUrl:", baseUrl);
-            console.log("token:", token);
-
-            if (token) { // Token exists on successful sign-in
-                console.log("Redirecting based on user role:", token.role)
-                switch (token.role) {
-                    case 'FRANCHISE_OWNER':
-                        return `${baseUrl}/admin/franchise`;
-                    case 'CASHIER':
-                        return `${baseUrl}/admin/create/payment`;
-                    default:
-                        return `${baseUrl}/admin`;
-                }
-            }
-            // Fallback 
-            return baseUrl;
+        redirect({ url, baseUrl }) {
+            console.debug("Redirect URL:", url);
+            console.debug("Base URL:", baseUrl);
+            return `${baseUrl}/login`;
         },
-
-        authorized({ request, auth }) {
-
-
-            const { pathname } = request.nextUrl
-
-            // Skip auth for static files and Next.js internals
-            if (
-                pathname.startsWith('/_next/') ||
-                pathname.startsWith('/api/') ||
-                pathname.includes('.') || // files with extensions
-                pathname === '/favicon.ico'
-            ) {
-                return true
-            }
-
-
-            console.log("Auth status", auth)
-            const isLoggedIn = !!auth?.user
-            console.log("Is logged in", isLoggedIn)
-            console.log("Pathname", pathname)
-            return true
-        }
     },
     pages: {
         signIn: "/login",

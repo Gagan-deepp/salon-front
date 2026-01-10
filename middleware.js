@@ -33,14 +33,35 @@ const routePermissions = [
     },
 ];
 
+
+const publicPaths = [
+    '/', // home page
+    '/login',
+    '/api/auth', // NextAuth API routes
+    '/_next',
+    '/favicon.ico',
+];
+
 export const config = {
-    matcher: ["/", "/admin/:path*"],
+    matcher: [
+        '/((?!api/auth|_next/static|_next/image|favicon.ico).*)',
+    ],
 };
+
 
 export async function middleware(request) {
     const pathname = request.nextUrl.pathname;
 
     // console.debug("🔍 Middleware processing:", pathname);
+
+    if (
+        pathname.startsWith('/_next/') ||
+        pathname.startsWith('/api/') && !pathname.startsWith('/api/auth') ||
+        pathname.includes('.') || // files with extensions
+        pathname === '/favicon.ico'
+    ) {
+        return NextResponse.next();
+    }
 
     // Handle home page redirects for logged-in users
     if (pathname === "/" || pathname === "/login") {

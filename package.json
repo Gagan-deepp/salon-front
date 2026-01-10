@@ -28,7 +28,7 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sparticuz/chromium-min": "^141.0.0",
-    "@tanstack/react-form": "^1.23.8",
+    "@tanstack/react-form": "^1.27.7",
     "add": "^2.0.6",
     "axios": "^1.11.0",
     "calendar": "^0.1.1",
