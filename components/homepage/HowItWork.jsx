@@ -1,7 +1,6 @@
 'use client';
-import { TrendingUp, Package, BarChart2, Sparkles } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { BarChart2, Package, Sparkles, TrendingUp } from "lucide-react";
 
 const HowItWorks = () => {
     const revenueEngines = [
@@ -24,7 +23,7 @@ const HowItWorks = () => {
             title: "Hyper-Targeted Analytics",
             benefit: "Actionable data at your fingertips.",
             description: "Instantly drill down to your peak profit windows, top-performing services, and highest-converting staff members, all from a visual dashboard.",
-            accent: "accent",
+            accent: "primary",
         },
     ];
 
@@ -69,9 +68,9 @@ const HowItWorks = () => {
                             return (
                                 <div
                                     key={engine.title}
-                                    className={`group relative p-8 bg-card/60 backdrop-blur-sm border border-border/30 rounded-3xl transition-all duration-700 hover:shadow-xl hover:shadow-primary/5 ${accentColor === 'primary' ? 'hover:border-primary/40 hover:bg-gradient-to-br hover:from-primary/8 hover:to-transparent' :
-                                        accentColor === 'secondary' ? 'hover:border-secondary/40 hover:bg-gradient-to-br hover:from-secondary/8 hover:to-transparent' :
-                                            'hover:border-accent/40 hover:bg-gradient-to-br hover:from-accent/8 hover:to-transparent'
+                                    className={`group relative p-8 bg-card/60 backdrop-blur-sm border border-border/30 rounded-3xl transition-all duration-700 hover:shadow-xl hover:shadow-primary/5 ${accentColor === 'primary' ? 'hover:border-primary/50 hover:bg-gradient-to-br hover:from-primary/8 hover:to-transparent' :
+                                        accentColor === 'secondary' ? 'hover:border-secondary/50 hover:bg-gradient-to-br hover:from-secondary/8 hover:to-transparent' :
+                                            'hover:border-accent/50 hover:bg-gradient-to-br hover:from-accent/8 hover:to-transparent'
                                         } ${isVisible ? 'animate-fade-in' : 'opacity-0'
                                         }`}
                                     style={{ animationDelay: `${index * 200}ms` }}

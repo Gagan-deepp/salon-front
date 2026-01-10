@@ -1,7 +1,6 @@
 'use client';
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock, BarChart3, Database, Droplets, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, BarChart3, Database, Droplets, Lock, Sparkles } from "lucide-react";
 
 const features = [
     {
@@ -26,7 +25,7 @@ const features = [
         headline: "One Customer, Any Location.",
         description: "Seamlessly unify client history, appointments, and loyalty points across your entire network, driving brand-wide retention and consistent experience.",
         iconComponent: Database,
-        accent: "accent",
+        accent: "secondary",
     },
     {
         icon: "🧴",
@@ -74,9 +73,9 @@ const Features = () => {
                             return (
                                 <div
                                     key={feature.title}
-                                    className={`group relative p-10 bg-card/60 backdrop-blur-sm border border-border/30 rounded-3xl hover:bg-card/80 transition-all duration-700 hover:shadow-xl hover:shadow-primary/5 ${accentColor === 'primary' ? 'hover:border-primary/40 hover:bg-gradient-to-br hover:from-primary/8 hover:to-transparent' :
-                                            accentColor === 'secondary' ? 'hover:border-secondary/40 hover:bg-gradient-to-br hover:from-secondary/8 hover:to-transparent' :
-                                                'hover:border-accent/40 hover:bg-gradient-to-br hover:from-accent/8 hover:to-transparent'
+                                    className={`group relative p-10 bg-card/60 backdrop-blur-sm border border-border/30 rounded-3xl hover:bg-card/80 transition-all duration-700 hover:shadow-xl hover:shadow-primary/5 ${accentColor === 'primary' ? 'hover:border-primary/50 hover:bg-linear-to-br hover:from-primary/8 hover:to-transparent' :
+                                        accentColor === 'secondary' ? 'hover:border-primary/50 hover:bg-linear-to-br hover:from-primary/8 hover:to-transparent' :
+                                            'hover:border-accent/50 hover:bg-linear-to-br hover:from-accent/8 hover:to-transparent'
                                         }`}
                                     style={{ animationDelay: `${index * 200}ms` }}
                                 >
