@@ -128,6 +128,16 @@ export function AppSidebar({ ...props }) {
         url: "/admin/appointments",
         icon: BriefcaseBusiness,
       },
+      {
+        title: "Buy Package",
+        url: "/admin/buy/package",
+        icon: BriefcaseBusiness,
+      },
+       {
+        title: "Buy Membership",
+        url: "/admin/purchase/membership",
+        icon: BriefcaseBusiness,
+      }
     ],
     saas_owner: [
       {

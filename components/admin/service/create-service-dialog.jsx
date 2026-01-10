@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
 import { createService } from "@/lib/actions/service_action"
 import { getFranchises } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
@@ -46,6 +47,7 @@ export function CreateServiceDialog({ children }) {
   const [loading, setLoading] = useState(false)
   const [selectedRoles, setSelectedRoles] = useState([])
   const [franchises, setFranchises] = useState([])
+  const [inclusiveGST, setInclusiveGST] = useState(false) // New state for GST toggle
   const router = useRouter()
 
   useEffect(() => {
@@ -76,7 +78,9 @@ export function CreateServiceDialog({ children }) {
       description: formData.get("description"),
       duration: Number.parseInt(formData.get("duration")),
       price: Number.parseFloat(formData.get("price")),
+      // Only include gstRate if not inclusive
       gstRate: Number.parseFloat(formData.get("gstRate")),
+      inclusiveGST:inclusiveGST,
       franchiseId: formData.get("franchiseId"),
       allowedRoles: selectedRoles,
       commissionRate: Number.parseFloat(formData.get("commissionRate")),
@@ -88,6 +92,7 @@ export function CreateServiceDialog({ children }) {
       toast.success("Service created successfully")
       setOpen(false)
       setSelectedRoles([])
+      setInclusiveGST(false) // Reset toggle
       router.refresh()
     } else {
       toast.error(result.error || "Failed to create service")
@@ -172,27 +177,62 @@ export function CreateServiceDialog({ children }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="gstRate">GST Rate (%)</Label>
-              <Input
-                id="gstRate"
-                name="gstRate"
-                type="number"
-                min="0"
-                max="28"
-                defaultValue="18" />
+          {/* GST Section with Toggle */}
+          <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+               
+                <p className="text-sm text-gray-500">
+                  {inclusiveGST 
+                    ? "Price already includes GST (no additional GST will be charged)" 
+                    : "GST will be added on top of the price"}
+                </p>
+              </div>
+              <Switch
+                id="inclusiveGST"
+                checked={inclusiveGST}
+                onCheckedChange={setInclusiveGST}
+              />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="commissionRate">Commission Rate (%)</Label>
-              <Input
-                id="commissionRate"
-                name="commissionRate"
-                type="number"
-                min="0"
-                max="50"
-                defaultValue="10" />
-            </div>
+
+             
+              <div className="space-y-2">
+                <Label htmlFor="gstRate">GST Rate (%) *</Label>
+                <Input
+                  id="gstRate"
+                  name="gstRate"
+                  type="number"
+                  min="0"
+                  max="28"
+                  step="0.01"
+                  defaultValue="18"
+                  required={!inclusiveGST}
+                  className="bg-white"
+                />
+                {/* <p className="text-xs text-gray-500">
+                  This GST rate will be added on top of the base price
+                </p> */}
+              </div>
+            
+
+            {inclusiveGST && (
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
+                <strong>Note:</strong> The entered price already includes GST. No additional GST will be calculated at billing.
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="commissionRate">Commission Rate (%)</Label>
+            <Input
+              id="commissionRate"
+              name="commissionRate"
+              type="number"
+              min="0"
+              max="50"
+              step="0.01"
+              defaultValue="10"
+            />
           </div>
 
           {/* <div className="space-y-2">
@@ -203,7 +243,8 @@ export function CreateServiceDialog({ children }) {
                   <Checkbox
                     id={role.value}
                     checked={selectedRoles.includes(role.value)}
-                    onCheckedChange={(checked) => handleRoleChange(role.value, checked)} />
+                    onCheckedChange={(checked) => handleRoleChange(role.value, checked)}
+                  />
                   <Label htmlFor={role.value} className="text-sm">
                     {role.label}
                   </Label>

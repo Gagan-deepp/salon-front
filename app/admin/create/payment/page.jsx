@@ -4,6 +4,7 @@ import { CreateCustomerDialog } from "@/components/admin/customer/create-custome
 import { DiscountDialog } from "@/components/admin/payment/discount-dialog";
 import { PaymentDialog } from "@/components/admin/payment/payment-dialog";
 import { ProductCard } from "@/components/admin/payment/product-card";
+import { PackageRedemptionDialog } from "@/components/admin/payment/package-redemption-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -38,7 +39,8 @@ import {
   Trash,
   Search,
   Phone,
-  X
+  X,
+  Gift,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -68,6 +70,10 @@ export default function CreatePaymentPage() {
       sgst: 0,
       igst: 0,
       total: 0,
+      inclusiveGst: 0,
+      inclusiveCgst: 0,
+      inclusiveSgst: 0,
+      inclusiveBasePrice: 0,
     },
     finalAmount: 0,
   });
@@ -94,11 +100,6 @@ export default function CreatePaymentPage() {
             getUsers({ page: 1, limit: 100, isActive: true }),
           ]);
 
-        console.debug("Customer res data ===> ", customersRes.data);
-        console.debug("Service res data ===> ", servicesRes.data);
-        console.debug("Product res data ===> ", productsRes.data);
-        console.debug("providerRes  data ===> ", providerRes.data);
-
         if (customersRes.success && customersRes.data.data?.length > 0) {
           setCustomers(customersRes.data.data);
         }
@@ -113,7 +114,6 @@ export default function CreatePaymentPage() {
         }
       } catch (error) {
         console.error("Failed to fetch dropdown data:", error);
-        console.log("Using dummy data for testing");
       }
     };
 
@@ -130,7 +130,16 @@ export default function CreatePaymentPage() {
         servicesTotal: 0,
         productsTotal: 0,
         discount: { percentage: 0, amount: 0, promoCode: "" },
-        gst: { cgst: 0, sgst: 0, igst: 0, total: 0 },
+        gst: {
+          cgst: 0,
+          sgst: 0,
+          igst: 0,
+          total: 0,
+          inclusiveGst: 0,
+          inclusiveCgst: 0,
+          inclusiveSgst: 0,
+          inclusiveBasePrice: 0,
+        },
         finalAmount: 0,
       });
     }
@@ -138,20 +147,19 @@ export default function CreatePaymentPage() {
 
   const calculateAmounts = async () => {
     try {
-      const payload = {
-        services: formData.services,
-        products: formData.products,
-        discountPercentage: formData.discount.percentage,
-        promoCode: formData.discount.promoCode,
-        discount: formData.discount,
-      };
+      // const payload = {
+      //   services: formData.services,
+      //   products: formData.products,
+      //   discountPercentage: formData.discount.percentage,
+      //   promoCode: formData.discount.promoCode,
+      //   discount: formData.discount,
+      // };
 
-      const result = await calculatePaymentAmount(payload);
-      if (result.success) {
-        setCalculations(result.data.data);
-      } else {
-        calculateAmountsLocally();
-      }
+      // const result = await calculatePaymentAmount(payload);
+      // if (result.success) {
+      //   setCalculations(result.data.data);
+      // } else {
+      calculateAmountsLocally();
     } catch (error) {
       console.error("Failed to calculate amounts:", error.response);
       calculateAmountsLocally();
@@ -159,6 +167,7 @@ export default function CreatePaymentPage() {
   };
 
   const calculateAmountsLocally = () => {
+    debugger;
     const servicesSubtotal = servicesTotal();
     const productsSubtotal = productTotal();
     const subtotal = servicesSubtotal + productsSubtotal;
@@ -166,12 +175,72 @@ export default function CreatePaymentPage() {
     const discountAmount = (subtotal * formData.discount.percentage) / 100;
     const amountAfterDiscount = subtotal - discountAmount;
 
-    // Calculate GST (18% total - 9% CGST + 9% SGST)
-    const gstAmount = (amountAfterDiscount * 18) / 100;
-    const cgst = gstAmount / 2;
-    const sgst = gstAmount / 2;
+    let totalCgst = 0;
+    let totalSgst = 0;
+    let totalGst = 0;
+    let inclusiveCgst = 0;
+    let inclusiveSgst = 0;
+    let inclusiveGst = 0;
 
-    const finalAmount = amountAfterDiscount + gstAmount;
+    // Calculate GST for services
+    formData.services.forEach((service) => {
+      const serviceTotal = service.price * service.quantity;
+      const serviceDiscount =
+        (serviceTotal * formData.discount.percentage) / 100;
+      const serviceAfterDiscount = serviceTotal - serviceDiscount;
+
+      const gstRate = service.gstRate || 18;
+
+      if (service.inclusiveGst) {
+        // Price already includes GST - extract the GST amount
+        // Formula: Base Price = (Total Price × 100) / (100 + GST Rate)
+        const basePrice = (serviceAfterDiscount * 100) / (100 + gstRate);
+        const gstAmount = serviceAfterDiscount - basePrice;
+
+        inclusiveCgst += gstAmount / 2;
+        inclusiveSgst += gstAmount / 2;
+        inclusiveGst += gstAmount;
+      } else {
+        // GST needs to be added on top of price
+        const gstAmount = (serviceAfterDiscount * gstRate) / 100;
+
+        totalCgst += gstAmount / 2;
+        totalSgst += gstAmount / 2;
+        totalGst += gstAmount;
+      }
+    });
+
+    // Calculate GST for products
+    formData.products.forEach((product) => {
+      const productTotal = product.price * product.quantity;
+      const productDiscount =
+        (productTotal * formData.discount.percentage) / 100;
+      const productAfterDiscount = productTotal - productDiscount;
+
+      const gstRate = product.gstRate || 18;
+
+      if (product.inclusiveGst) {
+        // Price already includes GST - extract the GST amount
+        const basePrice = (productAfterDiscount * 100) / (100 + gstRate);
+        const gstAmount = productAfterDiscount - basePrice;
+
+        inclusiveCgst += gstAmount / 2;
+        inclusiveSgst += gstAmount / 2;
+        inclusiveGst += gstAmount;
+      } else {
+        // GST needs to be added on top of price
+        const gstAmount = (productAfterDiscount * gstRate) / 100;
+
+        totalCgst += gstAmount / 2;
+        totalSgst += gstAmount / 2;
+        totalGst += gstAmount;
+      }
+    });
+
+    // Final amount calculation:
+    // For inclusive GST: already part of subtotal, don't add again
+    // For exclusive GST: needs to be added
+    const finalAmount = amountAfterDiscount + totalGst;
 
     setCalculations({
       subtotal,
@@ -183,10 +252,13 @@ export default function CreatePaymentPage() {
         promoCode: formData.discount.promoCode,
       },
       gst: {
-        cgst,
-        sgst,
+        cgst: totalCgst,
+        sgst: totalSgst,
         igst: 0,
-        total: gstAmount,
+        total: totalGst,
+        inclusiveGst: inclusiveGst,
+        inclusiveCgst: inclusiveCgst,
+        inclusiveSgst: inclusiveSgst,
       },
       finalAmount,
     });
@@ -233,7 +305,7 @@ export default function CreatePaymentPage() {
           `Promo code applied! Discount: ₹${result.data.discountAmount}`
         );
       } else {
-        toast.warning(`Promo code applied! Discount: ₹${result.error}`);
+        toast.warning(`Promo code error: ${result.error}`);
       }
     } catch (error) {
       toast.error(`Failed to validate promo code`);
@@ -246,6 +318,7 @@ export default function CreatePaymentPage() {
       ...prevFormData,
       customerId: newCustomer._id,
     }));
+    setCustomerSearchText(`${newCustomer.name} - ${newCustomer.phone}`);
   };
 
   const handleDiscountApply = (discountData) => {
@@ -253,6 +326,15 @@ export default function CreatePaymentPage() {
       ...prev,
       discount: discountData,
     }));
+  };
+
+  // Handle package redemption success
+  const handlePackageRedemptionSuccess = (redeemedService) => {
+    setFormData((prev) => ({
+      ...prev,
+      services: [...prev.services, redeemedService],
+    }));
+    toast.success("Package service added to bill");
   };
 
   const handlePaymentComplete = async (paymentData) => {
@@ -266,18 +348,13 @@ export default function CreatePaymentPage() {
 
       const result = await createPayment(payload);
 
-      console.log("Create payment result ==> ", result);
       if (result.success) {
-        // Get the invoice/payment data from the result (now populated!)
         const invoice = result.data.invoice;
         const payment = result.data.payment;
-
-        // Get selected customer for fallback
         const selectedCustomer = customers.find(
           (c) => c._id === formData.customerId
         );
 
-        // Prepare the invoice data - now using populated data from backend
         const invoiceData = {
           customerInfo: {
             name: invoice.customerId?.name || selectedCustomer?.name || "N/A",
@@ -347,7 +424,6 @@ export default function CreatePaymentPage() {
         });
 
         const res = await response.json();
-        console.log("invoice response ==> ", res);
         toast.success(`Payment created successfully`);
         // router.push("/admin/payments")
       } else {
@@ -368,8 +444,8 @@ export default function CreatePaymentPage() {
           <p className="text-gray-600">Record a new payment transaction</p>
         </div>
 
-        {/* Header Dialogs */}
-        <div className="flex md:flex-row gap-4 items-center">
+        {/* Header Buttons */}
+        <div className="flex md:flex-row gap-4 items-center flex-wrap">
           <CreateCustomerDialog handleCustomerCreated={handleCustomerCreated}>
             <Button type="button">
               <Plus className="w-4 h-4 mr-2" />
@@ -377,29 +453,36 @@ export default function CreatePaymentPage() {
             </Button>
           </CreateCustomerDialog>
 
+          {/* Package Redemption Button */}
+          {formData.customerId && (
+            <PackageRedemptionDialog
+              customerId={formData.customerId}
+              services={services}
+              onRedemptionSuccess={handlePackageRedemptionSuccess}
+            >
+              <Button type="button" variant="secondary">
+                <Gift className="w-4 h-4 mr-2" />
+                Redeem Package
+              </Button>
+            </PackageRedemptionDialog>
+          )}
+
           {(calculations.subtotal > 0 ||
             servicesTotal() + productTotal() > 0) && (
-            <div className="space-y-4">
-              <DiscountDialog
-                discount={formData.discount}
-                subtotal={
-                  calculations.subtotal || servicesTotal() + productTotal()
-                }
-                customerId={formData.customerId}
-                onApply={handleDiscountApply}
-                onValidatePromo={handlePromoCodeValidation}
-              >
-                <Button
-                  type="button"
-                  variant="default"
-                  size="sm"
-                  className="w-full"
-                >
-                  <Tag className="w-4 h-4 mr-2" />
-                  Apply Discount
-                </Button>
-              </DiscountDialog>
-            </div>
+            <DiscountDialog
+              discount={formData.discount}
+              subtotal={
+                calculations.subtotal || servicesTotal() + productTotal()
+              }
+              customerId={formData.customerId}
+              onApply={handleDiscountApply}
+              onValidatePromo={handlePromoCodeValidation}
+            >
+              <Button type="button" variant="default" size="sm">
+                <Tag className="w-4 h-4 mr-2" />
+                Apply Discount
+              </Button>
+            </DiscountDialog>
           )}
 
           <PaymentDialog
@@ -422,8 +505,7 @@ export default function CreatePaymentPage() {
             >
               {loading ? (
                 <>
-                  {" "}
-                  <Loader2 className="animate-spin" /> Processing...{" "}
+                  <Loader2 className="animate-spin" /> Processing...
                 </>
               ) : (
                 <>
@@ -441,7 +523,7 @@ export default function CreatePaymentPage() {
         <Card className="flex-1 lg:flex-[2] p-6 rounded-lg shadow-sm">
           <ScrollArea className="h-[calc(100vh-250px)] pr-4">
             <div className="space-y-6 p-2">
-             
+              {/* Customer Selection */}
               <div className="space-y-3">
                 <Label htmlFor="customer" className="text-base font-medium">
                   Customer *
@@ -457,13 +539,12 @@ export default function CreatePaymentPage() {
                     type="text"
                     list="customers-datalist"
                     placeholder="Search customer by name or phone..."
-                    className="w-[50%] h-10 ring-2 ring-border rounded-md pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full h-10 ring-2 ring-border rounded-md pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
                     value={customerSearchText}
                     onChange={(e) => {
                       const searchValue = e.target.value;
                       setCustomerSearchText(searchValue);
 
-                      // Find customer by exact name or phone match
                       const foundCustomer = customers.find(
                         (c) =>
                           c.name.toLowerCase() === searchValue.toLowerCase() ||
@@ -481,7 +562,6 @@ export default function CreatePaymentPage() {
                       }
                     }}
                     onFocus={() => {
-                      // Clear on focus for better UX
                       if (formData.customerId) {
                         setCustomerSearchText("");
                       }
@@ -498,42 +578,8 @@ export default function CreatePaymentPage() {
                     ))}
                   </datalist>
                 </div>
-
-                {/* {formData.customerId && (
-                  <div className="flex items-center gap-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <User className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-blue-900">
-                        {
-                          customers.find((c) => c._id === formData.customerId)
-                            ?.name
-                        }
-                      </p>
-                      <p className="text-sm text-blue-700 flex items-center gap-1">
-                        <Phone className="w-3 h-3" />
-                        {
-                          customers.find((c) => c._id === formData.customerId)
-                            ?.phone
-                        }
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setFormData((prev) => ({ ...prev, customerId: "" }));
-                        setCustomerSearchText("");
-                      }}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                )} */}
               </div>
+
               <Tabs defaultValue="services" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="services">Services</TabsTrigger>
@@ -579,6 +625,14 @@ export default function CreatePaymentPage() {
                           key={index}
                           className="p-4 border rounded-lg space-y-4"
                         >
+                          {/* Package Badge */}
+                          {service.isPackageRedemption && (
+                            <Badge variant="secondary" className="mb-2">
+                              <Gift className="w-3 h-3 mr-1" />
+                              Package: {service.packageName}
+                            </Badge>
+                          )}
+
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div className="md:col-span-2 lg:col-span-1">
                               <Label className="text-sm font-medium">
@@ -586,6 +640,7 @@ export default function CreatePaymentPage() {
                               </Label>
                               <Select
                                 value={service.serviceId}
+                                disabled={service.isPackageRedemption}
                                 onValueChange={(value) => {
                                   const selectedService = services.find(
                                     (s) => s._id === value
@@ -602,6 +657,9 @@ export default function CreatePaymentPage() {
                                               price: selectedService.price,
                                               duration:
                                                 selectedService.duration,
+                                              gstRate: selectedService.gstRate,
+                                              inclusiveGst:
+                                                selectedService.inclusiveGST,
                                             }
                                           : s
                                       ),
@@ -632,7 +690,7 @@ export default function CreatePaymentPage() {
                               </Label>
                               <input
                                 type="number"
-                                className="mt-1 w-full px-3 py-2 border rounded-md "
+                                className="mt-1 w-full px-3 py-2 border rounded-md"
                                 value={service.price}
                                 disabled={true}
                               />
@@ -644,6 +702,7 @@ export default function CreatePaymentPage() {
                               <input
                                 type="number"
                                 min="1"
+                                disabled={service.isPackageRedemption}
                                 className="mt-1 w-full px-3 py-2 border rounded-md"
                                 value={service.quantity}
                                 onChange={(e) => {
@@ -665,55 +724,57 @@ export default function CreatePaymentPage() {
                             </div>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label className="text-sm font-medium">
-                                Salon Expert
-                              </Label>
-                              <Select
-                                value={service.providerId}
-                                onValueChange={(value) => {
-                                  const selectedProvider = providers.find(
-                                    (p) => p._id === value
-                                  );
-                                  if (selectedProvider) {
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      services: prev.services.map((s, i) =>
-                                        i === index
-                                          ? {
-                                              ...s,
-                                              providerId: value,
-                                              providerName:
-                                                selectedProvider.name,
-                                            }
-                                          : s
-                                      ),
-                                    }));
-                                  }
-                                }}
-                              >
-                                <SelectTrigger className="mt-1">
-                                  <SelectValue placeholder="Select Salon Expert" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {providers.map((provider) => (
-                                    <SelectItem
-                                      key={provider._id}
-                                      value={provider._id}
-                                    >
-                                      <div className="flex gap-2">
-                                        <span className="font-medium">
-                                          {provider.name}
-                                        </span>
-                                        <span className="text-sm text-gray-500">
-                                          {provider.role}
-                                        </span>
-                                      </div>
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
+                            {!service.isPackageRedemption && (
+                              <div>
+                                <Label className="text-sm font-medium">
+                                  Salon Expert
+                                </Label>
+                                <Select
+                                  value={service.providerId}
+                                  onValueChange={(value) => {
+                                    const selectedProvider = providers.find(
+                                      (p) => p._id === value
+                                    );
+                                    if (selectedProvider) {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        services: prev.services.map((s, i) =>
+                                          i === index
+                                            ? {
+                                                ...s,
+                                                providerId: value,
+                                                providerName:
+                                                  selectedProvider.name,
+                                              }
+                                            : s
+                                        ),
+                                      }));
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="mt-1">
+                                    <SelectValue placeholder="Select Salon Expert" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {providers.map((provider) => (
+                                      <SelectItem
+                                        key={provider._id}
+                                        value={provider._id}
+                                      >
+                                        <div className="flex gap-2">
+                                          <span className="font-medium">
+                                            {provider.name}
+                                          </span>
+                                          <span className="text-sm text-gray-500">
+                                            {provider.role}
+                                          </span>
+                                        </div>
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
                             <div className="flex items-end justify-between">
                               <div className="flex-1 mr-4">
                                 <Label className="text-sm font-medium">
@@ -723,6 +784,11 @@ export default function CreatePaymentPage() {
                                   ₹
                                   {(service.price * service.quantity).toFixed(
                                     2
+                                  )}
+                                  {service.isPackageRedemption && (
+                                    <span className="text-xs text-gray-500 ml-2">
+                                      (Free)
+                                    </span>
                                   )}
                                 </div>
                               </div>
@@ -735,7 +801,7 @@ export default function CreatePaymentPage() {
                                 }
                                 className="text-red-600 hover:text-red-700 cursor-pointer"
                               >
-                                <Trash className="w-4 h-4 " />
+                                <Trash className="w-4 h-4" />
                               </Button>
                             </div>
                           </div>
@@ -750,7 +816,8 @@ export default function CreatePaymentPage() {
                             No services added yet
                           </p>
                           <p className="text-sm">
-                            Click "Add Service" to get started
+                            Click "Add Service" or "Redeem Package" to get
+                            started
                           </p>
                         </div>
                       )}
@@ -793,11 +860,18 @@ export default function CreatePaymentPage() {
                         className="flex justify-between text-sm  p-4 rounded-lg bg-muted"
                       >
                         <div className="flex-1">
-                          <div className="font-medium">
+                          <div className="font-medium flex items-center gap-2">
                             {service.serviceName || `Service ${index + 1}`}
+                            {service.isPackageRedemption && (
+                              <Badge variant="secondary" className="text-xs">
+                                <Gift className="w-2 h-2 mr-1" />
+                                Package
+                              </Badge>
+                            )}
                           </div>
                           <div className="text-gray-500">
                             ₹{service.price} × {service.quantity}
+                           
                           </div>
                         </div>
                         <div className="font-medium">
@@ -887,18 +961,36 @@ export default function CreatePaymentPage() {
                 <Separator />
 
                 {/* GST Breakdown */}
+                {/* GST Breakdown */}
+                {calculations.gst.inclusiveGst > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>CGST:</span>
+                      <span>₹{calculations.gst.inclusiveCgst.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>SGST:</span>
+                      <span>₹{calculations.gst.inclusiveSgst.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between font-medium border-t pt-2">
+                      <span>Total Inclusive GST:</span>
+                      <span>₹{calculations.gst.inclusiveGst.toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
+
                 {calculations.gst.total > 0 && (
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>CGST (9%):</span>
+                      <span>CGST:</span>
                       <span>₹{calculations.gst.cgst.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>SGST (9%):</span>
+                      <span>SGST:</span>
                       <span>₹{calculations.gst.sgst.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between font-medium border-t pt-2">
-                      <span>Total GST:</span>
+                      <span>Total Exclusive GST:</span>
                       <span>₹{calculations.gst.total.toFixed(2)}</span>
                     </div>
                   </div>
@@ -924,7 +1016,7 @@ export default function CreatePaymentPage() {
                       <Calculator className="w-16 h-16 mx-auto mb-4 opacity-50" />
                       <p className="text-lg font-medium">No items added</p>
                       <p className="text-sm">
-                        Click on service or product cards to add them
+                        Add services, products, or redeem packages
                       </p>
                     </div>
                   )}
