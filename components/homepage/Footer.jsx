@@ -63,21 +63,21 @@ const Footer = () => {
                                     <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
                                         <Mail className="w-5 h-5" />
                                     </div>
-                                    <span className="text-base text-muted-foreground font-medium group-hover:text-foreground transition-colors">hello@rynoxtech.com</span>
+                                    <span className="text-base text-muted-foreground font-medium group-hover:text-foreground transition-colors"> <Link href="mailto:rynox0001@gmail.com" > rynox0001@gmail.com </Link></span>
                                 </div>
 
                                 <div className="relative z-10 flex items-center gap-4">
                                     <div className="p-3 rounded-xl bg-secondary/10 text-secondary group-hover:scale-110 transition-transform duration-300">
                                         <Phone className="w-5 h-5" />
                                     </div>
-                                    <span className="text-base text-muted-foreground font-medium group-hover:text-foreground transition-colors">+91 (800) 123-4567</span>
+                                    <span className="text-base text-muted-foreground font-medium group-hover:text-foreground transition-colors"> <Link href="tel:+917977120544" >+91 7977120544 </Link>  </span>
                                 </div>
 
                                 <div className="relative z-10 flex items-center gap-4">
                                     <div className="p-3 rounded-xl bg-accent/10 text-accent group-hover:scale-110 transition-transform duration-300">
                                         <MapPin className="w-5 h-5" />
                                     </div>
-                                    <span className="text-base text-muted-foreground font-medium group-hover:text-foreground transition-colors">Mumbai, India</span>
+                                    <span className="text-base text-muted-foreground font-medium group-hover:text-foreground transition-colors">3rd Floor, 5 Convent Street Colaba, Mumbai 400001</span>
                                 </div>
                             </div>
                         </div>
