@@ -33,12 +33,12 @@ export default async function ProductsPage({ searchParams }) {
           <h1 className="text-3xl font-bold ">Products</h1>
           <p className="text-gray-600">Manage your product inventory</p>
         </div>
-        {(user?.role === "SUPER_ADMIN" || user?.role === "SAAS_OWNER") && <CreateProductDialog>
+        <CreateProductDialog>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Product
           </Button>
-        </CreateProductDialog>}
+        </CreateProductDialog>
       </div>
 
 

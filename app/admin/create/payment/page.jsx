@@ -2,46 +2,23 @@
 
 import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog";
 import { DiscountDialog } from "@/components/admin/payment/discount-dialog";
+import { PackageRedemptionDialog } from "@/components/admin/payment/package-redemption-dialog";
 import { PaymentDialog } from "@/components/admin/payment/payment-dialog";
 import { ProductCard } from "@/components/admin/payment/product-card";
-import { PackageRedemptionDialog } from "@/components/admin/payment/package-redemption-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCustomersDropdown } from "@/lib/actions/customer_action";
-import {
-  calculatePaymentAmount,
-  createPayment,
-  validatePromoCode,
-} from "@/lib/actions/payment_action";
+import { createPayment, validatePromoCode } from "@/lib/actions/payment_action";
 import { getProducts } from "@/lib/actions/product_action";
 import { getServices } from "@/lib/actions/service_action";
 import { getUsers } from "@/lib/actions/user_action";
-import {
-  Calculator,
-  IndianRupee,
-  User,
-  Loader2,
-  Plus,
-  Receipt,
-  Tag,
-  Trash,
-  Search,
-  Phone,
-  X,
-  Gift,
-} from "lucide-react";
+import { Calculator, Gift, IndianRupee, Loader2, Plus, Receipt, Search, Tag, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -399,6 +376,7 @@ export default function CreatePaymentPage() {
             ...formData.services.map((s) => ({
               serviceName: s.serviceName,
               price: s.price,
+              code: s.serviceCode,
               quantity: s.quantity,
               gstRate: s.gstRate || 18,
             })),
@@ -406,6 +384,7 @@ export default function CreatePaymentPage() {
               productName: p.productName,
               price: p.price,
               quantity: p.quantity,
+              code: p.productCode,
               gstRate: p.gstRate || 18,
             })),
           ],
@@ -469,21 +448,21 @@ export default function CreatePaymentPage() {
 
           {(calculations.subtotal > 0 ||
             servicesTotal() + productTotal() > 0) && (
-            <DiscountDialog
-              discount={formData.discount}
-              subtotal={
-                calculations.subtotal || servicesTotal() + productTotal()
-              }
-              customerId={formData.customerId}
-              onApply={handleDiscountApply}
-              onValidatePromo={handlePromoCodeValidation}
-            >
-              <Button type="button" variant="default" size="sm">
-                <Tag className="w-4 h-4 mr-2" />
-                Apply Discount
-              </Button>
-            </DiscountDialog>
-          )}
+              <DiscountDialog
+                discount={formData.discount}
+                subtotal={
+                  calculations.subtotal || servicesTotal() + productTotal()
+                }
+                customerId={formData.customerId}
+                onApply={handleDiscountApply}
+                onValidatePromo={handlePromoCodeValidation}
+              >
+                <Button type="button" variant="default" size="sm">
+                  <Tag className="w-4 h-4 mr-2" />
+                  Apply Discount
+                </Button>
+              </DiscountDialog>
+            )}
 
           <PaymentDialog
             customer={customers.find((c) => c._id === formData.customerId)}
@@ -602,6 +581,7 @@ export default function CreatePaymentPage() {
                                 ...prev.services,
                                 {
                                   serviceId: "",
+                                  serviceCode: "",
                                   serviceName: "",
                                   price: 0,
                                   gstRate: 18,
@@ -651,16 +631,17 @@ export default function CreatePaymentPage() {
                                       services: prev.services.map((s, i) =>
                                         i === index
                                           ? {
-                                              ...s,
-                                              serviceId: value,
-                                              serviceName: selectedService.name,
-                                              price: selectedService.price,
-                                              duration:
-                                                selectedService.duration,
-                                              gstRate: selectedService.gstRate,
-                                              inclusiveGst:
-                                                selectedService.inclusiveGST,
-                                            }
+                                            ...s,
+                                            serviceId: value,
+                                            serviceName: selectedService.name,
+                                            price: selectedService.price,
+                                            serviceCode: selectedService.code,
+                                            duration:
+                                              selectedService.duration,
+                                            gstRate: selectedService.gstRate,
+                                            inclusiveGst:
+                                              selectedService.inclusiveGST,
+                                          }
                                           : s
                                       ),
                                     }));
@@ -675,7 +656,7 @@ export default function CreatePaymentPage() {
                                     <SelectItem key={s._id} value={s._id}>
                                       <div className="flex flex-col">
                                         <span>{s.name}</span>
-                                        <span className="text-sm text-gray-500">
+                                        <span className="text-sm">
                                           ₹{s.price}
                                         </span>
                                       </div>
@@ -711,11 +692,11 @@ export default function CreatePaymentPage() {
                                     services: prev.services.map((s, i) =>
                                       i === index
                                         ? {
-                                            ...s,
-                                            quantity:
-                                              Number.parseInt(e.target.value) ||
-                                              1,
-                                          }
+                                          ...s,
+                                          quantity:
+                                            Number.parseInt(e.target.value) ||
+                                            1,
+                                        }
                                         : s
                                     ),
                                   }));
@@ -741,11 +722,11 @@ export default function CreatePaymentPage() {
                                         services: prev.services.map((s, i) =>
                                           i === index
                                             ? {
-                                                ...s,
-                                                providerId: value,
-                                                providerName:
-                                                  selectedProvider.name,
-                                              }
+                                              ...s,
+                                              providerId: value,
+                                              providerName:
+                                                selectedProvider.name,
+                                            }
                                             : s
                                         ),
                                       }));
@@ -765,7 +746,7 @@ export default function CreatePaymentPage() {
                                           <span className="font-medium">
                                             {provider.name}
                                           </span>
-                                          <span className="text-sm text-gray-500">
+                                          <span className="text-sm">
                                             {provider.role}
                                           </span>
                                         </div>
@@ -871,7 +852,7 @@ export default function CreatePaymentPage() {
                           </div>
                           <div className="text-gray-500">
                             ₹{service.price} × {service.quantity}
-                           
+
                           </div>
                         </div>
                         <div className="font-medium">

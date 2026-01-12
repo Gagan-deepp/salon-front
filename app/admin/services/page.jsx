@@ -33,12 +33,12 @@ export default async function ServicesPage({ searchParams }) {
           <h1 className="text-3xl font-bold ">Services</h1>
           <p className="text-gray-600">Manage your beauty and wellness services</p>
         </div>
-        {(user?.role === "SUPER_ADMIN" || user?.role === "SAAS_OWNER") && <CreateServiceDialog>
+        <CreateServiceDialog>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Service
           </Button>
-        </CreateServiceDialog>}
+        </CreateServiceDialog>
       </div>
 
       <ServiceFilter

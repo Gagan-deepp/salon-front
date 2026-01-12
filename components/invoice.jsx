@@ -46,6 +46,8 @@ export default function InvoiceDownloadButton({
     const totals = calculateTotals()
 
     const downloadPDF = async () => {
+
+        console.log("Items ==> ", items)
         if (!pdfRef.current) return
 
         try {
@@ -306,7 +308,7 @@ export default function InvoiceDownloadButton({
                                     fontWeight: "600",
                                     fontSize: "11px"
                                 }}>
-                                    HSN
+                                    CODE
                                 </th>
                                 <th style={{
                                     border: "1px solid #d1d5db",
@@ -410,7 +412,7 @@ export default function InvoiceDownloadButton({
                                             padding: "8px",
                                             textAlign: "center"
                                         }}>
-                                            -
+                                            {"productCode" in item ? item.productCode : item.serviceCode}
                                         </td>
                                         <td style={{
                                             border: "1px solid #d1d5db",

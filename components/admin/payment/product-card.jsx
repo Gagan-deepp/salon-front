@@ -27,6 +27,7 @@ export function ProductCard({ products, setFormData, formData }) {
           {
             productId: product._id,
             productName: product.name,
+            productCode: product.code || "",
             price: product.price.mrp,
             gstRate: 18,
             quantity: 1,

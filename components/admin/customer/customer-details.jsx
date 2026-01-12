@@ -98,7 +98,7 @@ export function CustomerDetails({ customer }) {
                 {customer.isActive ? "Active" : "Inactive"}
               </Badge>
 
-              <Badge variant={customer.isActive ? "default" : "destructive"}>
+              <Badge variant={customer.isMember ? "green" : "red"}>
                 {customer.isMember ? "Member" : "Non Member"}
               </Badge>
               {customer.gender && (

@@ -20,6 +20,7 @@ import { Switch } from "@/components/ui/switch"
 import { createService } from "@/lib/actions/service_action"
 import { getFranchises } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
+import { useSession } from "next-auth/react"
 
 const CATEGORIES = [
   { value: "Hair", label: "Hair" },
@@ -49,6 +50,8 @@ export function CreateServiceDialog({ children }) {
   const [franchises, setFranchises] = useState([])
   const [inclusiveGST, setInclusiveGST] = useState(false) // New state for GST toggle
   const router = useRouter()
+  const { data: session } = useSession()
+
 
   useEffect(() => {
     const loadFranchises = async () => {
@@ -80,7 +83,7 @@ export function CreateServiceDialog({ children }) {
       price: Number.parseFloat(formData.get("price")),
       // Only include gstRate if not inclusive
       gstRate: Number.parseFloat(formData.get("gstRate")),
-      inclusiveGST:inclusiveGST,
+      inclusiveGST: inclusiveGST,
       franchiseId: formData.get("franchiseId"),
       allowedRoles: selectedRoles,
       commissionRate: Number.parseFloat(formData.get("commissionRate")),
@@ -152,8 +155,23 @@ export function CreateServiceDialog({ children }) {
 
           <div className="space-y-2">
             <Label htmlFor="franchiseId">Franchise *</Label>
-            <Select name="franchiseId" required>
-              <SelectTrigger>
+            {/* <Select name="franchiseId" required>
+              <SelectTrigger >
+                <SelectValue placeholder="Select franchise" />
+              </SelectTrigger>
+              <SelectContent>
+                {franchises.map((franchise) => (
+                  <SelectItem key={franchise._id} value={franchise._id}>
+                    {franchise.name} ({franchise.code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select> */}
+
+
+
+            <Select name="franchiseId" required value={session?.franchiseId || ""}>
+              <SelectTrigger className="w-full" disabled={session?.user?.role === "FRANCHISE_OWNER"}>
                 <SelectValue placeholder="Select franchise" />
               </SelectTrigger>
               <SelectContent>
@@ -181,10 +199,10 @@ export function CreateServiceDialog({ children }) {
           <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-               
+
                 <p className="text-sm text-gray-500">
-                  {inclusiveGST 
-                    ? "Price already includes GST (no additional GST will be charged)" 
+                  {inclusiveGST
+                    ? "Price already includes GST (no additional GST will be charged)"
                     : "GST will be added on top of the price"}
                 </p>
               </div>
@@ -195,25 +213,25 @@ export function CreateServiceDialog({ children }) {
               />
             </div>
 
-             
-              <div className="space-y-2">
-                <Label htmlFor="gstRate">GST Rate (%) *</Label>
-                <Input
-                  id="gstRate"
-                  name="gstRate"
-                  type="number"
-                  min="0"
-                  max="28"
-                  step="0.01"
-                  defaultValue="18"
-                  required={!inclusiveGST}
-                  className="bg-white"
-                />
-                {/* <p className="text-xs text-gray-500">
+
+            <div className="space-y-2">
+              <Label htmlFor="gstRate">GST Rate (%) *</Label>
+              <Input
+                id="gstRate"
+                name="gstRate"
+                type="number"
+                min="0"
+                max="28"
+                step="0.01"
+                defaultValue="18"
+                required={!inclusiveGST}
+                className="bg-white"
+              />
+              {/* <p className="text-xs text-gray-500">
                   This GST rate will be added on top of the base price
                 </p> */}
-              </div>
-            
+            </div>
+
 
             {inclusiveGST && (
               <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
@@ -257,7 +275,7 @@ export function CreateServiceDialog({ children }) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || selectedRoles.length === 0}>
+            <Button type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create Service"}
             </Button>
           </div>

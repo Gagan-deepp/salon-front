@@ -19,6 +19,7 @@ import { createProduct } from "@/lib/actions/product_action"
 import { getFranchises } from "@/lib/actions/franchise_action"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { useSession } from "next-auth/react"
 
 const CATEGORIES = [
   { value: "HAIR_CARE", label: "Hair Care" },
@@ -39,6 +40,8 @@ export function CreateProductDialog({ children }) {
   const [loading, setLoading] = useState(false)
   const [franchises, setFranchises] = useState([])
   const router = useRouter()
+  const { data: session } = useSession()
+
 
   useEffect(() => {
     const loadFranchises = async () => {
@@ -101,12 +104,12 @@ export function CreateProductDialog({ children }) {
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Product Name *</Label>
-              <Input id="name" name="name" required />
+              <Input id="name" name="name" placeholder="Enter product name" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="category">Category *</Label>
               <Select name="category" required>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -121,7 +124,7 @@ export function CreateProductDialog({ children }) {
             <div className="space-y-2">
               <Label htmlFor="type">Type *</Label>
               <Select name="type" required>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Product Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -135,18 +138,18 @@ export function CreateProductDialog({ children }) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="brand">Brand</Label>
-              <Input id="brand" name="brand" />
+              <Input id="brand" name="brand" placeholder="Enter brand name" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="sku">SKU *</Label>
-              <Input id="sku" name="sku" required />
+              <Input id="sku" name="sku" placeholder="Enter SKU" required />
             </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="franchiseId">Franchise *</Label>
-            <Select name="franchiseId" required>
-              <SelectTrigger>
+            <Select name="franchiseId" required value={session?.franchiseId || ""}>
+              <SelectTrigger className="w-full" disabled={session?.user?.role === "FRANCHISE_OWNER"}>
                 <SelectValue placeholder="Select franchise" />
               </SelectTrigger>
               <SelectContent>

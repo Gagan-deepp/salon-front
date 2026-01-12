@@ -185,22 +185,79 @@ export default function AppointmentsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <p className="text-sm text-gray-600">Total</p>
-              <p className="text-2xl font-bold text-gray-900">{pagination.total}</p>
+        {/* Total Card */}
+        <Card className="relative border-primary/50 group hover:shadow-xl hover:shadow-primary/10 transition-all duration-500 border rounded-3xl bg-card/50 backdrop-blur-sm hover:border-primary/50 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <CardContent className="p-6 relative z-10">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-primary mb-2">Total Appointments</p>
+                <p className="text-3xl font-bold text-foreground">{pagination.total}</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-primary/10 group-hover:scale-110 transition-transform duration-300">
+                <Calendar className="w-6 h-6 text-primary" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        {['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].map(status => {
+
+        {/* Status Cards */}
+        {[
+          { status: 'PENDING', color: 'secondary', icon: AlertCircle, label: 'Pending' },
+          { status: 'CONFIRMED', color: 'primary', icon: CheckCircle, label: 'Confirmed' },
+          { status: 'COMPLETED', color: 'accent', icon: CheckCircle, label: 'Completed' },
+          { status: 'CANCELLED', color: 'muted', icon: XCircle, label: 'Cancelled' }
+        ].map(({ status, color, icon: Icon, label }) => {
           const count = appointments.filter(a => a.status === status).length
+          const colorClasses = {
+            secondary: {
+              border: 'border-secondary/50',
+              text: 'text-secondary',
+              bg: 'bg-secondary/10',
+              iconColor: 'text-secondary',
+              gradient: 'from-secondary/5',
+              shadow: 'hover:shadow-secondary/10'
+            },
+            primary: {
+              border: 'border-primary/50',
+              text: 'text-primary',
+              bg: 'bg-primary/10',
+              iconColor: 'text-primary',
+              gradient: 'from-primary/5',
+              shadow: 'hover:shadow-primary/10'
+            },
+            accent: {
+              border: 'border-accent/50',
+              text: 'text-accent',
+              bg: 'bg-accent/10',
+              iconColor: 'text-accent',
+              gradient: 'from-accent/5',
+              shadow: 'hover:shadow-accent/10'
+            },
+            muted: {
+              border: 'border-muted-foreground/50',
+              text: 'text-muted-foreground',
+              bg: 'bg-muted/30',
+              iconColor: 'text-muted-foreground',
+              gradient: 'from-muted/5',
+              shadow: 'hover:shadow-muted/10'
+            }
+          }
+
+          const classes = colorClasses[color]
+
           return (
-            <Card key={status}>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600 capitalize">{status.toLowerCase()}</p>
-                  <p className="text-2xl font-bold text-gray-900">{count}</p>
+            <Card key={status} className={`relative group hover:shadow-xl ${classes.shadow} transition-all duration-500 border ${classes.border} rounded-3xl bg-card/50 backdrop-blur-sm hover:border-${color} overflow-hidden hover:scale-105`}>
+              <div className={`absolute inset-0 bg-gradient-to-br ${classes.gradient} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+              <CardContent className="p-6 relative z-10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className={`text-sm font-bold ${classes.text} mb-2`}>{label}</p>
+                    <p className="text-3xl font-bold text-foreground">{count}</p>
+                  </div>
+                  <div className={`p-4 rounded-2xl ${classes.bg} group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className={`w-6 h-6 ${classes.iconColor}`} />
+                  </div>
                 </div>
               </CardContent>
             </Card>

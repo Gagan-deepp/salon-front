@@ -140,10 +140,10 @@ export default function InvoiceForServer({
                 <table style={{ width: "100%", fontSize: "12px", borderCollapse: "collapse" }}>
                     <thead>
                         <tr style={{ backgroundColor: "#f3f4f6", borderBottom: "2px solid #d1d5db" }}>
-                            {["Item", "HSN", "Price", "Qty", "Total", "Disc", "Net", "Type", "GST%", "Tax", "Total"].map((header) => (
+                            {["Item", "Code", "Price", "Qty", "Total", "Disc", "Net", "Type", "GST%", "Tax", "Total"].map((header) => (
                                 <th key={header} style={{
                                     border: "1px solid #d1d5db", padding: "4px",
-                                    textAlign: header === "HSN" || header === "Qty" || header === "Type" ? "center" : "right",
+                                    textAlign: header === "Item" || header === "Code" || header === "Qty" || header === "Type" ? "center" : "right",
                                     fontWeight: "600", fontSize: "11px"
                                 }}>
                                     {header}
@@ -161,7 +161,7 @@ export default function InvoiceForServer({
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "left" }}>
                                         {"productName" in item ? item.productName : item.serviceName}
                                     </td>
-                                    <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "center" }}>-</td>
+                                    <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "center" }}>{item.code || ""}</td>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "right" }}>₹{item.price.toFixed(2)}</td>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "center" }}>{item.quantity}</td>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "right" }}>₹{itemPrice.toFixed(2)}</td>

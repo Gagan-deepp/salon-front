@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { getCustomersDropdown } from "@/lib/actions/customer_action"
+import { Separator } from "@/components/ui/separator"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
@@ -19,9 +21,11 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
     const [isPending, startTransition] = useTransition()
     const [franchises, setFranchises] = useState([])
     const [services, setServices] = useState([])
+    const [customers, setCustomers] = useState([])
     const [loadingFranchises, setLoadingFranchises] = useState(false)
     const [loadingServices, setLoadingServices] = useState(false)
     const [selectedFranchise, setSelectedFranchise] = useState("")
+    const [selectedCustomer, setSelectedCustomer] = useState({ name: "", phone: "", email: "" })
     const router = useRouter()
     const { data: session } = useSession()
 
@@ -70,6 +74,8 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
             )
             const result = await response.json()
 
+            const customersRes = await getCustomersDropdown({ limit: 100 })
+            if (customersRes.success) setCustomers(customersRes.data.data || [])
             if (result.success) {
                 setServices(result.data || [])
             } else {
@@ -93,9 +99,9 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
             const payload = {
                 franchiseId: formData.get("franchiseId"),
                 serviceId: formData.get("serviceId"),
-                customerName: formData.get("customerName"),
-                customerPhone: formData.get("customerPhone"),
-                customerEmail: formData.get("customerEmail"),
+                customerName: selectedCustomer ? selectedCustomer.name : formData.get("customerName"),
+                customerPhone: selectedCustomer ? selectedCustomer.phone : formData.get("customerPhone"),
+                customerEmail: selectedCustomer ? selectedCustomer.email : formData.get("customerEmail"),
                 appointmentDate: formData.get("appointmentDate"),
                 appointmentTime: formData.get("appointmentTime"),
                 notes: formData.get("notes"),
@@ -222,6 +228,48 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
                         </div>
                     </div>
 
+                    <div className="space-y-2">
+                        <Label htmlFor="customerEmail">Select an Existing Customer</Label>
+
+                        <Select
+                            name="customerName"
+                            value={selectedCustomer.name ? customers.find((c) => c.name === selectedCustomer.name)?._id : ""}
+                            onValueChange={(value) => {
+                                const customer = customers.find((c) => c._id === value)
+                                if (customer) {
+                                    setSelectedCustomer({
+                                        name: customer.name,
+                                        phone: customer.phone,
+                                        email: customer.email || "",
+                                    })
+                                } else {
+                                    setSelectedCustomer({ name: "", phone: "", email: "" })
+                                }
+                            }}
+                            required>
+                            <SelectTrigger className="h-11 w-full">
+                                <SelectValue placeholder="Select customer" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {customers.map((customer) => (
+                                    <SelectItem key={customer._id} value={customer._id}>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium">{customer.name}</span>
+                                            <span className="text-sm "> - {customer.phone}</span>
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="flex items-center justify-center" >
+                        <Separator />
+                        <div className="px-4" > OR </div>
+                        <Separator />
+
+                    </div>
+
                     {/* Customer Details */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
@@ -230,7 +278,6 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
                                 id="customerName"
                                 name="customerName"
                                 placeholder="John Doe"
-                                required
                             />
                         </div>
 
@@ -242,7 +289,6 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
                                 placeholder="9876543210"
                                 pattern="[0-9]{10}"
                                 maxLength="10"
-                                required
                             />
                         </div>
                     </div>

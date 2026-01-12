@@ -1,19 +1,16 @@
-1. Customer and service dropdown  should contain search box
-2. Button to replicate cashier page for new payment
-1. Offers and Packages to be given to the franchise Owner also : 
-2. Membership page with customer Packages table
-3. UI Changes of Sachin
-
-
-Franchise Owner Login  ( things to be removed )
-
-1. Subscription tab from dashboard : done
-2. Edit Delete Button below Franchise Name : done
-3. Loyality Points from Customer : done
-4. In Customer Detail page ( Only show Profile details nothing else ) : done : need to improve ui
-5. payments filter of All status, pending, refunded :  done
-6. Payment Search filter : done
-7. Service Details - Allowed Roles  :
-8. User Details - Performance tab : done
-9. Total Referrals in User Details  : done
-10. Usage History from Offer Details : done
+1. franchise owner can edit/create the service ( can be edited by fown or not ) : Implemented and Tested and implemente for Products too
+2. customers dropdown while creating appointment  :  done , implemented and tested
+3. calender like structure for appointments 
+4. memberships can be multiple
+<!-- 5. inclusive and exclusive gst on membership : JAY bhaiya -->
+6. Non member in red member in green : done and implemented
+7. promo code should be in dropdown : So that cashier  can select the promo code from OFFERS
+<!-- 8. apply membership button should be shown  : HOLD
+9. offers and membership are 2 different things : HOLD -->
+10. show offers in the form of : same as 7 
+<!-- 11. membership applied than offers can't be applied : JAY bhaiya -->
+<!-- 12. calculation should be shown that these are the differences in discounts -->
+<!-- 13. configurable designations -->
+<!-- 14. filter for kitty month filter -->
+15. gst to be applied on price after discount (1000 - 200 = 800) 800%*5 
+16. show service code in the bill
