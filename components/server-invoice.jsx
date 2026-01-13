@@ -12,21 +12,27 @@ export default function InvoiceForServer({
     let totalGst = 0;
 
     items.forEach((item) => {
-        const itemPrice = item.price * item.quantity;
+
+        const itemPrice = (item.price * item.quantity) - (discount.amount / items.length || 0);
         subtotal += itemPrice;
-        const gst = (itemPrice * item.gstRate) / 100;
-        totalGst += gst;
+
+
+        if (item.inclusiveGst) {
+            // Price already includes GST - extract the GST amount
+            // Formula: Base Price = (Total Price × 100) / (100 + GST Rate)
+            const basePrice = (itemPrice * 100) / (100 + item.gstRate);
+            const gst = itemPrice - basePrice;
+            totalGst += gst;
+        } else {
+        // GST needs to be added on top of price
+            const gst = (itemPrice * item.gstRate) / 100;
+            totalGst += gst;
+        }
     });
 
     const discountAmount = discount.amount || (subtotal * discount.percentage) / 100;
     const taxableAmount = subtotal - discountAmount;
     const finalAmount = taxableAmount + totalGst;
-
-    const termsConditions = [
-        "We encourage you to raise any concerns on the customer care number or email ID mentioned above.",
-        "Any issue arising from a service delivered by us should be reported within 48 hours of completion.",
-        "If you wish to return a product, it will be accepted within seven days of the date of purchase.",
-    ];
 
     // Utility to convert amount to words if you can replicate or hardcode for server
 
@@ -154,8 +160,30 @@ export default function InvoiceForServer({
                     <tbody>
                         {items.map((item, index) => {
                             const itemPrice = item.price * item.quantity;
-                            const taxAmount = (itemPrice * item.gstRate) / 100;
-                            const netAmount = itemPrice - (discount.amount / items.length || 0);
+                            const netAmount = itemPrice - (discount.amount / items.length || 0); // Net amount after discount
+                            const discAmount = itemPrice - netAmount;
+                            // const taxAmount = (netAmount * item.gstRate) / 100;
+
+
+                            let taxAmount = 0;
+
+
+
+                            if (item.inclusiveGst) {
+                                // Price already includes GST - extract the GST amount
+                                // Formula: Base Price = (Total Price × 100) / (100 + GST Rate)
+                                const basePrice = (netAmount * 100) / (100 + item.gstRate);
+                                const gstAmount = netAmount - basePrice;
+                                taxAmount += gstAmount;
+                            } else {
+                                // GST needs to be added on top of price
+                                const gstAmount = (netAmount * item.gstRate) / 100;
+                                taxAmount += gstAmount;
+                            }
+
+
+
+
                             return (
                                 <tr key={index} style={{ borderBottom: "1px solid #d1d5db" }}>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "left" }}>
@@ -165,7 +193,7 @@ export default function InvoiceForServer({
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "right" }}>₹{item.price.toFixed(2)}</td>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "center" }}>{item.quantity}</td>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "right" }}>₹{itemPrice.toFixed(2)}</td>
-                                    <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "right" }}>-</td>
+                                    <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "right" }}>₹{discAmount.toFixed(2)}</td>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "right" }}>₹{netAmount.toFixed(2)}</td>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "center" }}>GST</td>
                                     <td style={{ border: "1px solid #d1d5db", padding: "8px", textAlign: "right" }}>{item.gstRate}%</td>

@@ -24,18 +24,18 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      PENDING: { color: "bg-yellow-100 text-yellow-800 border-yellow-300", icon: AlertCircle },
-      CONFIRMED: { color: "bg-blue-100 text-blue-800 border-blue-300", icon: CheckCircle },
-      COMPLETED: { color: "bg-green-100 text-green-800 border-green-300", icon: CheckCircle },
-      CANCELLED: { color: "bg-red-100 text-red-800 border-red-300", icon: XCircle },
-      NO_SHOW: { color: "bg-gray-100 text-gray-800 border-gray-300", icon: XCircle }
+      PENDING: { color: "bg-secondary/10 text-secondary border-secondary/20", icon: AlertCircle },
+      CONFIRMED: { color: "bg-primary/10 text-primary border-primary/20", icon: CheckCircle },
+      COMPLETED: { color: "bg-accent/10 text-accent border-accent/20", icon: CheckCircle },
+      CANCELLED: { color: "bg-muted/30 text-muted-foreground border-muted-foreground/20", icon: XCircle },
+      NO_SHOW: { color: "bg-muted/30 text-muted-foreground border-muted-foreground/20", icon: XCircle }
     }
 
     const { color, icon: Icon } = config[status] || config.PENDING
 
     return (
-      <Badge className={`${color} border flex items-center gap-1`}>
-        <Icon className="w-3 h-3" />
+      <Badge className={`${color} border flex items-center gap-2 px-3 py-1 rounded-xl font-medium backdrop-blur-sm`}>
+        <Icon className="w-4 h-4" />
         {status.replace('_', ' ')}
       </Badge>
     )
@@ -45,9 +45,9 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
     try {
       setSaving(true)
 
-        const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:8080/api"   
+      const BASE_URL =
+        process.env.NEXT_PUBLIC_API_BASE_URL ||
+        "http://localhost:8080/api"
 
       const response = await fetch(
         `${BASE_URL}/appointments/updateappointments/${appointment._id}/status`,
@@ -88,23 +88,26 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => router.back()}>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col items-start space-y-3">
+          <Button variant="ghost" size="sm" onClick={() => router.back()} className="hover:bg-primary/5">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Appointment Details</h1>
-            <p className="text-gray-600 mt-1">Code: {appointment.appointmentCode}</p>
+            <h1 className="text-3xl font-bold text-foreground">Appointment Details</h1>
+            <p className="text-muted-foreground mt-1 flex items-center gap-2">
+              <span>Code:</span>
+              <Badge variant="outline" className="font-mono">{appointment.appointmentCode}</Badge>
+            </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           {getStatusBadge(appointment.status)}
           {!editing && (
-            <Button onClick={() => setEditing(true)}>
+            <Button onClick={() => setEditing(true)} className="hover:scale-105 transition-transform">
               <Edit className="w-4 h-4 mr-2" />
               Edit
             </Button>
@@ -113,44 +116,49 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
       </div>
 
       {/* Customer Information */}
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl hover:shadow-lg hover:shadow-primary/5 transition-all duration-500">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="w-5 h-5 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <div className="p-2 rounded-xl bg-primary/10">
+              <User className="w-5 h-5 text-primary" />
+            </div>
             Customer Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label className="text-sm text-gray-500">Name</Label>
-            <p className="font-semibold text-gray-900">{appointment.customerName}</p>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground font-medium">Name</Label>
+            <p className="font-bold text-lg text-foreground">{appointment.customerName}</p>
           </div>
-          <div>
-            <Label className="text-sm text-gray-500">Phone</Label>
-            <p className="font-semibold text-gray-900">{appointment.customerPhone}</p>
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground font-medium">Phone</Label>
+            <p className="font-bold text-lg text-foreground">{appointment.customerPhone}</p>
           </div>
           {appointment.customerEmail && (
-            <div className="md:col-span-2">
-              <Label className="text-sm text-gray-500">Email</Label>
-              <p className="font-semibold text-gray-900">{appointment.customerEmail}</p>
+            <div className="md:col-span-2 space-y-2">
+              <Label className="text-sm text-muted-foreground font-medium">Email</Label>
+              <p className="font-bold text-lg text-foreground">{appointment.customerEmail}</p>
             </div>
           )}
         </CardContent>
+
       </Card>
 
       {/* Appointment Details */}
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl hover:shadow-lg hover:shadow-primary/5 transition-all duration-500">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <div className="p-2 rounded-xl bg-secondary/10">
+              <Calendar className="w-5 h-5 text-secondary" />
+            </div>
             Appointment Details
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-sm text-gray-500">Date</Label>
-              <p className="font-semibold text-gray-900">
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground font-medium">Date</Label>
+              <p className="font-bold text-lg text-foreground">
                 {new Date(appointment.appointmentDate).toLocaleDateString('en-IN', {
                   weekday: 'long',
                   year: 'numeric',
@@ -159,17 +167,17 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
                 })}
               </p>
             </div>
-            <div>
-              <Label className="text-sm text-gray-500">Time</Label>
-              <p className="font-semibold text-gray-900 text-xl">{appointment.appointmentTime}</p>
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground font-medium">Time</Label>
+              <p className="font-bold text-2xl text-primary">{appointment.appointmentTime}</p>
             </div>
-            <div>
-              <Label className="text-sm text-gray-500">Duration</Label>
-              <p className="font-semibold text-gray-900">{appointment.duration} minutes</p>
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground font-medium">Duration</Label>
+              <p className="font-bold text-lg text-foreground">{appointment.duration} minutes</p>
             </div>
-            <div>
-              <Label className="text-sm text-gray-500">Created On</Label>
-              <p className="font-semibold text-gray-900">
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground font-medium">Created On</Label>
+              <p className="font-bold text-lg text-foreground">
                 {new Date(appointment.createdAt).toLocaleDateString('en-IN')}
               </p>
             </div>
@@ -179,22 +187,27 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
 
       {/* Service & Franchise */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl hover:shadow-lg hover:shadow-accent/5 transition-all duration-500">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Scissors className="w-5 h-5 text-primary" />
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <div className="p-2 rounded-xl bg-accent/10">
+                <Scissors className="w-5 h-5 text-accent" />
+              </div>
               Service
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <p className="font-bold text-lg text-gray-900">
+            <div className="space-y-3">
+              <p className="font-medium text-base text-foreground">
                 {appointment.serviceId?.name || 'N/A'}
               </p>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <span>{appointment.serviceId?.duration || 0} mins</span>
-                <span>•</span>
-                <span className="font-semibold text-emerald-600">
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">{appointment.serviceId?.duration || 0} mins</span>
+                </div>
+                <span className="text-muted-foreground">•</span>
+                <span className="font-bold text-lg text-accent">
                   ₹{appointment.serviceId?.price || 0}
                 </span>
               </div>
@@ -202,19 +215,22 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl hover:shadow-lg hover:shadow-secondary/5 transition-all duration-500">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-primary" />
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <div className="p-2 rounded-xl bg-secondary/10">
+                <MapPin className="w-5 h-5 text-secondary" />
+              </div>
               Franchise
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <p className="font-bold text-lg text-gray-900">
+            <div className="space-y-3">
+              <p className="font-medium text-base text-foreground">
                 {appointment.franchiseId?.name || 'N/A'}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <MapPin className="w-4 h-4" />
                 {appointment.franchiseId?.location || 'N/A'}
               </p>
             </div>
@@ -223,23 +239,23 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
       </div>
 
       {/* Status & Notes */}
-      <Card>
+      <Card className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl hover:shadow-lg hover:shadow-primary/5 transition-all duration-500">
         <CardHeader>
-          <CardTitle>Status & Notes</CardTitle>
+          <CardTitle className="text-foreground">Status & Notes</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           {editing ? (
             <>
-              <div>
-                <Label htmlFor="status">Status *</Label>
+              <div className="space-y-3">
+                <Label htmlFor="status" className="text-sm font-medium text-muted-foreground">Status *</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value) => setFormData({ ...formData, status: value })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-2xl border-border/50">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-2xl">
                     <SelectItem value="PENDING">Pending</SelectItem>
                     <SelectItem value="CONFIRMED">Confirmed</SelectItem>
                     <SelectItem value="COMPLETED">Completed</SelectItem>
@@ -249,34 +265,38 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="notes">Notes</Label>
+              <div className="space-y-3">
+                <Label htmlFor="notes" className="text-sm font-medium text-muted-foreground">Notes</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}
+                  className="rounded-2xl border-border/50 resize-none"
+                  placeholder="Add any notes about this appointment..."
                 />
               </div>
 
               {formData.status === 'CANCELLED' && (
-                <div>
-                  <Label htmlFor="cancellationReason">Cancellation Reason</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="cancellationReason" className="text-sm font-medium text-muted-foreground">Cancellation Reason</Label>
                   <Textarea
                     id="cancellationReason"
                     value={formData.cancellationReason}
                     onChange={(e) => setFormData({ ...formData, cancellationReason: e.target.value })}
                     rows={2}
+                    className="rounded-2xl border-border/50 resize-none"
+                    placeholder="Why was this appointment cancelled?"
                   />
                 </div>
               )}
 
-              <div className="flex gap-3">
-                <Button onClick={handleSave} disabled={saving}>
+              <div className="flex gap-3 pt-4">
+                <Button onClick={handleSave} disabled={saving} className="hover:scale-105 transition-transform">
                   <Save className="w-4 h-4 mr-2" />
                   {saving ? 'Saving...' : 'Save Changes'}
                 </Button>
-                <Button variant="outline" onClick={handleCancel}>
+                <Button variant="outline" onClick={handleCancel} className="border-border/50">
                   <X className="w-4 h-4 mr-2" />
                   Cancel
                 </Button>
@@ -285,19 +305,25 @@ export function AppointmentDetails({ appointment: initialAppointment }) {
           ) : (
             <>
               {appointment.notes && (
-                <div>
-                  <Label className="text-sm text-gray-500">Notes</Label>
-                  <p className="text-gray-900 whitespace-pre-wrap">{appointment.notes}</p>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-muted-foreground font-medium">Notes</Label>
+                    <div className="p-4 bg-muted/20 rounded-2xl border border-border/30">
+                      <p className="text-foreground whitespace-pre-wrap">{appointment.notes}</p>
+                    </div>
                 </div>
               )}
               {appointment.cancellationReason && (
-                <div>
-                  <Label className="text-sm text-gray-500">Cancellation Reason</Label>
-                  <p className="text-gray-900 whitespace-pre-wrap">{appointment.cancellationReason}</p>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-muted-foreground font-medium">Cancellation Reason</Label>
+                    <div className="p-4 bg-muted/20 rounded-2xl border border-border/30">
+                      <p className="text-foreground whitespace-pre-wrap">{appointment.cancellationReason}</p>
+                    </div>
                 </div>
               )}
               {!appointment.notes && !appointment.cancellationReason && (
-                <p className="text-gray-500 text-sm">No notes available</p>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground text-sm">No additional notes available for this appointment</p>
+                  </div>
               )}
             </>
           )}

@@ -160,14 +160,13 @@ export default function PurchaseMembershipPage() {
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Crown className="w-8 h-8 text-yellow-500" />
             Purchase Membership
           </h1>
-          <p className="text-gray-600">Convert customer to premium member</p>
+          <p className="text-muted-foreground">Convert customer to premium member</p>
         </div>
 
         <div className="flex gap-4 items-center flex-wrap">
@@ -200,7 +199,7 @@ export default function PurchaseMembershipPage() {
 
       <div className="flex flex-col lg:flex-row h-full gap-6">
         {/* Left Column - Form */}
-        <Card className="flex-1 lg:flex-[2] p-6 rounded-lg shadow-sm">
+        <Card className="flex-1 lg:flex-[2] p-6 rounded-3xl bg-card/50 backdrop-blur-sm border border-border/50 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
           <ScrollArea className="h-[calc(100vh-250px)] pr-4">
             <div className="space-y-6 p-2">
               {/* Customer Selection */}
@@ -263,51 +262,51 @@ export default function PurchaseMembershipPage() {
                       key={offer._id}
                       onClick={() => handleOfferSelect(offer._id)}
                       className={`
-                        p-6 border-2 rounded-xl cursor-pointer transition-all group hover:shadow-lg
+                        relative group p-6 border-2 rounded-3xl cursor-pointer transition-all duration-500 hover:shadow-xl backdrop-blur-sm
                         ${
                           selectedOffer?._id === offer._id
-                            ? "border-yellow-400 bg-yellow-50 shadow-lg ring-2 ring-yellow-200"
-                            : "border-gray-200 hover:border-yellow-300 hover:bg-yellow-25"
+                        ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 ring-2 ring-primary/20"
+                        : "border-border/50 bg-card/30 hover:border-primary/50 hover:bg-primary/5 hover:shadow-primary/5"
                         }
                       `}
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-yellow-100 rounded-lg">
-                            <Crown className="w-6 h-6 text-yellow-600" />
+                          <div className="p-3 bg-primary/10 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                            <Crown className="w-6 h-6 text-primary" />
                           </div>
                           <div>
-                            <h3 className="font-bold text-xl">{offer.name}</h3>
-                            <p className="text-sm text-yellow-700 font-medium">
+                            <h3 className="font-bold text-xl text-foreground">{offer.name}</h3>
+                            <p className="text-sm text-primary font-medium">
                               {offer.offerCode}
                             </p>
                           </div>
                         </div>
-                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                        <Badge variant="secondary" className="bg-secondary/10 text-secondary border-secondary/20">
                           {offer.offerType}
                         </Badge>
                       </div>
 
-                      <p className="text-gray-600 mb-4 line-clamp-2">{offer.description}</p>
+                      <p className="text-muted-foreground mb-4 line-clamp-2">{offer.description}</p>
 
                       {offer.membershipBenefits && (
-                        <div className="space-y-2 mb-4">
+                        <div className="space-y-3 mb-4">
                           <div className="flex justify-between items-center pt-2">
-                            <span className="text-sm text-gray-500">Membership Value:</span>
-                            <span className="font-bold text-lg">₹{offer.membershipBenefits.membershipValue}</span>
+                            <span className="text-sm text-muted-foreground">Membership Value:</span>
+                            <span className="font-bold text-lg text-foreground">₹{offer.membershipBenefits.membershipValue}</span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-500">Discount:</span>
-                            <span className="font-bold text-green-600 text-lg">
+                            <span className="text-sm text-muted-foreground">Discount:</span>
+                            <span className="font-bold text-accent text-lg">
                               {offer.membershipBenefits.discountPercentage}%
                             </span>
                           </div>
                           <div className="flex justify-between text-sm pt-1">
-                            <span className="text-gray-500 flex items-center gap-1">
+                            <span className="text-muted-foreground flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
                               1 Year
                             </span>
-                            <span className="font-medium">Active</span>
+                            <span className="font-medium text-primary">Active</span>
                           </div>
                         </div>
                       )}
@@ -316,8 +315,8 @@ export default function PurchaseMembershipPage() {
                 </div>
 
                 {offers.length === 0 && (
-                  <div className="text-center py-12 text-gray-500">
-                    <Crown className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Crown className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
                     <p className="text-lg font-medium">No membership offers available</p>
                     <p className="text-sm">Please create membership offers first</p>
                   </div>
@@ -390,11 +389,11 @@ export default function PurchaseMembershipPage() {
         </Card>
 
         {/* Right Column - Summary */}
-        <Card className="lg:flex-1 p-6 rounded-lg shadow-sm">
+        <Card className="lg:flex-1 p-6 rounded-3xl bg-card/50 backdrop-blur-sm border border-border/50 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
           <div className="sticky top-6">
-            <div className="p-4 border-b -mx-6 -mt-6 rounded-t-lg bg-gradient-to-r from-yellow-50 to-orange-50">
+            <div className="p-4 border-b -mx-6 -mt-6 rounded-t-3xl bg-gradient-to-r from-primary/5 to-secondary/5">
               <h3 className="text-lg font-semibold flex items-center">
-                <Receipt className="w-5 h-5 mr-2 text-yellow-600" />
+                <Receipt className="w-5 h-5 mr-2 text-primary" />
                 Membership Summary
               </h3>
             </div>
@@ -405,28 +404,28 @@ export default function PurchaseMembershipPage() {
                     {/* Selected Offer Details */}
                     <div className="space-y-3">
                       <div className="font-semibold text-lg flex items-center gap-2">
-                        <Crown className="w-5 h-5 text-yellow-600" />
+                        <Crown className="w-5 h-5 text-primary" />
                         {selectedOffer.name}
                       </div>
-                      <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
-                        <div className="space-y-2 text-sm">
+                      <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 backdrop-blur-sm">
+                        <div className="space-y-3 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Membership Value:</span>
-                            <span className="font-bold">₹{selectedOffer.membershipBenefits?.membershipValue}</span>
+                            <span className="text-muted-foreground">Membership Value:</span>
+                            <span className="font-bold text-foreground">₹{selectedOffer.membershipBenefits?.membershipValue}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Discount:</span>
-                            <span className="font-bold text-green-600">
+                            <span className="text-muted-foreground">Discount:</span>
+                            <span className="font-bold text-accent">
                               {selectedOffer.membershipBenefits?.discountPercentage}%
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Amount Paid:</span>
-                            <span className="font-bold text-lg">₹{formData.amountPaid.toFixed(2)}</span>
+                            <span className="text-muted-foreground">Amount Paid:</span>
+                            <span className="font-bold text-lg text-primary">₹{formData.amountPaid.toFixed(2)}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Quantity:</span>
-                            <span>× {formData.quantity}</span>
+                            <span className="text-muted-foreground">Quantity:</span>
+                            <span className="text-foreground">× {formData.quantity}</span>
                           </div>
                         </div>
                       </div>
@@ -435,38 +434,38 @@ export default function PurchaseMembershipPage() {
                     <Separator />
 
                     {/* Total Calculation */}
-                    <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                    <div className="space-y-4 p-4 bg-muted/30 rounded-2xl backdrop-blur-sm">
                       <div className="flex justify-between text-sm">
-                        <span>Amount per membership:</span>
-                        <span>₹{formData.amountPaid.toFixed(2)}</span>
+                        <span className="text-muted-foreground">Amount per membership:</span>
+                        <span className="text-foreground">₹{formData.amountPaid.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span>Quantity:</span>
-                        <span>× {formData.quantity}</span>
+                        <span className="text-muted-foreground">Quantity:</span>
+                        <span className="text-foreground">× {formData.quantity}</span>
                       </div>
                       <Separator />
-                      <div className="flex justify-between text-xl font-bold text-yellow-700">
+                      <div className="flex justify-between text-xl font-bold text-primary">
                         <span>Total Amount:</span>
                         <span>₹{calculateTotal().toFixed(2)}</span>
                       </div>
                     </div>
 
-                    <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
-                      <p className="font-semibold text-green-800 flex items-center gap-2 mb-2">
+                    <div className="bg-accent/5 border border-accent/20 p-4 rounded-2xl backdrop-blur-sm">
+                      <p className="font-semibold text-accent flex items-center gap-2 mb-3">
                         <Gift className="w-5 h-5" />
                         Membership Benefits:
                       </p>
-                      <ul className="text-sm text-green-700 space-y-1">
-                        <li>✅ {selectedOffer.membershipBenefits?.discountPercentage}% discount on all services</li>
-                        <li>✅ Priority booking & appointments</li>
-                        <li>✅ {selectedOffer.membershipBenefits?.membershipValue} worth of services</li>
-                        <li>✅ Valid for 1 year</li>
+                      <ul className="text-sm text-muted-foreground space-y-2">
+                        <li className="flex items-center gap-2">✅ {selectedOffer.membershipBenefits?.discountPercentage}% discount on all services</li>
+                        <li className="flex items-center gap-2">✅ Priority booking & appointments</li>
+                        <li className="flex items-center gap-2">✅ ₹{selectedOffer.membershipBenefits?.membershipValue} worth of services</li>
+                        <li className="flex items-center gap-2">✅ Valid for 1 year</li>
                       </ul>
                     </div>
                   </>
                 ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    <Crown className="w-16 h-16 mx-auto mb-4 opacity-50 text-yellow-300" />
+                    <div className="text-center py-12 text-muted-foreground">
+                      <Crown className="w-16 h-16 mx-auto mb-4 opacity-30 text-primary/30" />
                     <p className="text-lg font-medium">No offer selected</p>
                     <p className="text-sm">Select a customer and membership offer</p>
                   </div>

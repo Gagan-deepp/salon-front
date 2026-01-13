@@ -41,7 +41,7 @@ export function PaymentDialog({ customer, orderSummary, onComplete, loading, chi
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-scroll no-scrollbar">
                 <DialogHeader>
                     <div className="flex items-center justify-between">
                         <DialogTitle>Payment</DialogTitle>

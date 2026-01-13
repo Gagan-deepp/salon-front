@@ -12,5 +12,5 @@
 <!-- 12. calculation should be shown that these are the differences in discounts -->
 <!-- 13. configurable designations -->
 <!-- 14. filter for kitty month filter -->
-15. gst to be applied on price after discount (1000 - 200 = 800) 800%*5 
-16. show service code in the bill
+15. gst to be applied on price after discount (1000 - 200 = 800) 800%*5 : done
+16. show service code in the bill : done and implemented

@@ -150,7 +150,7 @@ export default function CreatePaymentPage() {
     const subtotal = servicesSubtotal + productsSubtotal;
 
     const discountAmount = (subtotal * formData.discount.percentage) / 100;
-    const amountAfterDiscount = subtotal - discountAmount;
+    const amountAfterDiscount = formData.discount.discountAmount > 0 ? subtotal - discountAmount : subtotal;
 
     let totalCgst = 0;
     let totalSgst = 0;
@@ -378,6 +378,7 @@ export default function CreatePaymentPage() {
               price: s.price,
               code: s.serviceCode,
               quantity: s.quantity,
+              inclusiveGst: s.inclusiveGst || false,
               gstRate: s.gstRate || 18,
             })),
             ...formData.products.map((p) => ({
@@ -385,6 +386,7 @@ export default function CreatePaymentPage() {
               price: p.price,
               quantity: p.quantity,
               code: p.productCode,
+              inclusiveGst: s.inclusiveGst || false,
               gstRate: p.gstRate || 18,
             })),
           ],
@@ -404,7 +406,16 @@ export default function CreatePaymentPage() {
 
         const res = await response.json();
         toast.success(`Payment created successfully`);
-        // router.push("/admin/payments")
+        setFormData({
+          customerId: "",
+          services: [],
+          products: [],
+          discount: {
+            percentage: 0,
+            promoCode: "",
+          },
+        })
+        router.refresh();
       } else {
         toast.warning(result.error);
       }
@@ -439,30 +450,29 @@ export default function CreatePaymentPage() {
               services={services}
               onRedemptionSuccess={handlePackageRedemptionSuccess}
             >
-              <Button type="button" variant="secondary">
+              <Button type="button" >
                 <Gift className="w-4 h-4 mr-2" />
                 Redeem Package
               </Button>
             </PackageRedemptionDialog>
           )}
 
-          {(calculations.subtotal > 0 ||
-            servicesTotal() + productTotal() > 0) && (
-              <DiscountDialog
-                discount={formData.discount}
-                subtotal={
-                  calculations.subtotal || servicesTotal() + productTotal()
-                }
-                customerId={formData.customerId}
-                onApply={handleDiscountApply}
-                onValidatePromo={handlePromoCodeValidation}
-              >
-                <Button type="button" variant="default" size="sm">
-                  <Tag className="w-4 h-4 mr-2" />
-                  Apply Discount
-                </Button>
-              </DiscountDialog>
-            )}
+          {(calculations.subtotal > 0 || servicesTotal() + productTotal() > 0) && (
+            <DiscountDialog
+              discount={formData.discount}
+              subtotal={
+                calculations.subtotal || servicesTotal() + productTotal()
+              }
+              customerId={formData.customerId}
+              onApply={handleDiscountApply}
+              onValidatePromo={handlePromoCodeValidation}
+            >
+              <Button type="button" variant="default" size="sm">
+                <Tag className="w-4 h-4 mr-2" />
+                Apply Discount
+              </Button>
+            </DiscountDialog>
+          )}
 
           <PaymentDialog
             customer={customers.find((c) => c._id === formData.customerId)}
@@ -572,7 +582,6 @@ export default function CreatePaymentPage() {
                         <h3 className="text-lg font-semibold">Services</h3>
                         <Button
                           type="button"
-                          variant="outline"
                           size="sm"
                           onClick={() => {
                             setFormData((prev) => ({
@@ -648,16 +657,16 @@ export default function CreatePaymentPage() {
                                   }
                                 }}
                               >
-                                <SelectTrigger className="mt-1">
+                                <SelectTrigger className="mt-1 w-full">
                                   <SelectValue placeholder="Select service" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {services.map((s) => (
                                     <SelectItem key={s._id} value={s._id}>
-                                      <div className="flex flex-col">
+                                      <div className="flex items-center gap-2">
                                         <span>{s.name}</span>
                                         <span className="text-sm">
-                                          ₹{s.price}
+                                          - ₹{s.price}
                                         </span>
                                       </div>
                                     </SelectItem>
@@ -829,7 +838,7 @@ export default function CreatePaymentPage() {
                 Bill Summary
               </h3>
             </div>
-            <ScrollArea className="h-[calc(100vh-350px)] py-4">
+            <ScrollArea className="h-[calc(100vh-350px)] py-4 overflow-y-scroll no-scrollbar">
               <div className="space-y-6">
                 {/* Services Breakdown */}
                 {formData.services.length > 0 && (

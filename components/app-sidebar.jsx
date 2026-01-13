@@ -28,6 +28,7 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
+import Image from "next/image"
 
 export function AppSidebar({ ...props }) {
   const pathName = usePathname()
@@ -135,7 +136,7 @@ export function AppSidebar({ ...props }) {
         url: "/admin/buy/package",
         icon: Package,
       },
-       {
+      {
         title: "Buy Membership",
         url: "/admin/purchase/membership",
         icon: UserCircle2,
@@ -295,15 +296,17 @@ export function AppSidebar({ ...props }) {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="xl"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-b-1 border-accent/60 rounded-none"
               asChild
             >
               <div>
-                <Link href="/" className="flex items-center space-x-2 group w-full justify-start">
-                  <img
+                <Link href="/" className="flex items-center space-x-2 group justify-start">
+                  <Image
                     src={rynoxLogo.src}
                     alt="Rynox"
-                    className="h-10 w-auto"
+                    width={80}
+                    height={80}
+                    className="h-16 w-auto"
                   />
                 </Link>
               </div>
@@ -312,10 +315,10 @@ export function AppSidebar({ ...props }) {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="overflow-y-scroll no-scrollbar" >
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu >
               {sideMenus.map((item) => {
                 const isActive = pathName === item.url
                 return (
@@ -351,11 +354,11 @@ export function AppSidebar({ ...props }) {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
+                          className={`my-2! py-6! ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
                       >
                         <Link href={item.url}>
                           {item.icon && <item.icon className="size-2" />}
-                          <span className="text-base">{item.title}</span>
+                            <span className="text-base font-medium">{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

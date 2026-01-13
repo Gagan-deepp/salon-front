@@ -39,11 +39,11 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
     setLoading(true)
     try {
       const result = await getCustomerPackages(customerId)
-      console.log("result-=-=-=-=-",result)
+      console.log("result-=-=-=-=-", result)
       if (result.success && result.data?.data) {
         // Filter only active packages with remaining sessions
         const activePackages = result.data.data.packages
-        console.log("active Packages",activePackages)
+        console.log("active Packages", activePackages)
         setPackages(activePackages)
       } else {
         toast.error(result.error || "Failed to fetch packages")
@@ -64,7 +64,7 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
       return
     }
 
-    
+
 
     const pkg = packages.find((p) => p._id === selectedPackage)
     const service = services.find((s) => s._id === selectedService)
@@ -92,7 +92,7 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
 
       if (result.success) {
         toast.success(`Package redeemed successfully! ${quantity} session(s) used.`)
-        
+
         // Call parent callback with redeemed service details
         if (onRedemptionSuccess) {
           onRedemptionSuccess({
@@ -163,10 +163,10 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
             ) : (
               <>
                 {/* Package Selection */}
-                <div className="space-y-2">
+                    <div className="space-y-2 mb-8">
                   <Label htmlFor="package">Select Package *</Label>
                   <Select value={selectedPackage} onValueChange={setSelectedPackage}>
-                    <SelectTrigger>
+                        <SelectTrigger className="w-full" >
                       <SelectValue placeholder="Choose a package" />
                     </SelectTrigger>
                     <SelectContent>
@@ -175,8 +175,8 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
                           <div className="flex items-center justify-between w-full gap-4">
                             <div className="flex-1">
                               <p className="font-medium">{pkg.packageId?.name || "Package"}</p>
-                              <p className="text-xs text-gray-500">
-                               Remaining Balance : {formatCurrency(pkg.remainingValue)} 
+                              <p className="text-xs">
+                                Remaining Balance : {formatCurrency(pkg.remainingValue)}
                               </p>
                             </div>
                             <Badge variant="secondary" className="ml-2">
@@ -230,7 +230,7 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
                 <div className="space-y-2">
                   <Label htmlFor="service">Select Service *</Label>
                   <Select value={selectedService} onValueChange={setSelectedService}>
-                    <SelectTrigger>
+                        <SelectTrigger className="w-full" >
                       <SelectValue placeholder="Choose a service" />
                     </SelectTrigger>
                     <SelectContent>
@@ -238,7 +238,7 @@ export function PackageRedemptionDialog({ customerId, services, onRedemptionSucc
                         <SelectItem key={service._id} value={service._id}>
                           <div className="flex flex-col">
                             <span className="font-medium">{service.name}</span>
-                            <span className="text-xs text-gray-500">₹{service.price}</span>
+                            <span className="text-xs">₹{service.price}</span>
                           </div>
                         </SelectItem>
                       ))}

@@ -52,7 +52,7 @@ export function LoginForm({
                 value={field.state.value}
                 onChange={(e) => { field.handleChange(e.target.value) }}
                 onBlur={field.handleBlur}
-                className="h-14 rounded-full border-2 border-border/30 px-6 text-base placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground focus:border-primary/50 transition-colors"
+                className="h-14 rounded-full border-2 border-border/30 px-6 text-base placeholder:text-base placeholder:font-medium placeholder:text-muted-foreground transition-colors"
               />
               {field.state.meta.errors.length > 0 && <FieldError errors={field.state.meta.errors} />}
             </Field>

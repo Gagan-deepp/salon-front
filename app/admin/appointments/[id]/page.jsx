@@ -69,7 +69,7 @@ export default function AppointmentPage() {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="space-y-6 p-8">
         <AppointmentDetailsSkeleton />
       </div>
     )
@@ -77,17 +77,30 @@ export default function AppointmentPage() {
 
   if (!appointment) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Appointment Not Found</h2>
-          <p className="text-gray-600 mb-4">The appointment you're looking for doesn't exist.</p>
+      <div className="space-y-6 p-8">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4 max-w-md mx-auto">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/5 rounded-full blur-2xl" />
+              <div className="relative p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl">
+                <h2 className="text-3xl font-bold text-foreground mb-3">Appointment Not Found</h2>
+                <p className="text-muted-foreground text-lg mb-6">The appointment you're looking for doesn't exist or has been removed.</p>
+                <button
+                  onClick={() => router.push('/admin/appointments')}
+                  className="px-6 py-3 bg-primary text-primary-foreground rounded-2xl hover:bg-primary/90 transition-colors font-medium"
+                >
+                  Back to Appointments
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="p-6">
+    <div className="space-y-6 p-8">
       <AppointmentDetails appointment={appointment} onUpdate={setAppointment} />
     </div>
   )

@@ -77,9 +77,9 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
+            <DropdownMenuItem className="p-0!" >
               <Button onClick={handleLogOut} className="w-full" >
-                <LogOut />
+                <LogOut className="text-primary-foreground" />
                 Log out
               </Button>
             </DropdownMenuItem>
