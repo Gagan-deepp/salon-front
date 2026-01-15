@@ -1,32 +1,38 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Tag, Check, X, Loader2 } from "lucide-react"
+import { Tag, Check, X, Loader2, ChevronsUpDown } from "lucide-react"
 import { toast } from "sonner"
-import { validateOffer } from "@/lib/actions/offer_action"
+import { getOffers, validateOffer } from "@/lib/actions/offer_action"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 
-export function DiscountDialog({ 
-  discount, 
-  subtotal, 
-  customerId, 
+export function DiscountDialog({
+  discount,
+  subtotal,
+  customerId,
   franchiseId,
   services = [],
   products = [],
-  onApply, 
-  children 
+  onApply,
+  children
 }) {
+
+  console.log("Customer id ==> ", customerId)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [validatingPromo, setValidatingPromo] = useState(false)
   const [promoValidated, setPromoValidated] = useState(false)
   const [validationError, setValidationError] = useState(null)
-  
+  const [offers, setOffers] = useState([])
+  const [comboboxOpen, setComboboxOpen] = useState(false)
+
   const [formData, setFormData] = useState({
     percentage: discount?.percentage || 0,
     promoCode: discount?.promoCode || "",
@@ -36,10 +42,28 @@ export function DiscountDialog({
 
   const [discountDetails, setDiscountDetails] = useState(null)
 
+  // Fetch available offers on component mount
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const result = await getOffers()
+
+        if (result.success) {
+          console.log("Offer result ===> ", result)
+          setOffers(result.data.data.offers || [])
+        }
+      } catch (error) {
+        console.error("Failed to fetch offers:", error)
+      }
+    }
+
+    fetchOffers()
+  }, [])
+
   // Reset validation state when promo code changes
   const handlePromoCodeChange = (value) => {
-    setFormData((prev) => ({ 
-      ...prev, 
+    setFormData((prev) => ({
+      ...prev,
       promoCode: value.toUpperCase(),
       percentage: 0,
       offerId: null,
@@ -67,7 +91,7 @@ export function DiscountDialog({
 
     try {
       console.log("🔍 Validating promo code:", formData.promoCode)
-      
+
       const validationData = {
         offerCode: formData.promoCode,
         amount: subtotal,
@@ -84,12 +108,12 @@ export function DiscountDialog({
       }
 
       const result = await validateOffer(validationData)
-      
+
       console.log("📊 Validation result:", result)
 
       if (result.success && result.data.data.valid) {
         const { offer, discount: discountInfo } = result.data.data
-        
+
         setPromoValidated(true)
         setDiscountDetails(discountInfo)
         setFormData((prev) => ({
@@ -98,7 +122,7 @@ export function DiscountDialog({
           offerId: offer.id,
           offerName: offer.name
         }))
-        
+
         toast.success(`Promo code applied! ${discountInfo.discountValue}% discount`, {
           description: offer.name
         })
@@ -136,7 +160,7 @@ export function DiscountDialog({
       offerName: formData.offerName,
       discountAmount: discountDetails?.discountAmount || (subtotal * formData.percentage) / 100
     })
-    
+
     setOpen(false)
     toast.success("Discount applied successfully")
   }
@@ -166,27 +190,83 @@ export function DiscountDialog({
             <Label className="text-sm font-medium">Promo Code</Label>
             <div className="flex space-x-2">
               <div className="relative flex-1">
-                <Input
-                  placeholder="Enter promo code"
-                  value={formData.promoCode}
-                  onChange={(e) => handlePromoCodeChange(e.target.value)}
-                  disabled={promoValidated}
-                  className={`uppercase ${
-                    promoValidated 
-                      ? 'border-green-500 bg-green-50' 
-                      : validationError 
-                      ? 'border-red-500' 
-                      : ''
-                  }`}
-                />
+                <Popover open={comboboxOpen} onOpenChange={setComboboxOpen} className="w-full">
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={comboboxOpen}
+                      className={`w-full justify-between ${promoValidated
+                        ? 'border-green-500 bg-green-50'
+                        : validationError
+                          ? 'border-red-500'
+                          : ''
+                        }`}
+                      disabled={promoValidated}
+                    >
+                      {formData.promoCode ? (
+                        <span className="uppercase">{formData.promoCode}</span>
+                      ) : (
+                        <span className="text-muted-foreground">Enter promo code</span>
+                      )}
+                      {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-60 p-2" align="start">
+                    <Command className="w-full">
+                      <CommandInput
+                        placeholder="Search promo codes..."
+                        value={formData.promoCode}
+                        onValueChange={handlePromoCodeChange}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No promo codes found.</CommandEmpty>
+                        <CommandGroup>
+                          {offers
+                            .filter((offer) =>
+                              offer.offerCode.toLowerCase().includes(formData.promoCode.toLowerCase()) ||
+                              offer.name.toLowerCase().includes(formData.promoCode.toLowerCase())
+                            )
+                            .map((offer) => (
+                              <CommandItem
+                                key={offer._id}
+                                value={offer.offerCode}
+                                onSelect={(currentValue) => {
+                                  handlePromoCodeChange(currentValue.toUpperCase())
+                                  setComboboxOpen(false)
+                                }}
+                              >
+                                <Check
+                                  className={`mr-2 h-4 w-4 text-white ${formData.promoCode === offer.offerCode
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                    }`}
+                                />
+                                <div className="flex flex-col flex-1">
+                                  <span className="font-medium">{offer.offerCode}</span>
+                                  <span className="text-sm ">{offer.name}</span>
+                                </div>
+                                <Badge variant="secondary" className="ml-2">
+                                  {offer.discount.type === 'PERCENTAGE'
+                                    ? `${offer.discount.value}%`
+                                    : `₹${offer.discount.value}`}
+                                </Badge>
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
                 {promoValidated && (
-                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-600" />
+                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-600 pointer-events-none" />
                 )}
                 {validationError && (
-                  <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
+                  <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600 pointer-events-none" />
                 )}
               </div>
-              
+
               {!promoValidated ? (
                 <Button
                   type="button"
@@ -219,8 +299,8 @@ export function DiscountDialog({
                   <div className="space-y-1">
                     <p className="font-semibold">{formData.offerName}</p>
                     <p className="text-sm">
-                      {discountDetails.discountType === 'PERCENTAGE' 
-                        ? `${discountDetails.discountValue}% discount` 
+                      {discountDetails.discountType === 'PERCENTAGE'
+                        ? `${discountDetails.discountValue}% discount`
                         : `₹${discountDetails.discountValue} off`}
                     </p>
                   </div>
@@ -247,13 +327,13 @@ export function DiscountDialog({
                     <span className="text-sm font-medium text-gray-700">Subtotal:</span>
                     <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium text-gray-700">Discount:</span>
                     <div className="text-right">
                       <Badge className="bg-green-600">
-                        {discountDetails.discountType === 'PERCENTAGE' 
-                          ? `${discountDetails.discountValue}%` 
+                        {discountDetails.discountType === 'PERCENTAGE'
+                          ? `${discountDetails.discountValue}%`
                           : `₹${discountDetails.discountValue}`}
                       </Badge>
                       <p className="text-red-600 font-semibold mt-1">
@@ -261,7 +341,7 @@ export function DiscountDialog({
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="pt-2 border-t border-green-300">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-semibold text-gray-800">Amount after discount:</span>
@@ -281,8 +361,8 @@ export function DiscountDialog({
 
           {/* Action Buttons */}
           <div className="flex justify-end space-x-2 pt-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
                 setOpen(false)
                 handleRemovePromo()
@@ -290,7 +370,7 @@ export function DiscountDialog({
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleApply}
               disabled={loading || (!promoValidated && formData.promoCode)}
             >

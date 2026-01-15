@@ -13,7 +13,7 @@ export default function InvoiceForServer({
 
     items.forEach((item) => {
 
-        const itemPrice = (item.price * item.quantity) - (discount.amount / items.length || 0);
+        const itemPrice = (item.price * item.quantity);
         subtotal += itemPrice;
 
 

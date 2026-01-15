@@ -99,9 +99,9 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
             const payload = {
                 franchiseId: formData.get("franchiseId"),
                 serviceId: formData.get("serviceId"),
-                customerName: selectedCustomer ? selectedCustomer.name : formData.get("customerName"),
-                customerPhone: selectedCustomer ? selectedCustomer.phone : formData.get("customerPhone"),
-                customerEmail: selectedCustomer ? selectedCustomer.email : formData.get("customerEmail"),
+                customerName: selectedCustomer.name ? selectedCustomer.name : formData.get("customerName"),
+                customerPhone: selectedCustomer.phone ? selectedCustomer.phone : formData.get("customerPhone"),
+                customerEmail: selectedCustomer.email ? selectedCustomer.email : formData.get("customerEmail"),
                 appointmentDate: formData.get("appointmentDate"),
                 appointmentTime: formData.get("appointmentTime"),
                 notes: formData.get("notes"),
@@ -116,6 +116,8 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
                 toast.error("Please select a service")
                 return
             }
+
+            console.log("Booking appointment payload ==> ", payload)
 
             try {
                 const response = await fetch(`${BASE_URL}/appointments/appointments/book`, {
