@@ -10,15 +10,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCustomersDropdown } from "@/lib/actions/customer_action";
+import { getOffers } from "@/lib/actions/offer_action";
+import { getPackages } from "@/lib/actions/package_actions";
 import { createPayment, validatePromoCode } from "@/lib/actions/payment_action";
 import { getProducts } from "@/lib/actions/product_action";
 import { getServices } from "@/lib/actions/service_action";
 import { getUsers } from "@/lib/actions/user_action";
-import { Calculator, Gift, IndianRupee, Loader2, Plus, Receipt, Search, Tag, Trash } from "lucide-react";
+import {
+  Calculator,
+  Gift,
+  IndianRupee,
+  Loader2,
+  Plus,
+  Receipt,
+  Search,
+  Tag,
+  Trash,
+  Crown,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -32,6 +51,8 @@ export default function CreatePaymentPage() {
   const [services, setServices] = useState([]);
   const [products, setProducts] = useState([]);
   const [customerSearchText, setCustomerSearchText] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isMembershipApplied, setIsMembershipApplied] = useState(false);
 
   const [calculations, setCalculations] = useState({
     subtotal: 0,
@@ -65,6 +86,17 @@ export default function CreatePaymentPage() {
     },
   });
 
+  useEffect(() => {
+    if (formData.customerId) {
+      const customer = customers.find((c) => c._id === formData.customerId);
+      setSelectedCustomer(customer);
+      // Reset membership applied state when customer changes
+      setIsMembershipApplied(false);
+    } else {
+      setSelectedCustomer(null);
+      setIsMembershipApplied(false);
+    }
+  }, [formData.customerId, customers]);
   // Fetch dropdown data
   useEffect(() => {
     const fetchData = async () => {
@@ -77,6 +109,7 @@ export default function CreatePaymentPage() {
             getUsers({ page: 1, limit: 100, isActive: true }),
           ]);
 
+        debugger;
         if (customersRes.success && customersRes.data.data?.length > 0) {
           setCustomers(customersRes.data.data);
         }
@@ -122,6 +155,60 @@ export default function CreatePaymentPage() {
     }
   }, [formData.services, formData.products, formData.discount.percentage]);
 
+  const handleApplyMembership = async () => {
+  if (!selectedCustomer?.isMember) {
+    toast.error("Customer is not a member");
+    return;
+  }
+
+  try {
+    // Fetch ALL active offers and find MEMBERSHIP offer
+    const offerRes = await getOffers({ 
+      limit: 100, status: "ACTIVE", isMembershipOffer: true 
+    });
+
+    debugger;
+    if (offerRes.success && offerRes.data?.data?.offers?.length > 0) {
+      // 🔍 Find the MEMBERSHIP offer from the response
+      const membershipOffer = offerRes.data.data.offers.find(offer => 
+        offer.offerCode === "MEMBERSHIP" ||
+        offer.isMembershipOffer === true
+      );
+
+      if (membershipOffer) {
+        console.log("✅ Found MEMBERSHIP offer:", membershipOffer);
+
+        // Extract discount percentage from offer structure
+        const membershipDiscount = membershipOffer.discount?.value ||
+                                  membershipOffer.membershipBenefits?.discountPercentage ||
+                                  membershipOffer.discountPercentage ||
+                                  20; // Fallback
+
+        setFormData((prev) => ({
+          ...prev,
+          discount: {
+            ...prev.discount,
+            percentage: membershipDiscount,
+            promoCode: membershipOffer.offerCode || "MEMBERSHIP",
+          },
+        }));
+
+        setIsMembershipApplied(true);
+        toast.success(
+          `🎉 Membership applied! ${membershipDiscount}% OFF from ${membershipOffer.name}`
+        );
+      } else {
+        toast.warning("No MEMBERSHIP offer found in active offers");
+      }
+    } else {
+      toast.error("No active offers available");
+    }
+  } catch (error) {
+    console.error("Failed to fetch membership offer:", error);
+    toast.error("Failed to apply membership discount");
+  }
+};
+
   const calculateAmounts = async () => {
     try {
       // const payload = {
@@ -150,7 +237,10 @@ export default function CreatePaymentPage() {
     const subtotal = servicesSubtotal + productsSubtotal;
 
     const discountAmount = (subtotal * formData.discount.percentage) / 100;
-    const amountAfterDiscount = formData.discount.discountAmount > 0 ? subtotal - discountAmount : subtotal;
+    const amountAfterDiscount =
+      formData.discount.discountAmount > 0
+        ? subtotal - discountAmount
+        : subtotal;
 
     let totalCgst = 0;
     let totalSgst = 0;
@@ -414,7 +504,7 @@ export default function CreatePaymentPage() {
             percentage: 0,
             promoCode: "",
           },
-        })
+        });
         router.refresh();
       } else {
         toast.warning(result.error);
@@ -443,6 +533,18 @@ export default function CreatePaymentPage() {
             </Button>
           </CreateCustomerDialog>
 
+          {selectedCustomer?.isMember && !isMembershipApplied && (
+            <Button
+              type="button"
+              variant="default"
+              onClick={handleApplyMembership}
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Apply Membership
+            </Button>
+          )}
+
           {/* Package Redemption Button */}
           {formData.customerId && (
             <PackageRedemptionDialog
@@ -450,14 +552,15 @@ export default function CreatePaymentPage() {
               services={services}
               onRedemptionSuccess={handlePackageRedemptionSuccess}
             >
-              <Button type="button" >
+              <Button type="button">
                 <Gift className="w-4 h-4 mr-2" />
                 Redeem Package
               </Button>
             </PackageRedemptionDialog>
           )}
 
-          {(calculations.subtotal > 0 || servicesTotal() + productTotal() > 0) && (
+          {(calculations.subtotal > 0 ||
+            servicesTotal() + productTotal() > 0)  && (
             <DiscountDialog
               discount={formData.discount}
               subtotal={
@@ -467,7 +570,7 @@ export default function CreatePaymentPage() {
               onApply={handleDiscountApply}
               onValidatePromo={handlePromoCodeValidation}
             >
-              <Button type="button" variant="default" size="sm">
+              <Button type="button" variant="default"  disabled={isMembershipApplied}>
                 <Tag className="w-4 h-4 mr-2" />
                 Apply Discount
               </Button>
@@ -640,17 +743,17 @@ export default function CreatePaymentPage() {
                                       services: prev.services.map((s, i) =>
                                         i === index
                                           ? {
-                                            ...s,
-                                            serviceId: value,
-                                            serviceName: selectedService.name,
-                                            price: selectedService.price,
-                                            serviceCode: selectedService.code,
-                                            duration:
-                                              selectedService.duration,
-                                            gstRate: selectedService.gstRate,
-                                            inclusiveGst:
-                                              selectedService.inclusiveGST,
-                                          }
+                                              ...s,
+                                              serviceId: value,
+                                              serviceName: selectedService.name,
+                                              price: selectedService.price,
+                                              serviceCode: selectedService.code,
+                                              duration:
+                                                selectedService.duration,
+                                              gstRate: selectedService.gstRate,
+                                              inclusiveGst:
+                                                selectedService.inclusiveGST,
+                                            }
                                           : s
                                       ),
                                     }));
@@ -701,11 +804,11 @@ export default function CreatePaymentPage() {
                                     services: prev.services.map((s, i) =>
                                       i === index
                                         ? {
-                                          ...s,
-                                          quantity:
-                                            Number.parseInt(e.target.value) ||
-                                            1,
-                                        }
+                                            ...s,
+                                            quantity:
+                                              Number.parseInt(e.target.value) ||
+                                              1,
+                                          }
                                         : s
                                     ),
                                   }));
@@ -731,11 +834,11 @@ export default function CreatePaymentPage() {
                                         services: prev.services.map((s, i) =>
                                           i === index
                                             ? {
-                                              ...s,
-                                              providerId: value,
-                                              providerName:
-                                                selectedProvider.name,
-                                            }
+                                                ...s,
+                                                providerId: value,
+                                                providerName:
+                                                  selectedProvider.name,
+                                              }
                                             : s
                                         ),
                                       }));
@@ -861,7 +964,6 @@ export default function CreatePaymentPage() {
                           </div>
                           <div className="text-gray-500">
                             ₹{service.price} × {service.quantity}
-
                           </div>
                         </div>
                         <div className="font-medium">

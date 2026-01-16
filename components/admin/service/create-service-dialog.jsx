@@ -253,7 +253,7 @@ export function CreateServiceDialog({ children }) {
             />
           </div>
 
-          {/* <div className="space-y-2">
+          <div className="space-y-2">
             <Label>Allowed Roles *</Label>
             <div className="grid grid-cols-3 gap-4">
               {ROLES.map((role) => (
@@ -269,7 +269,7 @@ export function CreateServiceDialog({ children }) {
                 </div>
               ))}
             </div>
-          </div> */}
+          </div> 
 
           <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

@@ -13,6 +13,7 @@ async function UserData({ userId }) {
     }
 
     const user = result.data.data
+    console.log("user in id component",user)
     let performance = null
     let referrals = []
 

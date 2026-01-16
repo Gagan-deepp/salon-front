@@ -110,8 +110,8 @@ export function CreateOfferDialog({ children }) {
                   <SelectContent>
                     <SelectItem value="PERCENTAGE">Percentage Off</SelectItem>
                     <SelectItem value="FIXED_AMOUNT">Fixed Amount</SelectItem>
-                    <SelectItem value="BUY_X_GET_Y">Buy X Get Y</SelectItem>
-                    <SelectItem value="FREE_SERVICE">Free Service</SelectItem>
+                    {/* <SelectItem value="BUY_X_GET_Y">Buy X Get Y</SelectItem>
+                    <SelectItem value="FREE_SERVICE">Free Service</SelectItem> */}
                   </SelectContent>
                 </Select>
               </div>
@@ -143,7 +143,7 @@ export function CreateOfferDialog({ children }) {
             <h3 className="text-sm font-semibold">Discount Details</h3>
             
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="discountType">Discount Type *</Label>
                 <Select name="discountType" defaultValue="PERCENTAGE" required>
                   <SelectTrigger>
@@ -154,7 +154,7 @@ export function CreateOfferDialog({ children }) {
                     <SelectItem value="FIXED">Fixed Amount</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
               <div className="space-y-2">
                 <Label htmlFor="discountValue">Discount Value *</Label>

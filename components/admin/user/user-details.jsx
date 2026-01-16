@@ -1,12 +1,12 @@
-"use client"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { EditUserDialog } from "./edit-user-dialog"
-import { DeleteUserDialog } from "./delete-user-dialog"
+"use client";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { EditUserDialog } from "./edit-user-dialog";
+import { DeleteUserDialog } from "./delete-user-dialog";
 import {
   ArrowLeft,
   Edit,
@@ -16,30 +16,68 @@ import {
   Calendar,
   Building2,
   Shield,
-} from "lucide-react"
+} from "lucide-react";
 
 export function UserDetails({ user, performance, referrals }) {
-  const router = useRouter()
+  const router = useRouter();
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
-    }).format(amount)
-  }
+    }).format(amount);
+  };
+
+  // Get current month kitty from user.kittyMonthly Map
+  const getCurrentMonthKitty = (user) => {
+    if (!user?.kittyMonthly) return 0;
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const monthKey = `${year}-${month}`;
+    console.log("user.kittyMonthly", user.kittyMonthly);
+
+    // ✅ SAFE ACCESS - works with plain object OR Map
+    return (user.kittyMonthly && user.kittyMonthly[monthKey]) || 0;
+  };
+
+  // Get current month name
+  const currentMonthName = () => {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return monthNames[new Date().getMonth()];
+  };
 
   return (
     <div className="space-y-6 ">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={() => router.back()} className="gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.back()}
+          className="gap-2"
+        >
           <ArrowLeft className="w-4 h-4" />
           Back
         </Button>
@@ -72,7 +110,10 @@ export function UserDetails({ user, performance, referrals }) {
             <Badge variant="outline" className="font-normal">
               {user.role?.replace("_", " ")}
             </Badge>
-            <Badge variant={user.isActive ? "default" : "secondary"} className="font-normal">
+            <Badge
+              variant={user.isActive ? "default" : "secondary"}
+              className="font-normal"
+            >
               {user.isActive ? "Active" : "Inactive"}
             </Badge>
             {user.emailVerified && (
@@ -85,7 +126,7 @@ export function UserDetails({ user, performance, referrals }) {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        {/* <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Commission Earned
@@ -95,38 +136,63 @@ export function UserDetails({ user, performance, referrals }) {
             <div className="text-2xl font-bold">
               {formatCurrency(user.totalCommissionEarned || 0)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Lifetime earnings</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Lifetime earnings
+            </p>
           </CardContent>
-        </Card>
-
-         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Kitty
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(user.kitty || 0)}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Monthly earnings</p>
-          </CardContent>
-        </Card>
+        </Card> */}
 
         {/* <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Pending Commission
+              Total earnings
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(user.pendingCommission || 0)}
+              {formatCurrency(user.totalKitty || 0)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Awaiting payout</p>
+            <p className="text-xs text-muted-foreground mt-1">Total earnings</p>
           </CardContent>
         </Card> */}
 
+         <Card>
+          <CardContent>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total earnings
+              </CardTitle>
+            </CardHeader>
+            <div className="text-2xl font-bold">
+               {formatCurrency(user.totalKitty || 0)}
+            </div>
+            {/* <p className="text-xs text-muted-foreground mt-1">
+              {currentMonthName()} earnings
+            </p> */}
+            {/* <div className="text-sm text-muted-foreground mt-1">
+              Total: {formatCurrency(user.totalKitty || 0)}
+            </div> */}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Monthly earnings
+              </CardTitle>
+            </CardHeader>
+            <div className="text-2xl font-bold">
+              {formatCurrency(getCurrentMonthKitty(user))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {currentMonthName()} earnings
+            </p>
+            {/* <div className="text-sm text-muted-foreground mt-1">
+              Total: {formatCurrency(user.totalKitty || 0)}
+            </div> */}
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -147,7 +213,9 @@ export function UserDetails({ user, performance, referrals }) {
               <Phone className="w-4 h-4 mt-0.5 text-muted-foreground" />
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-medium">Phone Number</p>
-                <p className="text-sm text-muted-foreground">{user.phone || "Not provided"}</p>
+                <p className="text-sm text-muted-foreground">
+                  {user.phone || "Not provided"}
+                </p>
               </div>
             </div>
             {user.franchiseId && (
@@ -157,8 +225,12 @@ export function UserDetails({ user, performance, referrals }) {
                   <Building2 className="w-4 h-4 mt-0.5 text-muted-foreground" />
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium">Franchise</p>
-                    <p className="text-sm text-muted-foreground">{user.franchiseId.name}</p>
-                    <p className="text-xs text-muted-foreground">{user.franchiseId.address}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {user.franchiseId.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {user.franchiseId.address}
+                    </p>
                   </div>
                 </div>
               </>
@@ -175,7 +247,9 @@ export function UserDetails({ user, performance, referrals }) {
               <Calendar className="w-4 h-4 mt-0.5 text-muted-foreground" />
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-medium">Joined</p>
-                <p className="text-sm text-muted-foreground">{formatDate(user.createdAt)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(user.createdAt)}
+                </p>
               </div>
             </div>
             <Separator />
@@ -183,7 +257,9 @@ export function UserDetails({ user, performance, referrals }) {
               <Calendar className="w-4 h-4 mt-0.5 text-muted-foreground" />
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-medium">Last Updated</p>
-                <p className="text-sm text-muted-foreground">{formatDate(user.updatedAt)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(user.updatedAt)}
+                </p>
               </div>
             </div>
             <Separator />
@@ -199,7 +275,6 @@ export function UserDetails({ user, performance, referrals }) {
           </CardContent>
         </Card>
       </div>
-
     </div>
-  )
+  );
 }

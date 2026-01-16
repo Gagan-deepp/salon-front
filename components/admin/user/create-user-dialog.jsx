@@ -23,6 +23,7 @@ const DESIGNATIONS = [
   'Junior Beautician',
   'Nail Artist',
   'Housekeeping Staff',
+  'Pedicurist',
   'Others'
 ]
 

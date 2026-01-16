@@ -112,6 +112,11 @@ export function AppSidebar({ ...props }) {
             url: "/admin/reports/churn-rate",
             icon: UserCircle
           },
+          {
+            title: "Kitty Report",
+            url: "/admin/reports/kitty-report",
+            icon: UserCircle
+          },
         ],
       },
     ],
@@ -220,7 +225,8 @@ export function AppSidebar({ ...props }) {
             title: "Churn Rate",
             url: "/admin/reports/churn-rate",
             icon: UserCircle
-          },
+          }
+          
         ],
       },
     ],
