@@ -39,10 +39,10 @@ export default function Page() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <Image
-          src="/login_banner.png"
+          src="/login_banner.svg"
           alt="Image"
           width={100}
-          height={100}
+          height={100}  
           quality={100}
           className="absolute inset-0 h-full w-full object-cover"
         />

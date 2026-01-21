@@ -133,8 +133,9 @@ export function UserTable({ users, currentPage, totalPages, total, searchParams 
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+                {/* <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem> */}
                 <SelectItem value="FRANCHISE_OWNER">Franchise Owner</SelectItem>
+                <SelectItem value="PROVIDER">Provider</SelectItem>
                 <SelectItem value="CASHIER">Cashier</SelectItem>
               </SelectContent>
             </Select>
