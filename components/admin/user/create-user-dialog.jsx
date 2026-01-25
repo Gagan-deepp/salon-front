@@ -130,7 +130,7 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
             <div className="space-y-2">
               <Label htmlFor="role">Role *</Label>
               <Select name="role" required>
-                <SelectTrigger>
+                <SelectTrigger className="w-full" >
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -141,10 +141,10 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
                 </SelectContent>
               </Select>
             </div>
-              <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="designation">Designation *</Label>
               <Select name="designation" required defaultValue="Others">
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select designation" />
                 </SelectTrigger>
                 <SelectContent>
@@ -156,11 +156,11 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 w-full">
+            <div className="space-y-2 w-full col-span-2">
               <Label htmlFor="franchiseId">Franchise *</Label>
-              <Select name="franchiseId" required value={session?.franchiseId || ""}>
-                <SelectTrigger disabled={session?.user?.role === "FRANCHISE_OWNER"}>
-                  <SelectValue placeholder="Select franchise" />
+              <Select name="franchiseId" className="w-full" required value={session?.franchiseId || ""}>
+                <SelectTrigger className="w-full" disabled={session?.user?.role === "FRANCHISE_OWNER"}>
+                  <SelectValue className="w-full" placeholder="Select franchise" />
                 </SelectTrigger>
                 <SelectContent>
                   {franchises.map((franchise) => (

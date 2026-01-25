@@ -125,46 +125,17 @@ export function UserDetails({ user, performance, referrals }) {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Commission Earned
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(user.totalCommissionEarned || 0)}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Lifetime earnings
-            </p>
-          </CardContent>
-        </Card> */}
+      <div className="grid gap-4 md:grid-cols-3">
 
-        {/* <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total earnings
-            </CardTitle>
-          </CardHeader>
+        <Card>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(user.totalKitty || 0)}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Total earnings</p>
-          </CardContent>
-        </Card> */}
-
-         <Card>
-          <CardContent>
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-3 px-0!">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total earnings
               </CardTitle>
             </CardHeader>
             <div className="text-2xl font-bold">
-               {formatCurrency(user.totalKitty || 0)}
+              {formatCurrency(user.totalKitty || 0)}
             </div>
             {/* <p className="text-xs text-muted-foreground mt-1">
               {currentMonthName()} earnings
@@ -177,7 +148,7 @@ export function UserDetails({ user, performance, referrals }) {
 
         <Card>
           <CardContent>
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-3 px-0!">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Monthly earnings
               </CardTitle>
@@ -187,6 +158,26 @@ export function UserDetails({ user, performance, referrals }) {
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {currentMonthName()} earnings
+            </p>
+            {/* <div className="text-sm text-muted-foreground mt-1">
+              Total: {formatCurrency(user.totalKitty || 0)}
+            </div> */}
+          </CardContent>
+        </Card>
+
+
+        <Card>
+          <CardContent>
+            <CardHeader className="pb-3 px-0!">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Comission per month
+              </CardTitle>
+            </CardHeader>
+            <div className="text-2xl font-bold">
+              {formatCurrency((getCurrentMonthKitty(user) * user.commissionStructure.defaultServiceRate) / 100)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Comission earned in {currentMonthName()}
             </p>
             {/* <div className="text-sm text-muted-foreground mt-1">
               Total: {formatCurrency(user.totalKitty || 0)}
