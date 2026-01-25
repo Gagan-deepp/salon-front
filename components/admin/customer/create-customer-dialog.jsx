@@ -49,14 +49,44 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
     }
   }, [open])
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    const formData = new FormData(e.target)
+    
+    // Validate required fields
+    const name = formData.get("name")
+    const phone = formData.get("phone")
+    const gender = formData.get("gender")
+    const franchiseId = formData.get("franchiseId")
+    
+    if (!name) {
+      toast.error("Please fill in the Full Name field")
+      return
+    }
+    
+    if (!phone) {
+      toast.error("Please fill in the Phone Number field")
+      return
+    }
+    
+    if (!gender) {
+      toast.error("Please select a Gender")
+      return
+    }
+    
+    if (!franchiseId) {
+      toast.error("Please select a Franchise")
+      return
+    }
+    
     setLoading(true)
 
     const payload = {
-      name: formData.get("name"),
-      phone: formData.get("phone"),
+      name,
+      phone,
       email: formData.get("email") || undefined,
-      gender: formData.get("gender"),
+      gender,
       dateOfBirth: formData.get("dateOfBirth") || undefined,
       address: {
         street: formData.get("street"),
@@ -64,7 +94,7 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
         state: formData.get("state"),
         pincode: formData.get("pincode"),
       },
-      franchiseId: formData.get("franchiseId"),
+      franchiseId,
       preferences: {
         notes: formData.get("notes") || undefined,
       },
@@ -98,15 +128,15 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
           <DialogDescription>Add a new customer to your database.</DialogDescription>
         </DialogHeader>
 
-        <form action={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name *</Label>
-              <Input id="name" name="name" required />
+              <Input id="name" name="name" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone Number *</Label>
-              <Input id="phone" name="phone" type="tel" required />
+              <Input id="phone" name="phone" type="tel" />
             </div>
           </div>
 
@@ -116,10 +146,10 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
               <Input id="email" name="email" type="email" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="gender">Gender</Label>
+              <Label htmlFor="gender">Gender *</Label>
               <Select name="gender">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select gender *" />
+                  <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
                   {GENDERS.map((gender) => (
@@ -142,7 +172,7 @@ export function CreateCustomerDialog({ children, handleCustomerCreated }) {
               {session?.user?.role !== "SUPER_ADMIN" && (
                 <Input type="hidden" name="franchiseId" value={session?.franchiseId || ""} />
               )}
-              <Select name={session?.user?.role === "SUPER_ADMIN" ? "franchiseId" : undefined} required disabled={session?.user?.role !== "SUPER_ADMIN"} value={session?.user?.role !== "SUPER_ADMIN" ? session?.franchiseId : ""}>
+              <Select name={session?.user?.role === "SUPER_ADMIN" ? "franchiseId" : undefined} disabled={session?.user?.role !== "SUPER_ADMIN"} value={session?.user?.role !== "SUPER_ADMIN" ? session?.franchiseId : ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select franchise" />
                 </SelectTrigger>

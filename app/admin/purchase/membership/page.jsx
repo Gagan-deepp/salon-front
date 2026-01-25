@@ -27,6 +27,7 @@ import {
   Gift,
   Percent,
   Calendar,
+  AlertCircle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -46,7 +47,7 @@ export default function PurchaseMembershipPage() {
   const [formData, setFormData] = useState({
     customerId: "",
     offerId: "",
-    amountPaid: 0,
+    amountPaid: "",
     quantity: 1,
     paymentMode: "CASH",
     paymentDetails: {},
@@ -115,6 +116,16 @@ export default function PurchaseMembershipPage() {
     return formData.amountPaid * formData.quantity;
   };
 
+  const getMinimumAmount = () => {
+    if (!selectedOffer?.membershipBenefits?.membershipValue) return 0;
+    return selectedOffer.membershipBenefits.membershipValue * 0.5;
+  };
+
+  const isAmountValid = () => {
+    if (!selectedOffer?.membershipBenefits?.membershipValue) return true;
+    return formData.amountPaid >= getMinimumAmount();
+  };
+
   const handlePurchase = async () => {
     if (!formData.customerId) {
       toast.error("Please select a customer");
@@ -126,6 +137,10 @@ export default function PurchaseMembershipPage() {
     }
     if (formData.amountPaid <= 0) {
       toast.error("Please enter valid amount");
+      return;
+    }
+    if (!isAmountValid()) {
+      toast.error(`Amount paid must be at least ₹${getMinimumAmount().toFixed(2)} (50% of membership value)`);
       return;
     }
 
@@ -295,12 +310,7 @@ export default function PurchaseMembershipPage() {
                             <span className="text-sm text-muted-foreground">Membership Value:</span>
                             <span className="font-bold text-lg text-foreground">₹{offer.membershipBenefits.membershipValue}</span>
                           </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-muted-foreground">Discount:</span>
-                            <span className="font-bold text-accent text-lg">
-                              {offer.membershipBenefits.discountPercentage}%
-                            </span>
-                          </div>
+                         
                           <div className="flex justify-between text-sm pt-1">
                             <span className="text-muted-foreground flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
@@ -324,36 +334,39 @@ export default function PurchaseMembershipPage() {
               </div>
 
               {/* Promo Code */}
-              {selectedOffer && (
-                <>
-                  <Separator />
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium">Promo Code (Optional)</Label>
-                    <Input
-                      placeholder="Enter promo code if any"
-                      value={offerCode}
-                      onChange={handleOfferCodeChange}
-                      className="h-10"
-                    />
-                  </div>
-                </>
-              )}
+           
 
               {/* Amount */}
               {selectedOffer && (
                 <>
                   <Separator />
                   <div className="space-y-3">
-                    <Label className="text-base font-medium">Amount Paid (₹)</Label>
+                    <Label className="text-base font-medium">Amount Paid (₹)*</Label>
                     <Input
                       type="number"
                       placeholder="Enter amount paid"
                       value={formData.amountPaid}
                       onChange={handleAmountChange}
-                      className="h-10 text-lg font-medium"
+                      className={`h-10 text-lg font-medium ${!isAmountValid() ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                       min="0"
                       step="0.01"
                     />
+                    {selectedOffer?.membershipBenefits?.membershipValue && (
+                      <div className="space-y-2">
+                        {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span>Minimum required (50%):</span>
+                          <span className="font-semibold text-foreground">₹{getMinimumAmount().toFixed(2)}</span>
+                        </div> */}
+                        {!isAmountValid() && formData.amountPaid > 0 && (
+                          <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                            <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                            <p className="text-sm text-destructive">
+                              At least 50% of membership value (₹{getMinimumAmount().toFixed(2)}) is required
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -377,8 +390,7 @@ export default function PurchaseMembershipPage() {
                         <SelectItem value="CASH">Cash</SelectItem>
                         <SelectItem value="CARD">Card</SelectItem>
                         <SelectItem value="UPI">UPI</SelectItem>
-                        <SelectItem value="NET_BANKING">Net Banking</SelectItem>
-                        <SelectItem value="WALLET">Wallet</SelectItem>
+                  
                       </SelectContent>
                     </Select>
                   </div>
@@ -413,20 +425,17 @@ export default function PurchaseMembershipPage() {
                             <span className="text-muted-foreground">Membership Value:</span>
                             <span className="font-bold text-foreground">₹{selectedOffer.membershipBenefits?.membershipValue}</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Discount:</span>
-                            <span className="font-bold text-accent">
-                              {selectedOffer.membershipBenefits?.discountPercentage}%
-                            </span>
-                          </div>
+                         
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Amount Paid:</span>
                             <span className="font-bold text-lg text-primary">₹{formData.amountPaid.toFixed(2)}</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Quantity:</span>
-                            <span className="text-foreground">× {formData.quantity}</span>
+
+                            <div className="flex justify-between">
+                            <span className="text-muted-foreground">Discount Given:</span>
+                            <span className="font-bold text-lg text-primary">₹{(selectedOffer.membershipBenefits?.membershipValue - formData.amountPaid).toFixed(2)}</span>
                           </div>
+                        
                         </div>
                       </div>
                     </div>
