@@ -109,7 +109,7 @@ export default function CreatePaymentPage() {
             getUsers({ page: 1, limit: 100, isActive: true }),
           ]);
 
-        debugger;
+        //debugger;
         if (customersRes.success && customersRes.data.data?.length > 0) {
           setCustomers(customersRes.data.data);
         }
@@ -167,7 +167,7 @@ export default function CreatePaymentPage() {
       limit: 100, status: "ACTIVE", isMembershipOffer: true 
     });
 
-    debugger;
+    //debugger;
     if (offerRes.success && offerRes.data?.data?.offers?.length > 0) {
       // 🔍 Find the MEMBERSHIP offer from the response
       const membershipOffer = offerRes.data.data.offers.find(offer => 
@@ -175,9 +175,12 @@ export default function CreatePaymentPage() {
         offer.isMembershipOffer === true
       );
 
+      //debugger;
       if (membershipOffer) {
         console.log("✅ Found MEMBERSHIP offer:", membershipOffer);
 
+
+        //debugger;
         // Extract discount percentage from offer structure
         const membershipDiscount = membershipOffer.discount?.value ||
                                   membershipOffer.membershipBenefits?.discountPercentage ||
@@ -224,6 +227,7 @@ export default function CreatePaymentPage() {
       //   setCalculations(result.data.data);
       // } else {
       calculateAmountsLocally();
+      // }
     } catch (error) {
       console.error("Failed to calculate amounts:", error.response);
       calculateAmountsLocally();
@@ -231,16 +235,18 @@ export default function CreatePaymentPage() {
   };
 
   const calculateAmountsLocally = () => {
-    debugger;
+    //debugger;
     const servicesSubtotal = servicesTotal();
     const productsSubtotal = productTotal();
     const subtotal = servicesSubtotal + productsSubtotal;
 
     const discountAmount = (subtotal * formData.discount.percentage) / 100;
-    const amountAfterDiscount =
-      formData.discount.discountAmount > 0
-        ? subtotal - discountAmount
-        : subtotal;
+    // const amountAfterDiscount =
+    //   formData.discount.discountAmount > 0
+    //     ? subtotal - discountAmount
+    //     : subtotal;
+    const amountAfterDiscount = formData.discount.percentage > 0 ? subtotal - subtotal * (formData.discount.percentage/100) : subtotal;
+    
 
     let totalCgst = 0;
     let totalSgst = 0;
@@ -307,6 +313,8 @@ export default function CreatePaymentPage() {
     // Final amount calculation:
     // For inclusive GST: already part of subtotal, don't add again
     // For exclusive GST: needs to be added
+
+    debugger;
     const finalAmount = amountAfterDiscount + totalGst;
 
     setCalculations({
@@ -329,6 +337,8 @@ export default function CreatePaymentPage() {
       },
       finalAmount,
     });
+
+    console.log("hello jay===============",calculations)
   };
 
   const servicesTotal = () => {
