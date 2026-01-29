@@ -66,7 +66,7 @@ export default function PurchaseMembershipPage() {
         if (customersRes.success && customersRes.data.data?.length > 0) {
           setCustomers(customersRes.data.data);
         }
-        console.log("offerRes",offersRes)
+        console.log("offerRes", offersRes)
         if (offersRes.success && offersRes.data.data.offers?.length > 0) {
           setOffers(offersRes.data.data.offers);
         }
@@ -149,6 +149,20 @@ export default function PurchaseMembershipPage() {
       const result = await purchaseMembership(formData);
 
       if (result.success) {
+        // Prepare invoice data - using only the data we get from API
+        const invoiceData = {
+          membershipData: result.data, // Contains membership, customer, and franchise data
+          notes: "Thank you for choosing our membership program!"
+        };
+
+        const response = await fetch("/api/send-member-invoice", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(invoiceData),
+        });
+
         toast.success("Membership purchased successfully!");
         // Reset form
         setFormData({
@@ -278,10 +292,9 @@ export default function PurchaseMembershipPage() {
                       onClick={() => handleOfferSelect(offer._id)}
                       className={`
                         relative group p-6 border-2 rounded-3xl cursor-pointer transition-all duration-500 hover:shadow-xl backdrop-blur-sm
-                        ${
-                          selectedOffer?._id === offer._id
-                        ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 ring-2 ring-primary/20"
-                        : "border-border/50 bg-card/30 hover:border-primary/50 hover:bg-primary/5 hover:shadow-primary/5"
+                        ${selectedOffer?._id === offer._id
+                          ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 ring-2 ring-primary/20"
+                          : "border-border/50 bg-card/30 hover:border-primary/50 hover:bg-primary/5 hover:shadow-primary/5"
                         }
                       `}
                     >
@@ -310,7 +323,7 @@ export default function PurchaseMembershipPage() {
                             <span className="text-sm text-muted-foreground">Membership Value:</span>
                             <span className="font-bold text-lg text-foreground">₹{offer.membershipBenefits.membershipValue}</span>
                           </div>
-                         
+
                           <div className="flex justify-between text-sm pt-1">
                             <span className="text-muted-foreground flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
@@ -334,7 +347,7 @@ export default function PurchaseMembershipPage() {
               </div>
 
               {/* Promo Code */}
-           
+
 
               {/* Amount */}
               {selectedOffer && (
@@ -390,7 +403,7 @@ export default function PurchaseMembershipPage() {
                         <SelectItem value="CASH">Cash</SelectItem>
                         <SelectItem value="CARD">Card</SelectItem>
                         <SelectItem value="UPI">UPI</SelectItem>
-                  
+
                       </SelectContent>
                     </Select>
                   </div>
@@ -425,17 +438,17 @@ export default function PurchaseMembershipPage() {
                             <span className="text-muted-foreground">Membership Value:</span>
                             <span className="font-bold text-foreground">₹{selectedOffer.membershipBenefits?.membershipValue}</span>
                           </div>
-                         
+
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Amount Paid:</span>
                             <span className="font-bold text-lg text-primary">₹{formData.amountPaid.toFixed(2)}</span>
                           </div>
 
-                            <div className="flex justify-between">
+                          <div className="flex justify-between">
                             <span className="text-muted-foreground">Discount Given:</span>
                             <span className="font-bold text-lg text-primary">₹{(selectedOffer.membershipBenefits?.membershipValue - formData.amountPaid).toFixed(2)}</span>
                           </div>
-                        
+
                         </div>
                       </div>
                     </div>
