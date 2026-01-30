@@ -30,14 +30,15 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { CardSkeleton } from "@/components/admin/table-skeleton";
 
 export default function BuyPackagePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true); // Add loading state for initial data fetch
 
   const [customers, setCustomers] = useState([]);
   const [packages, setPackages] = useState([]);
-  const [customerSearchText, setCustomerSearchText] = useState("");
 
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -53,11 +54,12 @@ export default function BuyPackagePage() {
   // Fetch dropdown data
   useEffect(() => {
     const fetchData = async () => {
+      setDataLoading(true); // Start loading
       try {
         const [customersRes, packagesRes] = await Promise.all([
           getCustomersDropdown({ limit: 100 }),
           getPackages({ limit: 100, status: "ACTIVE" }),
-        
+
         ]);
 
         if (customersRes.success && customersRes.data.data?.length > 0) {
@@ -65,13 +67,15 @@ export default function BuyPackagePage() {
         }
         debugger;
         if (packagesRes.success && packagesRes.data?.length > 0) {
-            debugger;
-            console.log("packageRes",packagesRes.data)
+          debugger;
+          console.log("packageRes", packagesRes.data)
           setPackages(packagesRes.data);
         }
       } catch (error) {
         console.error("Failed to fetch dropdown data:", error);
         toast.error("Failed to load data");
+      } finally {
+        setDataLoading(false); // End loading
       }
     };
 
@@ -84,7 +88,6 @@ export default function BuyPackagePage() {
       ...prevFormData,
       customerId: newCustomer._id,
     }));
-    setCustomerSearchText(`${newCustomer.name} - ${newCustomer.phone}`);
   };
 
   const handlePackageSelect = (packageId) => {
@@ -146,7 +149,6 @@ export default function BuyPackagePage() {
         });
         setSelectedPackage(null);
         setQuantity(1);
-        setCustomerSearchText("");
         // Optionally redirect
         // router.push("/admin/packages");
       } else {
@@ -208,56 +210,32 @@ export default function BuyPackagePage() {
                 <Label htmlFor="customer" className="text-base font-medium">
                   Customer *
                 </Label>
-
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <Search className="w-5 h-5 text-gray-400" />
-                  </div>
-
-                  <input
-                    id="customer-search"
-                    type="text"
-                    list="customers-datalist"
-                    placeholder="Search customer by name or phone..."
-                    className="w-full h-10 ring-2 ring-border rounded-md pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
-                    value={customerSearchText}
-                    onChange={(e) => {
-                      const searchValue = e.target.value;
-                      setCustomerSearchText(searchValue);
-
-                      const foundCustomer = customers.find(
-                        (c) =>
-                          c.name.toLowerCase() === searchValue.toLowerCase() ||
-                          c.phone === searchValue ||
-                          `${c.name} - ${c.phone}` === searchValue
-                      );
-
-                      if (foundCustomer) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          customerId: foundCustomer._id,
-                        }));
-                      } else {
-                        setFormData((prev) => ({ ...prev, customerId: "" }));
-                      }
-                    }}
-                    onFocus={() => {
-                      if (formData.customerId) {
-                        setCustomerSearchText("");
-                      }
-                    }}
-                    required
-                  />
-
-                  <datalist id="customers-datalist">
-                    {customers.map((customer) => (
-                      <option
-                        key={customer._id}
-                        value={`${customer.name} - ${customer.phone}`}
-                      />
-                    ))}
-                  </datalist>
-                </div>
+                <Select
+                  value={formData.customerId}
+                  onValueChange={(value) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      customerId: value,
+                    }));
+                  }}
+                >
+                  <SelectTrigger className="h-10 w-full">
+                    <SelectValue placeholder={customers?.length > 0 ? "Select a customer..." : "No customers available"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers?.length > 0 ? (
+                      customers?.map((customer) => (
+                        <SelectItem key={customer._id} value={customer._id}>
+                          {customer.name} - {customer.phone}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground text-center">
+                        No customers found
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
               </div>
 
               <Separator />
@@ -268,73 +246,76 @@ export default function BuyPackagePage() {
                   Select Package *
                 </Label>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {packages.map((pkg) => (
-                    <div
-                      key={pkg._id}
-                      onClick={() => handlePackageSelect(pkg._id)}
-                      className={`
+                {dataLoading ? (
+                  <CardSkeleton />
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {packages.map((pkg) => (
+                        <div
+                          key={pkg._id}
+                          onClick={() => handlePackageSelect(pkg._id)}
+                          className={`
                         p-4 border-2 rounded-lg cursor-pointer transition-all
-                        ${
-                          selectedPackage?._id === pkg._id
+                        ${selectedPackage?._id === pkg._id
                             ? "border-primary bg-primary/5"
                             : "border-gray-200 hover:border-primary/50"
-                        }
+                          }
                       `}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <PackageIcon className="w-5 h-5 text-primary" />
-                          <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                        </div>
-                        {/* {pkg.type && (
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <PackageIcon className="w-5 h-5 text-primary" />
+                              <h3 className="font-semibold text-lg">{pkg.name}</h3>
+                            </div>
+                            {/* {pkg.type && (
                           <Badge variant="secondary">{pkg.type}</Badge>
                         )} */}
-                      </div>
-
-                      <p className="text-sm text-gray-600 mb-3">
-                        {pkg.description || "No description available"}
-                      </p>
-
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Package Value:</span>
-                          <span className="font-medium">₹{pkg.totalValue}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Price:</span>
-                          <span className="font-bold text-green-600">
-                            ₹{pkg.price}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">You Save:</span>
-                          <span className="font-medium text-orange-600">
-                            ₹{pkg.totalValue - pkg.price}
-                          </span>
-                        </div>
-                        {pkg.validity && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Validity:</span>
-                            <span className="font-medium">
-                              {pkg.validity} days
-                            </span>
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
 
-                {packages.length === 0 && (
-                  <div className="text-center py-12 text-gray-500">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                      <PackageIcon className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <p className="text-lg font-medium">No packages available</p>
-                    <p className="text-sm">
-                      Please add packages to get started
-                    </p>
+                          <p className="text-sm text-gray-600 mb-3">
+                            {pkg.description || "No description available"}
+                          </p>
+
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">Package Value:</span>
+                              <span className="font-medium">₹{pkg.totalValue}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">Price:</span>
+                              <span className="font-bold text-green-600">
+                                ₹{pkg.price}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">You Save:</span>
+                              <span className="font-medium text-orange-600">
+                                ₹{pkg.totalValue - pkg.price}
+                              </span>
+                            </div>
+                            {pkg.validity && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Validity:</span>
+                                <span className="font-medium">
+                                  {pkg.validity} days
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+
+                      {!dataLoading && packages.length === 0 && (
+                        <div className="text-center py-12 text-gray-500 col-span-full">
+                          <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                            <PackageIcon className="w-8 h-8 text-gray-400" />
+                          </div>
+                          <p className="text-lg font-medium">No packages available</p>
+                          <p className="text-sm">
+                            Please add packages to get started
+                          </p>
+                        </div>
+                      )}
                   </div>
                 )}
               </div>
@@ -490,8 +471,8 @@ export default function BuyPackagePage() {
                     <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-800">
                       <p className="font-semibold mb-1">📦 Package Benefits:</p>
                       <p>
-                        Customer will receive ₹{selectedPackage.totalValue * quantity} 
-                          worth of services for just ₹{calculateTotal().toFixed(2)}
+                        Customer will receive ₹{selectedPackage.totalValue * quantity}
+                        worth of services for just ₹{calculateTotal().toFixed(2)}
                       </p>
                     </div>
                   </>

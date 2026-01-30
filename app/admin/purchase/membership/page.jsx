@@ -1,8 +1,11 @@
 "use client";
 
 import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog";
+import { CardSkeleton } from "@/components/admin/table-skeleton";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -13,21 +16,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { getCustomersDropdown } from "@/lib/actions/customer_action";
-import { getOffers } from "@/lib/actions/offer_action"; // You'll need this
 import { purchaseMembership } from "@/lib/actions/membership_action"; // You'll need this
+import { getOffers } from "@/lib/actions/offer_action"; // You'll need this
 import {
+  AlertCircle,
+  Calendar,
+  Crown,
+  Gift,
   Loader2,
   Plus,
   Receipt,
-  Search,
-  Crown,
-  Gift,
-  Percent,
-  Calendar,
-  AlertCircle,
+  Search
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,10 +36,10 @@ import { toast } from "sonner";
 export default function PurchaseMembershipPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true); // Add loading state for initial data fetch
 
   const [customers, setCustomers] = useState([]);
   const [offers, setOffers] = useState([]);
-  const [customerSearchText, setCustomerSearchText] = useState("");
   const [offerCode, setOfferCode] = useState("");
 
   const [selectedOffer, setSelectedOffer] = useState(null);
@@ -57,6 +57,7 @@ export default function PurchaseMembershipPage() {
   // Fetch dropdown data
   useEffect(() => {
     const fetchData = async () => {
+      setDataLoading(true); // Start loading
       try {
         const [customersRes, offersRes] = await Promise.all([
           getCustomersDropdown({ limit: 100 }),
@@ -66,13 +67,14 @@ export default function PurchaseMembershipPage() {
         if (customersRes.success && customersRes.data.data?.length > 0) {
           setCustomers(customersRes.data.data);
         }
-        console.log("offerRes", offersRes)
         if (offersRes.success && offersRes.data.data.offers?.length > 0) {
           setOffers(offersRes.data.data.offers);
         }
       } catch (error) {
         console.error("Failed to fetch dropdown data:", error);
         toast.error("Failed to load data");
+      } finally {
+        setDataLoading(false); // End loading
       }
     };
 
@@ -85,7 +87,6 @@ export default function PurchaseMembershipPage() {
       ...prevFormData,
       customerId: newCustomer._id,
     }));
-    setCustomerSearchText(`${newCustomer.name} - ${newCustomer.phone}`);
   };
 
   const handleOfferSelect = (offerId) => {
@@ -175,7 +176,6 @@ export default function PurchaseMembershipPage() {
           offerCode: "",
         });
         setSelectedOffer(null);
-        setCustomerSearchText("");
         setOfferCode("");
       } else {
         toast.error(result.error || "Failed to purchase membership");
@@ -236,48 +236,32 @@ export default function PurchaseMembershipPage() {
                 <Label htmlFor="customer" className="text-base font-medium">
                   Customer *
                 </Label>
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <Search className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="customer-search"
-                    type="text"
-                    list="customers-datalist"
-                    placeholder="Search customer by name or phone..."
-                    className="w-full h-10 ring-2 ring-border rounded-md pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
-                    value={customerSearchText}
-                    onChange={(e) => {
-                      const searchValue = e.target.value;
-                      setCustomerSearchText(searchValue);
-
-                      const foundCustomer = customers.find(
-                        (c) =>
-                          c.name.toLowerCase() === searchValue.toLowerCase() ||
-                          c.phone === searchValue ||
-                          `${c.name} - ${c.phone}` === searchValue
-                      );
-
-                      if (foundCustomer) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          customerId: foundCustomer._id,
-                        }));
-                      } else {
-                        setFormData((prev) => ({ ...prev, customerId: "" }));
-                      }
-                    }}
-                    required
-                  />
-                  <datalist id="customers-datalist">
-                    {customers.map((customer) => (
-                      <option
-                        key={customer._id}
-                        value={`${customer.name} - ${customer.phone}`}
-                      />
-                    ))}
-                  </datalist>
-                </div>
+                <Select
+                  value={formData.customerId}
+                  onValueChange={(value) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      customerId: value,
+                    }));
+                  }}
+                >
+                  <SelectTrigger className="h-10 w-full">
+                    <SelectValue placeholder={customers?.length > 0 ? "Select a customer..." : "No customers available"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers?.length > 0 ? (
+                      customers?.map((customer) => (
+                        <SelectItem key={customer._id} value={customer._id}>
+                          {customer.name} - {customer.phone}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground text-center">
+                        No customers found
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
               </div>
 
               <Separator />
@@ -285,63 +269,68 @@ export default function PurchaseMembershipPage() {
               {/* Offer Selection */}
               <div className="space-y-4">
                 <Label className="text-base font-medium">Membership Offers *</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {offers.map((offer) => (
-                    <div
-                      key={offer._id}
-                      onClick={() => handleOfferSelect(offer._id)}
-                      className={`
+
+                {dataLoading ? (
+                  <CardSkeleton />
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {offers.map((offer) => (
+                        <div
+                          key={offer._id}
+                          onClick={() => handleOfferSelect(offer._id)}
+                          className={`
                         relative group p-6 border-2 rounded-3xl cursor-pointer transition-all duration-500 hover:shadow-xl backdrop-blur-sm
                         ${selectedOffer?._id === offer._id
                           ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 ring-2 ring-primary/20"
                           : "border-border/50 bg-card/30 hover:border-primary/50 hover:bg-primary/5 hover:shadow-primary/5"
-                        }
+                          }
                       `}
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="p-3 bg-primary/10 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                            <Crown className="w-6 h-6 text-primary" />
+                        >
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className="p-3 bg-primary/10 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                <Crown className="w-6 h-6 text-primary" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-xl text-foreground">{offer.name}</h3>
+                                <p className="text-sm text-primary font-medium">
+                                  {offer.offerCode}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge variant="secondary" className="bg-secondary/10 text-secondary border-secondary/20">
+                              {offer.offerType}
+                            </Badge>
                           </div>
-                          <div>
-                            <h3 className="font-bold text-xl text-foreground">{offer.name}</h3>
-                            <p className="text-sm text-primary font-medium">
-                              {offer.offerCode}
-                            </p>
-                          </div>
+
+                          <p className="text-muted-foreground mb-4 line-clamp-2">{offer.description}</p>
+
+                          {offer.membershipBenefits && (
+                            <div className="space-y-3 mb-4">
+                              <div className="flex justify-between items-center pt-2">
+                                <span className="text-sm text-muted-foreground">Membership Value:</span>
+                                <span className="font-bold text-lg text-foreground">₹{offer.membershipBenefits.membershipValue}</span>
+                              </div>
+
+                              <div className="flex justify-between text-sm pt-1">
+                                <span className="text-muted-foreground flex items-center gap-1">
+                                  <Calendar className="w-4 h-4" />
+                                  1 Year
+                                </span>
+                                <span className="font-medium text-primary">Active</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <Badge variant="secondary" className="bg-secondary/10 text-secondary border-secondary/20">
-                          {offer.offerType}
-                        </Badge>
-                      </div>
+                      ))}
 
-                      <p className="text-muted-foreground mb-4 line-clamp-2">{offer.description}</p>
-
-                      {offer.membershipBenefits && (
-                        <div className="space-y-3 mb-4">
-                          <div className="flex justify-between items-center pt-2">
-                            <span className="text-sm text-muted-foreground">Membership Value:</span>
-                            <span className="font-bold text-lg text-foreground">₹{offer.membershipBenefits.membershipValue}</span>
-                          </div>
-
-                          <div className="flex justify-between text-sm pt-1">
-                            <span className="text-muted-foreground flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              1 Year
-                            </span>
-                            <span className="font-medium text-primary">Active</span>
-                          </div>
+                      {!dataLoading && offers.length === 0 && (
+                        <div className="text-center py-12 text-muted-foreground col-span-full">
+                          <Crown className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
+                          <p className="text-lg font-medium">No membership offers available</p>
+                          <p className="text-sm">Please create membership offers first</p>
                         </div>
                       )}
-                    </div>
-                  ))}
-                </div>
-
-                {offers.length === 0 && (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Crown className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
-                    <p className="text-lg font-medium">No membership offers available</p>
-                    <p className="text-sm">Please create membership offers first</p>
                   </div>
                 )}
               </div>
