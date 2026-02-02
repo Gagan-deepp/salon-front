@@ -50,6 +50,18 @@ export async function getAllPayments(params) {
     return { success: false, error: error.response?.data?.message || "getAllPayments failed" }
   }
 }
+//  Get All member payments
+export async function getAllMemberPayments(params) {
+  try {
+    const headers = await getAuthHeaders()
+    const res = await axios.get(`${BASE_URL}/payments/all-member`, { params, headers })
+    console.log("getAllMemberPayments response", res.data)
+    return { success: true, data: res.data }
+  } catch (error) {
+    console.error("getAllMemberPayments error", error)
+    return { success: false, error: error.response?.data?.message || "getAllMemberPayments failed" }
+  }
+}
 
 // 2) Get Payment by ID  – GET /payments/{paymentId}
 export async function getPaymentById(paymentId) {
@@ -90,6 +102,19 @@ export async function getFranchisePayments(params) {
   } catch (error) {
     console.error("getFranchisePayments error", error.response?.data)
     return { success: false, error: error.response?.data?.message || "getFranchisePayments failed" }
+  }
+}
+
+// Get All Franchise membership Payments  – GET /payments/franchise-member
+export async function getFranchiseMembershipPayments(params) {
+  try {
+    const headers = await getAuthHeaders()
+    const res = await axios.get(`${BASE_URL}/payments/franchise-member`, { params, headers })
+    console.log("getFranchiseMembershipPayments response", res.data)
+    return { success: true, data: res.data }
+  } catch (error) {
+    console.error("getFranchiseMembershipPayments error", error.response?.data)
+    return { success: false, error: error.response?.data?.message || "getFranchiseMembershipPayments failed" }
   }
 }
 

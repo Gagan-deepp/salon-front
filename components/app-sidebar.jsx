@@ -17,7 +17,8 @@ import {
   SquareTerminal,
   Telescope,
   UserCheck,
-  UserCircle
+  UserCircle,
+  CreditCard
 } from "lucide-react"
 import { useEffect, useState } from "react"
 
@@ -60,6 +61,11 @@ export function AppSidebar({ ...props }) {
         title: "Payments",
         url: "/admin/payments",
         icon: BadgeIndianRupee
+      },
+      {
+        title: "Membership - Payments",
+        url: "/admin/membership-payments",
+        icon: CreditCard
       },
       {
         title: "Products",
@@ -186,6 +192,11 @@ export function AppSidebar({ ...props }) {
         icon: BadgeIndianRupee
       },
       {
+        title: "Membership - Payments",
+        url: "/admin/membership-payments",
+        icon: CreditCard
+      },
+      {
         title: "Products",
         url: "/admin/products",
         icon: ShoppingBasket
@@ -226,7 +237,7 @@ export function AppSidebar({ ...props }) {
             url: "/admin/reports/churn-rate",
             icon: UserCircle
           }
-          
+
         ],
       },
     ],
