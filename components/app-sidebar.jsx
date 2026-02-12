@@ -104,6 +104,26 @@ export function AppSidebar({ ...props }) {
         isActive: true,
         items: [
           {
+            title: "Customer Metrics",
+            url: "/admin/reports/customer-metrics",
+            icon: UserCircle
+          },
+          {
+            title: "Customer Purchase",
+            url: "/admin/reports/customer-purchase",
+            icon: UserCircle
+          },
+          {
+            title: "Customer Service Bucket",
+            url: "/admin/reports/customer-service-bucket",
+            icon: UserCircle
+          },
+          {
+            title: "Gain Loss",
+            url: "/admin/reports/gain-loss",
+            icon: UserCircle
+          },
+          {
             title: "Service Performance",
             url: "/admin/reports/service",
             icon: Briefcase
