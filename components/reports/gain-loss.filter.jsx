@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -19,7 +19,7 @@ export default function GainLossFilters() {
     const [basePeriodEnd, setBasePeriodEnd] = useState(null)
 
     useEffect(() => {
-        const params = new URLSearchParams(searchParams)
+        const params = new URLSearchParams()
         if (analysisPeriodStart) params.set("analysisPeriodStart", format(analysisPeriodStart, "yyyy-MM-dd"))
         if (analysisPeriodEnd) params.set("analysisPeriodEnd", format(analysisPeriodEnd, "yyyy-MM-dd"))
         if (basePeriodStart) params.set("basePeriodStart", format(basePeriodStart, "yyyy-MM-dd"))
@@ -27,8 +27,16 @@ export default function GainLossFilters() {
         router.push(`?${params.toString()}`)
     }, [analysisPeriodStart, analysisPeriodEnd, basePeriodStart, basePeriodEnd])
 
+    const clearFilters = () => {
+        setAnalysisPeriodStart(undefined)
+        setAnalysisPeriodEnd(undefined)
+        setBasePeriodStart(undefined)
+        setBasePeriodEnd(undefined)
+        router.push("/admin/reports/gain-loss")
+    }
+
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 flex justify-between items-center ">
             {/* Analysis Period */}
             <div className="space-y-2">
                 <label className="text-sm font-medium">Analysis Period (Current)</label>
@@ -112,6 +120,11 @@ export default function GainLossFilters() {
                     </Popover>
                 </div>
             </div>
+
+            <Button variant="secondary" onClick={clearFilters} className="w-fit">
+                <Filter className="w-4 h-4 mr-2" />
+                Clear Filters
+            </Button>
         </div>
     )
 }

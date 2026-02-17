@@ -69,7 +69,7 @@ export async function getCustomerPurchase(franchiseId, startDate, endDate, custo
 export async function getGainLoss(franchiseId, analysisPeriodStart, analysisPeriodEnd, basePeriodStart, basePeriodEnd) {
     try {
         const headers = await getAuthHeaders()
-        const res = await axios.get(`${BASE_URL}/customerreport/gain-loss?franchiseId=${"691e06a8f4564ffa2f5c2110"}&analysisPeriodStart=${"2025-01-01"}&analysisPeriodEnd=${"2025-10-31"}&basePeriodStart=${"2024-01-01"}&basePeriodEnd=${"2024-10-31"}`, {
+        const res = await axios.get(`${BASE_URL}/customerreport/gain-loss?franchiseId=${franchiseId}&analysisPeriodStart=${analysisPeriodStart}&analysisPeriodEnd=${analysisPeriodEnd}&basePeriodStart=${basePeriodStart}&basePeriodEnd=${basePeriodEnd}`, {
             headers
         })
         console.log("getGainLoss response", res.data)

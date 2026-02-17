@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -19,12 +19,19 @@ export default function CustomerPurchaseFilters() {
     const [customerType, setCustomerType] = useState("Total")
 
     useEffect(() => {
-        const params = new URLSearchParams(searchParams)
+        const params = new URLSearchParams()
         if (startDate) params.set("startDate", format(startDate, "yyyy-MM-dd"))
         if (endDate) params.set("endDate", format(endDate, "yyyy-MM-dd"))
         if (customerType) params.set("customerType", customerType)
         router.push(`?${params.toString()}`)
     }, [startDate, endDate, customerType])
+
+    const clearFilters = () => {
+        setStartDate(undefined)
+        setEndDate(undefined)
+        setCustomerType("Total")
+        router.push("/admin/reports/customer-purchase")
+    }
 
     return (
         <div className="flex flex-wrap gap-4 items-center">
@@ -77,6 +84,11 @@ export default function CustomerPurchaseFilters() {
                     <SelectItem value="Existing">Existing Customers</SelectItem>
                 </SelectContent>
             </Select>
+
+            <Button variant="secondary" onClick={clearFilters} className="w-fit">
+                <Filter className="w-4 h-4 mr-2" />
+                Clear Filters
+            </Button>
         </div>
     )
 }

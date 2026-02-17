@@ -5,16 +5,64 @@ import { Card, CardContent } from '@/components/ui/card'
 import { getCustomerOverallBasket } from '@/lib/actions/reports.action'
 import { auth } from '@/lib/auth'
 import { CalendarRange, Scissors, Sparkles, Hand, Palette, FootprintsIcon, Heart } from 'lucide-react'
+import { Suspense } from 'react'
+import { SummaryCardsSkeleton, TableContainerSkeleton } from '@/components/admin/report-skeletons'
 
 export default async function CustomerServiceBucketPage({ searchParams }) {
     const searchP = await searchParams
+
+    return (
+        <div className="p-6 w-full overflow-hidden">
+            {/* Header */}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                        Customer Service Bucket Report
+                    </h1>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Service category wise breakdown and performance metrics
+                    </p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-primary border-primary bg-primary/10 px-3 py-1">
+                        <CalendarRange className="h-3.5 w-3.5 mr-1.5" />
+                        FY 2024-25
+                    </Badge>
+                </div>
+            </div>
+
+            <ServiceBucketFilters />
+
+            <Suspense
+                key={`${searchP?.startDate || ''}-${searchP?.endDate || ''}-${searchP?.customerType || ''}`}
+                fallback={
+                    <>
+                        <SummaryCardsSkeleton />
+                        <div className='flex flex-col items-start gap-12'>
+                            <TableContainerSkeleton />
+                            <TableContainerSkeleton />
+                        </div>
+                    </>
+                }
+            >
+                <CustomerServiceBucketData
+                    startDate={searchP?.startDate}
+                    endDate={searchP?.endDate}
+                    customerType={searchP?.customerType}
+                />
+            </Suspense>
+        </div>
+    )
+}
+
+async function CustomerServiceBucketData({ startDate, endDate, customerType }) {
     const session = await auth()
 
     const response = await getCustomerOverallBasket(
         session.franchiseId,
-        searchP.startDate,
-        searchP.endDate,
-        searchP.customerType || 'Overall'
+        startDate,
+        endDate,
+        customerType || 'Overall'
     )
 
     if (!response?.success) {
@@ -31,7 +79,7 @@ export default async function CustomerServiceBucketPage({ searchParams }) {
     }
 
     const { data } = response
-    const { summary, fiscalYear, customerType } = data
+    const { summary, fiscalYear } = data
 
     const categoryIcons = {
         'Hair': Scissors,
@@ -52,33 +100,14 @@ export default async function CustomerServiceBucketPage({ searchParams }) {
     }))
 
     return (
-        <div className="p-6 w-full overflow-hidden">
-            {/* Header */}
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-                        Customer Service Bucket Report
-                    </h1>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        Service category wise breakdown and performance metrics
-                    </p>
-                </div>
-                <div className="flex items-center gap-2">
-                    {customerType && (
-                        <Badge variant="secondary" className="px-3 py-1">
-                            {customerType}
-                        </Badge>
-                    )}
-                    {fiscalYear && (
-                        <Badge variant="outline" className="text-primary border-primary bg-primary/10 px-3 py-1">
-                            <CalendarRange className="h-3.5 w-3.5 mr-1.5" />
-                            {fiscalYear}
-                        </Badge>
-                    )}
-                </div>
-            </div>
-
-            <ServiceBucketFilters />
+        <>
+            {/* <div className="flex items-center gap-2 mb-8">
+                {data.customerType && (
+                    <Badge variant="secondary" className="px-3 py-1">
+                        {data.customerType}
+                    </Badge>
+                )}
+            </div> */}
 
             {/* Summary Cards */}
             <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 my-8">
@@ -158,6 +187,6 @@ export default async function CustomerServiceBucketPage({ searchParams }) {
                     <ServiceMixTable data={data} />
                 </div>
             </div>
-        </div>
+        </>
     )
 }

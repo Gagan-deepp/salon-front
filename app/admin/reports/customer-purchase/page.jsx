@@ -5,18 +5,58 @@ import { getCustomerPurchase } from "@/lib/actions/reports.action"
 import { Scissors, Sparkles, Hand, Paintbrush, Wind, User } from "lucide-react"
 import CustomerPurchaseFilters from "@/components/reports/customer-purchase.filter"
 import { CustomerPurchaseTable } from "@/components/report-table-purchase"
+import { Suspense } from "react"
+import { SummaryCardsSkeleton, TableContainerSkeleton } from "@/components/admin/report-skeletons"
 
 export default async function CustomerPurchasePage({ searchParams }) {
+    const searchP = await searchParams
+
+    return (
+        <div className="p-6 space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold">Customer Purchase Report</h1>
+                    <p className="text-sm text-muted-foreground">
+                        Track purchase value and average ticket size by service category
+                    </p>
+                </div>
+                <Badge variant="outline" className="text-sm">
+                    FY 2024-25
+                </Badge>
+            </div>
+
+            {/* Filters */}
+            <CustomerPurchaseFilters />
+
+            <Suspense
+                key={`${searchP?.startDate || ''}-${searchP?.endDate || ''}-${searchP?.customerType || ''}`}
+                fallback={
+                    <>
+                        <SummaryCardsSkeleton />
+                        <SummaryCardsSkeleton />
+                        <div className="space-y-4 max-w-344">
+                            <TableContainerSkeleton />
+                        </div>
+                    </>
+                }
+            >
+                <CustomerPurchaseData
+                    startDate={searchP?.startDate}
+                    endDate={searchP?.endDate}
+                    customerType={searchP?.customerType}
+                />
+            </Suspense>
+        </div>
+    )
+}
+
+async function CustomerPurchaseData({ startDate, endDate, customerType }) {
     const session = await auth()
     const franchiseId = session?.franchiseId
 
-    // Get filter params
-    const startDate = searchParams?.startDate || "2024-11-01"
-    const endDate = searchParams?.endDate || "2025-10-31"
-    const customerType = searchParams?.customerType || "Total"
-
     // Fetch data
-    const result = await getCustomerPurchase(franchiseId, startDate, endDate, customerType)
+    const result = await getCustomerPurchase(franchiseId, startDate || "2024-11-01", endDate || "2025-10-31", customerType || "Total")
     const data = result?.success ? result.data : null
 
     // Calculate total purchase value and avg ticket across all categories
@@ -57,23 +97,7 @@ export default async function CustomerPurchasePage({ searchParams }) {
     }
 
     return (
-        <div className="p-6 space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold">Customer Purchase Report</h1>
-                    <p className="text-sm text-muted-foreground">
-                        Track purchase value and average ticket size by service category
-                    </p>
-                </div>
-                <Badge variant="outline" className="text-sm">
-                    FY 2024-25
-                </Badge>
-            </div>
-
-            {/* Filters */}
-            <CustomerPurchaseFilters />
-
+        <>
             {/* Summary Cards - Overall */}
             <div className="grid gap-4 md:grid-cols-3 max-w-344">
                 <Card>
@@ -140,11 +164,11 @@ export default async function CustomerPurchasePage({ searchParams }) {
                 <div>
                     <h2 className="text-xl font-semibold">Customer Purchase - By Category</h2>
                     <p className="text-sm text-muted-foreground">
-                        Monthly purchase value and average ticket size for {customerType.toLowerCase()} customers
+                        Monthly purchase value and average ticket size for {customerType ? customerType.toLowerCase() : "total"} customers
                     </p>
                 </div>
                 <CustomerPurchaseTable data={data} />
             </div>
-        </div>
+        </>
     )
 }

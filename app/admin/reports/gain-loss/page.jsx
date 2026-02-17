@@ -5,26 +5,11 @@ import { getGainLoss } from "@/lib/actions/reports.action"
 import { Users, UserCheck, Percent, TrendingUp, TrendingDown } from "lucide-react"
 import GainLossFilters from "@/components/reports/gain-loss.filter"
 import { GainLossTable } from "@/components/report-table-gain-loss"
+import { Suspense } from "react"
+import { SummaryCardsSkeleton, TableContainerSkeleton } from "@/components/admin/report-skeletons"
 
 export default async function GainLossPage({ searchParams }) {
-    const session = await auth()
-    const franchiseId = session?.franchiseId
-
-    // Get filter params
-    const analysisPeriodStart = searchParams?.analysisPeriodStart || "2025-01-01"
-    const analysisPeriodEnd = searchParams?.analysisPeriodEnd || "2025-10-31"
-    const basePeriodStart = searchParams?.basePeriodStart || "2024-01-01"
-    const basePeriodEnd = searchParams?.basePeriodEnd || "2024-10-31"
-
-    // Fetch data
-    const result = await getGainLoss(
-        franchiseId,
-        analysisPeriodStart,
-        analysisPeriodEnd,
-        basePeriodStart,
-        basePeriodEnd
-    )
-    const data = result?.success ? result.data : null
+    const searchP = await searchParams
 
     return (
         <div className="p-6 space-y-6">
@@ -41,6 +26,44 @@ export default async function GainLossPage({ searchParams }) {
             {/* Filters */}
             <GainLossFilters />
 
+            <Suspense
+                key={`${searchP?.analysisPeriodStart || ''}-${searchP?.analysisPeriodEnd || ''}-${searchP?.basePeriodStart || ''}-${searchP?.basePeriodEnd || ''}`}
+                fallback={
+                    <>
+                        <SummaryCardsSkeleton />
+                        <div className="space-y-4">
+                            <TableContainerSkeleton />
+                        </div>
+                    </>
+                }
+            >
+                <GainLossData
+                    analysisPeriodStart={searchP?.analysisPeriodStart}
+                    analysisPeriodEnd={searchP?.analysisPeriodEnd}
+                    basePeriodStart={searchP?.basePeriodStart}
+                    basePeriodEnd={searchP?.basePeriodEnd}
+                />
+            </Suspense>
+        </div>
+    )
+}
+
+async function GainLossData({ analysisPeriodStart, analysisPeriodEnd, basePeriodStart, basePeriodEnd }) {
+    const session = await auth()
+    const franchiseId = session?.franchiseId
+
+    // Fetch data
+    const result = await getGainLoss(
+        franchiseId,
+        analysisPeriodStart || "2025-01-01",
+        analysisPeriodEnd || "2025-10-31",
+        basePeriodStart || "2024-01-01",
+        basePeriodEnd || "2024-10-31"
+    )
+    const data = result?.success ? result.data : null
+
+    return (
+        <>
             {/* Period Labels */}
             {data?.analysisPeriod && data?.basePeriod && (
                 <div className="flex gap-4 text-sm">
@@ -149,6 +172,6 @@ export default async function GainLossPage({ searchParams }) {
                 </div>
                 <GainLossTable data={data} />
             </div>
-        </div>
+        </>
     )
 }
