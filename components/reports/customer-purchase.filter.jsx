@@ -45,6 +45,7 @@ export default function CustomerPurchaseFilters() {
                             !startDate && "text-muted-foreground"
                         )}
                     >
+                        <span>From : </span>
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {startDate ? format(startDate, "PPP") : "Start Date"}
                     </Button>
@@ -64,6 +65,7 @@ export default function CustomerPurchaseFilters() {
                             !endDate && "text-muted-foreground"
                         )}
                     >
+                        <span>To : </span>
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {endDate ? format(endDate, "PPP") : "End Date"}
                     </Button>

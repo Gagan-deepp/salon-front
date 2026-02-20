@@ -50,6 +50,7 @@ export default function GainLossFilters() {
                                     !analysisPeriodStart && "text-muted-foreground"
                                 )}
                             >
+                                 <span> From : </span>
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {analysisPeriodStart ? format(analysisPeriodStart, "PPP") : "Start Date"}
                             </Button>
@@ -68,6 +69,8 @@ export default function GainLossFilters() {
                                     !analysisPeriodEnd && "text-muted-foreground"
                                 )}
                             >
+                                <span> To : </span>
+
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {analysisPeriodEnd ? format(analysisPeriodEnd, "PPP") : "End Date"}
                             </Button>
@@ -92,6 +95,8 @@ export default function GainLossFilters() {
                                     !basePeriodStart && "text-muted-foreground"
                                 )}
                             >
+                                <span> From : </span>
+
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {basePeriodStart ? format(basePeriodStart, "PPP") : "Start Date"}
                             </Button>
@@ -103,6 +108,7 @@ export default function GainLossFilters() {
 
                     <Popover>
                         <PopoverTrigger asChild>
+                            
                             <Button
                                 variant="outline"
                                 className={cn(
@@ -110,6 +116,7 @@ export default function GainLossFilters() {
                                     !basePeriodEnd && "text-muted-foreground"
                                 )}
                             >
+                                <span> To : </span>
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {basePeriodEnd ? format(basePeriodEnd, "PPP") : "End Date"}
                             </Button>

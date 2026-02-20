@@ -63,6 +63,7 @@ export function ServiceBucketFilters() {
                         <Popover>
                             <PopoverTrigger asChild className="w-full">
                                 <Button variant="outline" className="w-full justify-start text-left font-normal">
+                                    <span>From : </span>
                                     <CalendarIcon className="mr-2 h-4 w-4" />
                                     {startDate ? format(startDate, "PPP") : "Start Date"}
                                 </Button>
@@ -80,7 +81,7 @@ export function ServiceBucketFilters() {
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button variant="outline" className="w-full justify-start text-left font-normal">
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                   <span> To : </span> <CalendarIcon className="mr-2 h-4 w-4" />
                                     {endDate ? format(endDate, "PPP") : "End Date"}
                                 </Button>
                             </PopoverTrigger>

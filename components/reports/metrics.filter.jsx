@@ -57,7 +57,9 @@ export function CustomerMetricsFilters() {
                         <Popover>
                             <PopoverTrigger asChild className="w-full" >
                                 <Button variant="outline" className="w-[200px] justify-start text-left font-normal w-full">
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                  <span>
+                                    From :
+                                    </span>  <CalendarIcon className="mr-2 h-4 w-4" />
                                     {startDate ? format(startDate, "PPP") : "Start Date"}
                                 </Button>
                             </PopoverTrigger>
@@ -73,7 +75,9 @@ export function CustomerMetricsFilters() {
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button variant="outline" className="w-[200px] justify-start text-left font-normal w-full">
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                   <span>
+                                    To :
+                                    </span>  <CalendarIcon className="mr-2 h-4 w-4" />
                                     {endDate ? format(endDate, "PPP") : "End Date"}
                                 </Button>
                             </PopoverTrigger>
