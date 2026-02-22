@@ -98,11 +98,17 @@ export async function getServiceTopPerformance() {
     }
 }
 
-export async function getRepeatCustomer() {
+export async function getRepeatCustomer(startDate = null, endDate = null) {
     try {
         const headers = await getAuthHeaders()
-        const res = await axios.get(`${BASE_URL}/analytics/repeat-customer`, { headers })
-        // console.log("getRepeatCustomer response", res)
+        const params = {}
+        if (startDate) params.startDate = startDate
+        if (endDate) params.endDate = endDate
+
+        const res = await axios.get(`${BASE_URL}/analytics/repeat-customer`, {
+            headers,
+            params
+        })
         return res.data
     } catch (error) {
         console.error("getRepeatCustomer error", error.response?.data)
