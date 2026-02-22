@@ -22,6 +22,8 @@ export default async function RepeatCustomerPage() {
 
     const repeat_customer = result.data
 
+    console.log("Repeat customer data ==> ", repeat_customer)
+
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">

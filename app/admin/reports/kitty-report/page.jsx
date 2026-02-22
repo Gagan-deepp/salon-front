@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { getUsersKittySummary } from "@/lib/actions/package_actions";
+import { Users, Coins, Trophy, BookOpen } from "lucide-react";
 
 export default function KittyAnalyticsPage() {
   const [report, setReport] = useState(null);
@@ -107,8 +108,8 @@ export default function KittyAnalyticsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Kitty Analytics</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold">Kitty Analytics</h1>
+          <p className="text-sm text-muted-foreground">
             Track provider earnings by month
           </p>
         </div>
@@ -149,50 +150,57 @@ export default function KittyAnalyticsPage() {
 
       {/* Summary Cards */}
       {report && (
-        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
+        <div className="grid gap-4 md:grid-cols-3">
           <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-green-600 mb-1">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Employees with Kitty</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
                 {report.summary.employeesWithKittyThisMonth}
               </div>
-              <p className="text-sm text-muted-foreground">
-                Employees with Kitty
-              </p>
+              <p className="text-xs text-muted-foreground">Active earners this month</p>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-1">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total {report.filter.monthName} Kitty</CardTitle>
+              <Coins className="h-4 w-4 text-emerald-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-emerald-600">
                 {formatCurrency(report.summary.totalKittyThisMonth)}
               </div>
-              <p className="text-sm text-muted-foreground">
-                Total {report.filter.monthName} Kitty
-              </p>
+              <p className="text-xs text-muted-foreground">Combined kitty earnings</p>
             </CardContent>
           </Card>
-          
-          {/* <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-1">
-                {formatCurrency(report.summary.averageKittyPerEmployee)}
-              </div>
-              <p className="text-sm text-muted-foreground">Avg per Employee</p>
-            </CardContent>
-          </Card>
-           */}
+
           <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-lg font-bold mb-1">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Top Earner</CardTitle>
+              <Trophy className="h-4 w-4 text-amber-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-lg font-bold truncate">
                 {report.summary.topEarner?.name || "N/A"}
               </div>
-              <p className="text-sm text-muted-foreground">Top Earner</p>
+              <p className="text-xs text-muted-foreground">
+                {report.summary.topEarner ? formatCurrency(report.summary.topEarner.monthKitty) : "No data"}
+              </p>
             </CardContent>
           </Card>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">Providers Ranking</h2>
+          <p className="text-sm text-muted-foreground">
+            Kitty earnings breakdown by provider
+          </p>
+        </div>
         {/* Selected User Card */}
         {/* <Card className="lg:col-span-1">
           <CardHeader>
@@ -246,19 +254,6 @@ export default function KittyAnalyticsPage() {
         </Card> */}
 
         {/* Kitty Report Table */}
-        <Card className="lg:col-span-3">
-          <CardHeader>
-            <CardTitle>
-              Providers Ranking (
-              {months.find((m) => m.value === selectedMonth)?.label} {selectedYear})
-            </CardTitle>
-            {report && (
-              <p className="text-2xl font-bold text-green-600">
-                Total: {formatCurrency(report.summary.totalKittyThisMonth)}
-              </p>
-            )}
-          </CardHeader>
-          <CardContent>
             {error ? (
               <div className="text-center py-12">
                 <p className="text-destructive mb-2">{error}</p>
@@ -273,64 +268,92 @@ export default function KittyAnalyticsPage() {
                 No kitty data found for {months.find(m => m.value === selectedMonth)?.label} {selectedYear}
               </p>
             ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Provider</TableHead>
-                      <TableHead>Designation</TableHead>
-                      <TableHead>Franchise</TableHead>
-                      <TableHead className="text-right">
-                        {selectedMonth}/{selectedYear} Kitty
-                      </TableHead>
-                      <TableHead className="text-right">Total Kitty</TableHead>
-                      <TableHead className="w-24">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {report.employees.map((user) => (
-                      <TableRow
-                        key={user._id}
-                        className={`cursor-pointer hover:bg-muted/50 border-l-4 transition-all ${
-                          selectedUserId === user._id 
-                            ? 'bg-blue-50 border-l-blue-500 shadow-sm' 
-                            : 'border-l-transparent hover:border-l-muted'
-                        }`}
-                        onClick={() => setSelectedUserId(user._id)}
-                      >
-                        <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell>{user.designation}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="max-w-[200px] truncate">
-                            {user.franchise || "N/A"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-bold text-green-600">
-                          {formatCurrency(user.monthKitty)}
-                        </TableCell>
-                        <TableCell className="text-right font-mono text-sm">
-                          {formatCurrency(user.totalLifetimeKitty || user.totalKitty)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={selectedUserId === user._id ? "default" : "secondary"}
-                            className="cursor-pointer hover:scale-105 transition-transform"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedUserId(user._id);
-                            }}
-                          >
-                            {selectedUserId === user._id ? "✓ Selected" : "Select"}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <div className="space-y-6">
+                  <div className="rounded-md border overflow-auto">
+                    <Table>
+                      <TableHeader className="bg-primary">
+                        <TableRow>
+                          <TableHead className="text-white font-bold min-w-[150px]">Provider</TableHead>
+                          <TableHead className="text-white min-w-[120px]">Designation</TableHead>
+                          <TableHead className="text-white min-w-[150px]">Franchise</TableHead>
+                          <TableHead className="text-white text-center min-w-[150px]">
+                            {months.find(m => m.value === selectedMonth)?.label} Kitty
+                          </TableHead>
+                          <TableHead className="text-white text-center min-w-[150px]">Total Kitty</TableHead>
+                          <TableHead className="text-white text-center min-w-[100px]">Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {report.employees.map((user, index) => (
+                          <TableRow
+                            key={user._id}
+                          className={`cursor-pointer transition-all ${selectedUserId === user._id 
+                              ? 'bg-blue-50 ring-1 ring-blue-300'
+                              : index % 2 === 0 ? 'bg-muted' : 'bg-gray-300'
+                            }`}
+                          onClick={() => setSelectedUserId(user._id)}
+                        >
+                          <TableCell className="font-semibold">{user.name}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="bg-white/50">{user.designation}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="max-w-[200px] truncate">
+                              {user.franchise || "N/A"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center font-bold text-emerald-600">
+                            {formatCurrency(user.monthKitty)}
+                          </TableCell>
+                          <TableCell className="text-center font-medium">
+                            {formatCurrency(user.totalLifetimeKitty || user.totalKitty)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge
+                              variant={selectedUserId === user._id ? "default" : "secondary"}
+                              className="cursor-pointer hover:scale-105 transition-transform"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedUserId(user._id);
+                              }}
+                            >
+                              {selectedUserId === user._id ? "✓ Selected" : "Select"}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+
+                        {/* Total Row */}
+                        <TableRow className="bg-primary font-bold hover:bg-primary">
+                          <TableCell className="text-white">Total</TableCell>
+                          <TableCell colSpan={2}></TableCell>
+                          <TableCell className="text-white text-center text-lg">
+                            {formatCurrency(report.summary.totalKittyThisMonth)}
+                          </TableCell>
+                          <TableCell colSpan={2}></TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* How to Read This Section */}
+                  <div className="rounded-lg border bg-muted/50 p-6">
+                    <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                      <BookOpen /> How to Read This
+                    </h3>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold mt-0.5 text-emerald-600">▲</span>
+                        <span><strong>Month Kitty:</strong> The kitty earned by each provider for the selected month</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold mt-0.5">→</span>
+                        <span><strong>Total Kitty:</strong> Lifetime accumulated kitty across all months</span>
+                      </li>
+                    </ul>
+                  </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+        )}
       </div>
     </div>
   );
