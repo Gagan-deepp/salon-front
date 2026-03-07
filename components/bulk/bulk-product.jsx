@@ -7,47 +7,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner"
 import { Upload, FileSpreadsheet, Loader2, CheckCircle2, AlertCircle, Download } from "lucide-react"
 import * as XLSX from "xlsx"
-import { bulkcreateCustomer, GetbulkCustomeremplate } from "@/lib/actions/bulk_action"
+import { bulkcreateProduct, GetbulkProductTemplate } from "@/lib/actions/bulk_action"
 import { Badge } from "../ui/badge"
 
-const VALID_GENDERS = ["MALE", "FEMALE", "OTHER"]
-
-const parseDate = (value) => {
-    if (!value) return ""
-    const str = String(value).trim()
-
-    // Try DD/MM/YYYY
-    const ddmm = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
-    if (ddmm) {
-        const [, d, m, y] = ddmm
-        const date = new Date(`${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`)
-        if (!isNaN(date.getTime())) return date.toISOString().split("T")[0]
-    }
-
-    // Try YYYY-MM-DD (ISO)
-    const iso = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)
-    if (iso) {
-        const date = new Date(str)
-        if (!isNaN(date.getTime())) return date.toISOString().split("T")[0]
-    }
-
-    // Try Excel serial number
-    if (/^\d{5}$/.test(str)) {
-        const excelEpoch = new Date(1899, 11, 30)
-        const date = new Date(excelEpoch.getTime() + parseInt(str) * 86400000)
-        if (!isNaN(date.getTime())) return date.toISOString().split("T")[0]
-    }
-
-    return str
-}
-
-const parseIsMember = (value) => {
+const parseIsActive = (value) => {
     if (value === undefined || value === null || value === "") return false
     const str = String(value).trim().toLowerCase()
     return ["yes", "true", "1"].includes(str)
 }
 
-const BulkCustomerUpload = () => {
+const BulkProductUpload = () => {
     const [file, setFile] = useState(null)
     const [valid, setValid] = useState(null)
     const [parsedData, setParsedData] = useState([])
@@ -60,7 +29,7 @@ const BulkCustomerUpload = () => {
     const handleDownloadTemplate = async () => {
         setIsDownloading(true)
         try {
-            const res = await GetbulkCustomeremplate()
+            const res = await GetbulkProductTemplate()
             if (res.success) {
                 const byteCharacters = atob(res.data)
                 const byteNumbers = new Array(byteCharacters.length)
@@ -79,9 +48,10 @@ const BulkCustomerUpload = () => {
                 URL.revokeObjectURL(url)
                 toast.success("Template downloaded")
             } else {
-                toast.error(res.error || "Failed to download template")
+                toast.error(res.error)
             }
         } catch (error) {
+            console.error("Download template error:", error)
             toast.error("Failed to download template")
         } finally {
             setIsDownloading(false)
@@ -137,28 +107,6 @@ const BulkCustomerUpload = () => {
         if (!row.name) {
             errors.push("Name is required")
         }
-
-        const phoneDigits = String(row.phone).replace(/\D/g, "")
-        if (!phoneDigits || phoneDigits.length !== 10) {
-            errors.push("Phone must be exactly 10 digits")
-        }
-
-        if (!row.gender || !VALID_GENDERS.includes(row.gender.toUpperCase())) {
-            errors.push("Gender must be one of: MALE, FEMALE, OTHER")
-        }
-
-        if (row.dateOfBirth) {
-            const parsed = parseDate(row.dateOfBirth)
-            const date = new Date(parsed)
-            if (isNaN(date.getTime())) {
-                errors.push("Date format: DD/MM/YYYY or MM/DD/YYYY")
-            }
-        }
-
-        if (row.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email)) {
-            errors.push("Invalid email format")
-        }
-
         return {
             ...row,
             valid: errors.length === 0 ? "valid" : "invalid",
@@ -183,47 +131,38 @@ const BulkCustomerUpload = () => {
 
             const parsed = jsonData.map((row) => {
                 const name = row.name || row.Name || row.FullName || row.fullName || ""
-                const phone = String(row.phone || row.Phone || row.PhoneNumber || row.phoneNumber || "").trim()
-                const email = row.email || row.Email || ""
-                const genderRaw = row.gender || row.Gender || ""
-                const gender = String(genderRaw).trim().toUpperCase()
-                const dateOfBirth = parseDate(row.dateOfBirth || row.DateOfBirth || row.DOB || row.dob || "")
-                const isMember = parseIsMember(row.isMember || row.IsMember || row.is_member || "")
-                const street = row.street || row.Street || row.address || row.Address || ""
-                const city = row.city || row.City || ""
-                const state = row.state || row.State || ""
-                const pincode = row.pincode || row.Pincode || row.zip || row.Zip || ""
-                const notes = row.notes || row.Notes || ""
+                const category = row.category || row.Category || ""
+                const type = row.type || row.Type || ""
+                const brand = row.brand || row.Brand || ""
+                const description = row.description || row.Description || ""
+                const sku = row.sku || row.SKU || row.Sku || ""
+                const mrp = row.mrp || row.Mrp || row.MRP || ""
+                const sellingPrice = row.sellingPrice || row.SellingPrice || ""
+                const costPrice = row.costPrice || row.CostPrice || ""
+                const gstRate = row.gstRate || row.GstRate || row.GSTRate || ""
+                const currentStock = row.currentStock || row.CurrentStock || ""
+                const minStock = row.MinimumStock || row.minimumstock || ""
+                const maxStock = row.MaximumStock || row.maximumstock || ""
+                const commissionRate = row.CommissionRate || row.commissionrate || ""
+                const isActive = parseIsActive(row.isActive || row.IsActive || row.is_active || "")
 
-                const backendPayload = {
-                    name,
-                    phone: phone.replace(/\D/g, ""),
-                    email: email || undefined,
-                    gender: VALID_GENDERS.includes(gender) ? gender : undefined,
-                    dateOfBirth: dateOfBirth || undefined,
-                    isMember,
-                    address: (street || city || state || pincode) ? {
-                        street: street || undefined,
-                        city: city || undefined,
-                        state: state || undefined,
-                        pincode: pincode || undefined,
-                    } : undefined,
-                    preferences: notes ? { notes } : undefined,
-                }
 
                 return {
                     name,
-                    phone,
-                    email,
-                    gender,
-                    dateOfBirth,
-                    isMember,
-                    street,
-                    city,
-                    state,
-                    pincode,
-                    notes,
-                    backendPayload,
+                    category,
+                    type,
+                    brand,
+                    description,
+                    sku,
+                    mrp,
+                    sellingPrice,
+                    costPrice,
+                    gstRate,
+                    currentStock,
+                    minStock,
+                    maxStock,
+                    commissionRate,
+                    isActive,
                 }
             })
 
@@ -232,7 +171,8 @@ const BulkCustomerUpload = () => {
 
             const validCount = validatedData.filter(v => v.valid === "valid").length
             setValid(validCount)
-            toast.success(`Parsed ${validatedData.length} customers (${validCount} valid)`)
+            toast.success(`Parsed ${validatedData.length} products (${validCount} valid)`)
+
         } catch (error) {
             console.error("Parse error:", error)
             toast.error("Failed to parse Excel file")
@@ -241,15 +181,16 @@ const BulkCustomerUpload = () => {
         }
     }
 
+
     const handleBulkUpload = async () => {
         setUploadErrors([])
         try {
             startTransition(async () => {
                 const formData = new FormData()
                 formData.append("file", file)
-                const res = await bulkcreateCustomer(formData)
+                const res = await bulkcreateProduct(formData)
                 if (res.success) {
-                    toast.success(`Successfully uploaded customers`)
+                    toast.success(`Successfully uploaded products`)
                 } else {
                     toast.warning(res.error)
                     if (res.errors?.length > 0) {
@@ -269,9 +210,9 @@ const BulkCustomerUpload = () => {
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle>Bulk Customer Upload</CardTitle>
+                            <CardTitle>Bulk Product Upload</CardTitle>
                             <CardDescription>
-                                Upload an Excel file with columns: Name, Phone, Email, Gender, DateOfBirth, IsMember, Street, City, State, Pincode, Notes
+                                Upload an Excel file with columns: Name, Category, Type, Brand, Description, SKU, MRP, SellingPrice, CostPrice, GstRate, CurrentStock, MinStock, MaxStock, CommissionRate, IsActive
                             </CardDescription>
                         </div>
                         <Button
@@ -293,10 +234,8 @@ const BulkCustomerUpload = () => {
                     <div className="rounded-lg bg-muted/50 p-4 text-sm space-y-1">
                         <p className="font-medium mb-2">Validation Rules:</p>
                         <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                            <li>Phone numbers must be exactly 10 digits</li>
-                            <li>Gender must be one of: MALE, FEMALE, OTHER</li>
-                            <li>Date format: DD/MM/YYYY or MM/DD/YYYY</li>
-                            <li>IsMember: Yes/No, True/False, or 1/0</li>
+                            <li>Name is required</li>
+                            <li>IsActive: Yes/No, True/False, or 1/0</li>
                         </ul>
                     </div>
 
@@ -364,7 +303,7 @@ const BulkCustomerUpload = () => {
                                         Uploading...
                                     </>
                                 ) : (
-                                    `Upload ${parsedData.filter(v => v.valid === "valid").length} Customers`
+                                    `Upload ${parsedData.filter(v => v.valid === "valid").length} Products`
                                 )}
                             </Button>
                         )}
@@ -409,7 +348,7 @@ const BulkCustomerUpload = () => {
             {parsedData.length > 0 && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Parsed Customers ({parsedData.length})
+                        <CardTitle>Parsed Products ({parsedData.length})
                             <span className="text-green-300" >  {valid !== null && `${valid} valid`} </span>
                             <span className="text-red-300" >  {valid !== null && `${parsedData.length - valid} Invalid`} </span>
                         </CardTitle>
@@ -424,58 +363,58 @@ const BulkCustomerUpload = () => {
                                     <TableRow>
                                         <TableHead className="w-12">Valid</TableHead>
                                         <TableHead>Name</TableHead>
-                                        <TableHead>Phone</TableHead>
-                                        <TableHead>Email</TableHead>
-                                        <TableHead>Gender</TableHead>
-                                        <TableHead>Date of Birth</TableHead>
-                                        <TableHead>Is Member</TableHead>
-                                        <TableHead>Street</TableHead>
-                                        <TableHead>City</TableHead>
-                                        <TableHead>State</TableHead>
-                                        <TableHead>Pincode</TableHead>
-                                        <TableHead>Notes</TableHead>
+                                        <TableHead>Category</TableHead>
+                                        <TableHead>Type</TableHead>
+                                        <TableHead>Brand</TableHead>
+                                        <TableHead>Description</TableHead>
+                                        <TableHead>SKU</TableHead>
+                                        <TableHead>MRP</TableHead>
+                                        <TableHead>Selling Price</TableHead>
+                                        <TableHead>Cost Price</TableHead>
+                                        <TableHead>GST Rate</TableHead>
+                                        <TableHead>Current Stock</TableHead>
+                                        <TableHead>Min Stock</TableHead>
+                                        <TableHead>Max Stock</TableHead>
+                                        <TableHead>Commission Rate</TableHead>
+                                        <TableHead>Active</TableHead>
                                         <TableHead>Error Message</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {parsedData.map((customer, index) => (
+                                    {parsedData.map((product, index) => (
                                         <TableRow key={index}>
                                             <TableCell>
-                                                {customer.valid === "valid" ? (
+                                                {product.valid === "valid" ? (
                                                     <CheckCircle2 className="w-5 h-5 text-green-500" />
                                                 ) : (
                                                     <AlertCircle className="w-5 h-5 text-destructive" />
                                                 )}
                                             </TableCell>
                                             <TableCell className="font-medium max-w-[200px] truncate">
-                                                {customer.name}
+                                                {product.name}
                                             </TableCell>
-                                            <TableCell>{customer.phone}</TableCell>
+                                            <TableCell>{product.category || "—"}</TableCell>
+                                            <TableCell>{product.type || "—"}</TableCell>
+                                            <TableCell>{product.brand || "—"}</TableCell>
                                             <TableCell className="max-w-[150px] truncate text-xs">
-                                                {customer.email}
+                                                {product.description || "—"}
                                             </TableCell>
+                                            <TableCell className="font-mono text-xs">{product.sku || "—"}</TableCell>
+                                            <TableCell>{product.mrp || "—"}</TableCell>
+                                            <TableCell>{product.sellingPrice || "—"}</TableCell>
+                                            <TableCell>{product.costPrice || "—"}</TableCell>
+                                            <TableCell>{product.gstRate || "—"}</TableCell>
+                                            <TableCell>{product.currentStock || "—"}</TableCell>
+                                            <TableCell>{product.minStock || "—"}</TableCell>
+                                            <TableCell>{product.maxStock || "—"}</TableCell>
+                                            <TableCell>{product.commissionRate || "—"}</TableCell>
                                             <TableCell>
-                                                <Badge variant={VALID_GENDERS.includes(customer.gender) ? "gradient" : "secondary"}>
-                                                    {customer.gender || "—"}
+                                                <Badge variant={product.isActive ? "gradient" : "outline"}>
+                                                    {product.isActive ? "Yes" : "No"}
                                                 </Badge>
-                                            </TableCell>
-                                            <TableCell>{customer.dateOfBirth || "—"}</TableCell>
-                                            <TableCell>
-                                                <Badge variant={customer.isMember ? "gradient" : "outline"}>
-                                                    {customer.isMember ? "Yes" : "No"}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="max-w-[150px] truncate text-muted-foreground">
-                                                {customer.street}
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground">{customer.city}</TableCell>
-                                            <TableCell className="text-muted-foreground">{customer.state}</TableCell>
-                                            <TableCell className="text-muted-foreground">{customer.pincode}</TableCell>
-                                            <TableCell className="max-w-[150px] truncate text-muted-foreground">
-                                                {customer.notes}
                                             </TableCell>
                                             <TableCell className="text-xs text-destructive max-w-[200px] truncate">
-                                                {customer.error}
+                                                {product.error}
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -489,4 +428,4 @@ const BulkCustomerUpload = () => {
     )
 }
 
-export default BulkCustomerUpload
+export default BulkProductUpload

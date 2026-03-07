@@ -7,6 +7,7 @@ import { getAllPayments, getCashierPayments, getFranchisePayments, getPaymentAna
 import { TableSkeleton } from "@/components/admin/table-skeleton"
 import Link from "next/link"
 import { PaymentFilters } from "@/components/admin/payment/payment-filter"
+import { PaymentTabs } from "@/components/admin/payment/payment-tabs"
 import { auth } from "@/lib/auth"
 
 
@@ -46,16 +47,18 @@ export default async function PaymentsPage({ searchParams }) {
       </div>
 
 
-      {/* Filters */}
-      <PaymentFilters />
+      <PaymentTabs>
+        {/* Filters */}
+        <PaymentFilters />
 
-      {/* Payments Table */}
-      <Suspense key={JSON.stringify(params)} fallback={<TableSkeleton />}>
-        <PaymentTableWrapper
-          params={params}
-          user={user}
-        />
-      </Suspense>
+        {/* Payments Table */}
+        <Suspense key={JSON.stringify(params)} fallback={<TableSkeleton />}>
+          <PaymentTableWrapper
+            params={params}
+            user={user}
+          />
+        </Suspense>
+      </PaymentTabs>
 
     </div>
   )

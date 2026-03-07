@@ -7,16 +7,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner"
 import { Upload, FileSpreadsheet, Loader2, CheckCircle2, AlertCircle, Download } from "lucide-react"
 import * as XLSX from "xlsx"
-import { bulkcreateCustomer, GetbulkCustomeremplate } from "@/lib/actions/bulk_action"
+import { bulkcreatePayment, GetbulkPaymentTemplate } from "@/lib/actions/bulk_action"
 import { Badge } from "../ui/badge"
 
-const VALID_GENDERS = ["MALE", "FEMALE", "OTHER"]
+const VALID_PAYMENT_MODES = ["CASH", "UPI", "CARD"]
 
 const parseDate = (value) => {
     if (!value) return ""
     const str = String(value).trim()
 
-    // Try DD/MM/YYYY
     const ddmm = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
     if (ddmm) {
         const [, d, m, y] = ddmm
@@ -24,14 +23,12 @@ const parseDate = (value) => {
         if (!isNaN(date.getTime())) return date.toISOString().split("T")[0]
     }
 
-    // Try YYYY-MM-DD (ISO)
     const iso = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)
     if (iso) {
         const date = new Date(str)
         if (!isNaN(date.getTime())) return date.toISOString().split("T")[0]
     }
 
-    // Try Excel serial number
     if (/^\d{5}$/.test(str)) {
         const excelEpoch = new Date(1899, 11, 30)
         const date = new Date(excelEpoch.getTime() + parseInt(str) * 86400000)
@@ -41,13 +38,7 @@ const parseDate = (value) => {
     return str
 }
 
-const parseIsMember = (value) => {
-    if (value === undefined || value === null || value === "") return false
-    const str = String(value).trim().toLowerCase()
-    return ["yes", "true", "1"].includes(str)
-}
-
-const BulkCustomerUpload = () => {
+const BulkPaymentUpload = () => {
     const [file, setFile] = useState(null)
     const [valid, setValid] = useState(null)
     const [parsedData, setParsedData] = useState([])
@@ -60,7 +51,7 @@ const BulkCustomerUpload = () => {
     const handleDownloadTemplate = async () => {
         setIsDownloading(true)
         try {
-            const res = await GetbulkCustomeremplate()
+            const res = await GetbulkPaymentTemplate()
             if (res.success) {
                 const byteCharacters = atob(res.data)
                 const byteNumbers = new Array(byteCharacters.length)
@@ -134,29 +125,17 @@ const BulkCustomerUpload = () => {
     const validateRow = (row) => {
         const errors = []
 
-        if (!row.name) {
-            errors.push("Name is required")
-        }
-
-        const phoneDigits = String(row.phone).replace(/\D/g, "")
+        const phoneDigits = String(row.customerPhone).replace(/\D/g, "")
         if (!phoneDigits || phoneDigits.length !== 10) {
-            errors.push("Phone must be exactly 10 digits")
+            errors.push("CustomerPhone must be exactly 10 digits")
         }
 
-        if (!row.gender || !VALID_GENDERS.includes(row.gender.toUpperCase())) {
-            errors.push("Gender must be one of: MALE, FEMALE, OTHER")
+        if (!row.serviceName) {
+            errors.push("ServiceName is required")
         }
 
-        if (row.dateOfBirth) {
-            const parsed = parseDate(row.dateOfBirth)
-            const date = new Date(parsed)
-            if (isNaN(date.getTime())) {
-                errors.push("Date format: DD/MM/YYYY or MM/DD/YYYY")
-            }
-        }
-
-        if (row.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email)) {
-            errors.push("Invalid email format")
+        if (row.paymentMode && !VALID_PAYMENT_MODES.includes(row.paymentMode.toUpperCase())) {
+            errors.push("PaymentMode must be CASH, UPI, or CARD")
         }
 
         return {
@@ -182,48 +161,52 @@ const BulkCustomerUpload = () => {
             const jsonData = XLSX.utils.sheet_to_json(worksheet)
 
             const parsed = jsonData.map((row) => {
-                const name = row.name || row.Name || row.FullName || row.fullName || ""
-                const phone = String(row.phone || row.Phone || row.PhoneNumber || row.phoneNumber || "").trim()
-                const email = row.email || row.Email || ""
-                const genderRaw = row.gender || row.Gender || ""
-                const gender = String(genderRaw).trim().toUpperCase()
-                const dateOfBirth = parseDate(row.dateOfBirth || row.DateOfBirth || row.DOB || row.dob || "")
-                const isMember = parseIsMember(row.isMember || row.IsMember || row.is_member || "")
-                const street = row.street || row.Street || row.address || row.Address || ""
-                const city = row.city || row.City || ""
-                const state = row.state || row.State || ""
-                const pincode = row.pincode || row.Pincode || row.zip || row.Zip || ""
-                const notes = row.notes || row.Notes || ""
-
-                const backendPayload = {
-                    name,
-                    phone: phone.replace(/\D/g, ""),
-                    email: email || undefined,
-                    gender: VALID_GENDERS.includes(gender) ? gender : undefined,
-                    dateOfBirth: dateOfBirth || undefined,
-                    isMember,
-                    address: (street || city || state || pincode) ? {
-                        street: street || undefined,
-                        city: city || undefined,
-                        state: state || undefined,
-                        pincode: pincode || undefined,
-                    } : undefined,
-                    preferences: notes ? { notes } : undefined,
-                }
+                const customerPhone = String(row.CustomerPhone || row.customerPhone || row.customerphone || "").trim()
+                const serviceName = row.ServiceName || row.serviceName || row.servicename || ""
+                const serviceQuantity = row.ServiceQuantity || row.serviceQuantity || row.servicequantity || ""
+                const cashierEmail = row.CashierEmail || row.cashierEmail || row.cashieremail || ""
+                const providerEmail = row.ProviderEmail || row.providerEmail || row.provideremail || ""
+                const paymentMode = row.PaymentMode || row.paymentMode || row.paymentmode || ""
+                const paymentDate = parseDate(row.PaymentDate || row.paymentDate || row.paymentdate || "")
+                const subtotal = row.Subtotal || row.subtotal || ""
+                const discountPercentage = row.DiscountPercentage || row.discountPercentage || row.discountpercentage || ""
+                const discountAmount = row.DiscountAmount || row.discountAmount || row.discountamount || ""
+                const cgst = row.CGST || row.cgst || ""
+                const sgst = row.SGST || row.sgst || ""
+                const igst = row.IGST || row.igst || ""
+                const gstTotal = row.GSTTotal || row.gstTotal || row.gsttotal || ""
+                const finalAmount = row.FinalAmount || row.finalAmount || row.finalamount || ""
+                const promoCode = row.PromoCode || row.promoCode || row.promocode || ""
+                const transactionId = row.TransactionId || row.transactionId || row.transactionid || ""
+                const cardLast4Digits = row.CardLast4Digits || row.cardLast4Digits || row.cardlast4digits || ""
+                const cardType = row.CardType || row.cardType || row.cardtype || ""
+                const upiVPA = row.UpiVPA || row.upiVPA || row.upivpa || ""
+                const upiTransactionRef = row.UpiTransactionRef || row.upiTransactionRef || row.upitransactionref || ""
+                const notes = row.Notes || row.notes || ""
 
                 return {
-                    name,
-                    phone,
-                    email,
-                    gender,
-                    dateOfBirth,
-                    isMember,
-                    street,
-                    city,
-                    state,
-                    pincode,
+                    customerPhone,
+                    serviceName,
+                    serviceQuantity,
+                    cashierEmail,
+                    providerEmail,
+                    paymentMode,
+                    paymentDate,
+                    subtotal,
+                    discountPercentage,
+                    discountAmount,
+                    cgst,
+                    sgst,
+                    igst,
+                    gstTotal,
+                    finalAmount,
+                    promoCode,
+                    transactionId,
+                    cardLast4Digits,
+                    cardType,
+                    upiVPA,
+                    upiTransactionRef,
                     notes,
-                    backendPayload,
                 }
             })
 
@@ -232,7 +215,7 @@ const BulkCustomerUpload = () => {
 
             const validCount = validatedData.filter(v => v.valid === "valid").length
             setValid(validCount)
-            toast.success(`Parsed ${validatedData.length} customers (${validCount} valid)`)
+            toast.success(`Parsed ${validatedData.length} payments (${validCount} valid)`)
         } catch (error) {
             console.error("Parse error:", error)
             toast.error("Failed to parse Excel file")
@@ -247,9 +230,9 @@ const BulkCustomerUpload = () => {
             startTransition(async () => {
                 const formData = new FormData()
                 formData.append("file", file)
-                const res = await bulkcreateCustomer(formData)
+                const res = await bulkcreatePayment(formData)
                 if (res.success) {
-                    toast.success(`Successfully uploaded customers`)
+                    toast.success(`Successfully uploaded payments`)
                 } else {
                     toast.warning(res.error)
                     if (res.errors?.length > 0) {
@@ -269,9 +252,9 @@ const BulkCustomerUpload = () => {
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle>Bulk Customer Upload</CardTitle>
+                            <CardTitle>Bulk Payment Upload</CardTitle>
                             <CardDescription>
-                                Upload an Excel file with columns: Name, Phone, Email, Gender, DateOfBirth, IsMember, Street, City, State, Pincode, Notes
+                                Upload an Excel file with columns: CustomerPhone, ServiceName, ServiceQuantity, CashierEmail, ProviderEmail, PaymentMode, PaymentDate, Subtotal, DiscountPercentage, DiscountAmount, CGST, SGST, IGST, GSTTotal, FinalAmount, PromoCode, TransactionId, CardLast4Digits, CardType, UpiVPA, UpiTransactionRef, Notes
                             </CardDescription>
                         </div>
                         <Button
@@ -293,10 +276,10 @@ const BulkCustomerUpload = () => {
                     <div className="rounded-lg bg-muted/50 p-4 text-sm space-y-1">
                         <p className="font-medium mb-2">Validation Rules:</p>
                         <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                            <li>Phone numbers must be exactly 10 digits</li>
-                            <li>Gender must be one of: MALE, FEMALE, OTHER</li>
-                            <li>Date format: DD/MM/YYYY or MM/DD/YYYY</li>
-                            <li>IsMember: Yes/No, True/False, or 1/0</li>
+                            <li>CustomerPhone must be exactly 10 digits</li>
+                            <li>ServiceName is required</li>
+                            <li>PaymentMode must be one of: CASH, UPI, CARD</li>
+                            <li>PaymentDate format: DD/MM/YYYY</li>
                         </ul>
                     </div>
 
@@ -364,7 +347,7 @@ const BulkCustomerUpload = () => {
                                         Uploading...
                                     </>
                                 ) : (
-                                    `Upload ${parsedData.filter(v => v.valid === "valid").length} Customers`
+                                    `Upload ${parsedData.filter(v => v.valid === "valid").length} Payments`
                                 )}
                             </Button>
                         )}
@@ -409,7 +392,7 @@ const BulkCustomerUpload = () => {
             {parsedData.length > 0 && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Parsed Customers ({parsedData.length})
+                        <CardTitle>Parsed Payments ({parsedData.length})
                             <span className="text-green-300" >  {valid !== null && `${valid} valid`} </span>
                             <span className="text-red-300" >  {valid !== null && `${parsedData.length - valid} Invalid`} </span>
                         </CardTitle>
@@ -423,59 +406,69 @@ const BulkCustomerUpload = () => {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className="w-12">Valid</TableHead>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Phone</TableHead>
-                                        <TableHead>Email</TableHead>
-                                        <TableHead>Gender</TableHead>
-                                        <TableHead>Date of Birth</TableHead>
-                                        <TableHead>Is Member</TableHead>
-                                        <TableHead>Street</TableHead>
-                                        <TableHead>City</TableHead>
-                                        <TableHead>State</TableHead>
-                                        <TableHead>Pincode</TableHead>
+                                        <TableHead>Customer Phone</TableHead>
+                                        <TableHead>Service</TableHead>
+                                        <TableHead>Qty</TableHead>
+                                        <TableHead>Cashier Email</TableHead>
+                                        <TableHead>Provider Email</TableHead>
+                                        <TableHead>Mode</TableHead>
+                                        <TableHead>Date</TableHead>
+                                        <TableHead>Subtotal</TableHead>
+                                        <TableHead>Disc %</TableHead>
+                                        <TableHead>Disc Amt</TableHead>
+                                        <TableHead>CGST</TableHead>
+                                        <TableHead>SGST</TableHead>
+                                        <TableHead>IGST</TableHead>
+                                        <TableHead>GST Total</TableHead>
+                                        <TableHead>Final Amt</TableHead>
+                                        <TableHead>Promo</TableHead>
+                                        <TableHead>Transaction ID</TableHead>
+                                        <TableHead>Card Last 4</TableHead>
+                                        <TableHead>Card Type</TableHead>
+                                        <TableHead>UPI VPA</TableHead>
+                                        <TableHead>UPI Ref</TableHead>
                                         <TableHead>Notes</TableHead>
                                         <TableHead>Error Message</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {parsedData.map((customer, index) => (
+                                    {parsedData.map((payment, index) => (
                                         <TableRow key={index}>
                                             <TableCell>
-                                                {customer.valid === "valid" ? (
+                                                {payment.valid === "valid" ? (
                                                     <CheckCircle2 className="w-5 h-5 text-green-500" />
                                                 ) : (
                                                     <AlertCircle className="w-5 h-5 text-destructive" />
                                                 )}
                                             </TableCell>
-                                            <TableCell className="font-medium max-w-[200px] truncate">
-                                                {customer.name}
-                                            </TableCell>
-                                            <TableCell>{customer.phone}</TableCell>
-                                            <TableCell className="max-w-[150px] truncate text-xs">
-                                                {customer.email}
-                                            </TableCell>
+                                            <TableCell className="font-mono">{payment.customerPhone}</TableCell>
+                                            <TableCell className="font-medium">{payment.serviceName}</TableCell>
+                                            <TableCell>{payment.serviceQuantity || "—"}</TableCell>
+                                            <TableCell className="text-xs max-w-[120px] truncate">{payment.cashierEmail || "—"}</TableCell>
+                                            <TableCell className="text-xs max-w-[120px] truncate">{payment.providerEmail || "—"}</TableCell>
                                             <TableCell>
-                                                <Badge variant={VALID_GENDERS.includes(customer.gender) ? "gradient" : "secondary"}>
-                                                    {customer.gender || "—"}
+                                                <Badge variant={VALID_PAYMENT_MODES.includes(payment.paymentMode?.toUpperCase()) ? "gradient" : "secondary"}>
+                                                    {payment.paymentMode || "—"}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell>{customer.dateOfBirth || "—"}</TableCell>
-                                            <TableCell>
-                                                <Badge variant={customer.isMember ? "gradient" : "outline"}>
-                                                    {customer.isMember ? "Yes" : "No"}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="max-w-[150px] truncate text-muted-foreground">
-                                                {customer.street}
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground">{customer.city}</TableCell>
-                                            <TableCell className="text-muted-foreground">{customer.state}</TableCell>
-                                            <TableCell className="text-muted-foreground">{customer.pincode}</TableCell>
-                                            <TableCell className="max-w-[150px] truncate text-muted-foreground">
-                                                {customer.notes}
-                                            </TableCell>
+                                            <TableCell>{payment.paymentDate || "—"}</TableCell>
+                                            <TableCell>{payment.subtotal || "—"}</TableCell>
+                                            <TableCell>{payment.discountPercentage || "—"}</TableCell>
+                                            <TableCell>{payment.discountAmount || "—"}</TableCell>
+                                            <TableCell>{payment.cgst || "—"}</TableCell>
+                                            <TableCell>{payment.sgst || "—"}</TableCell>
+                                            <TableCell>{payment.igst || "—"}</TableCell>
+                                            <TableCell>{payment.gstTotal || "—"}</TableCell>
+                                            <TableCell className="font-medium">{payment.finalAmount || "—"}</TableCell>
+                                            <TableCell className="text-xs">{payment.promoCode || "—"}</TableCell>
+                                            <TableCell className="font-mono text-xs">{payment.transactionId || "—"}</TableCell>
+                                            <TableCell>{payment.cardLast4Digits || "—"}</TableCell>
+                                            <TableCell>{payment.cardType || "—"}</TableCell>
+                                            <TableCell className="text-xs">{payment.upiVPA || "—"}</TableCell>
+                                            <TableCell className="font-mono text-xs">{payment.upiTransactionRef || "—"}</TableCell>
+                                            <TableCell className="max-w-[150px] truncate text-muted-foreground">{payment.notes || "—"}</TableCell>
                                             <TableCell className="text-xs text-destructive max-w-[200px] truncate">
-                                                {customer.error}
+                                                {payment.error}
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -489,4 +482,4 @@ const BulkCustomerUpload = () => {
     )
 }
 
-export default BulkCustomerUpload
+export default BulkPaymentUpload

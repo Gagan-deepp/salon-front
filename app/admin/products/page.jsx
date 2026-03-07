@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { getProducts } from "@/lib/actions/product_action"
 import { ProductTable } from "@/components/admin/product/product-table"
 import { CreateProductDialog } from "@/components/admin/product/create-product-dialog"
+import { ProductTabs } from "@/components/admin/product/product-tabs"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
@@ -27,7 +28,7 @@ export default async function ProductsPage({ searchParams }) {
   const pagination = result.data.pagination || {}
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-[92rem] ">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold ">Products</h1>
@@ -41,25 +42,26 @@ export default async function ProductsPage({ searchParams }) {
         </CreateProductDialog>
       </div>
 
-
-      <ProductFilter
-        initialSearchTerm={searchP.search || ""}
-        initialCategoryFilter={searchP.category || "all"}
-      />
-
-      <Suspense fallback={<TableSkeleton />}>
-        <ProductTable
-          products={products}
-          pagination={
-            {
-              page: searchP.page ? parseInt(searchP.page) : 1,
-              limit: searchP.limit ? parseInt(searchP.limit) : 10,
-              total: pagination.total || 0,
-              totalPages: pagination.totalPages || 0,
-            }
-          }
+      <ProductTabs>
+        <ProductFilter
+          initialSearchTerm={searchP.search || ""}
+          initialCategoryFilter={searchP.category || "all"}
         />
-      </Suspense>
+
+        <Suspense fallback={<TableSkeleton />}>
+          <ProductTable
+            products={products}
+            pagination={
+              {
+                page: searchP.page ? parseInt(searchP.page) : 1,
+                limit: searchP.limit ? parseInt(searchP.limit) : 10,
+                total: pagination.total || 0,
+                totalPages: pagination.totalPages || 0,
+              }
+            }
+          />
+        </Suspense>
+      </ProductTabs>
     </div>
   );
 }

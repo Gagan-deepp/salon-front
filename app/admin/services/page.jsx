@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { getServices } from "@/lib/actions/service_action"
 import { ServiceTable } from "@/components/admin/service/service-table"
 import { CreateServiceDialog } from "@/components/admin/service/create-service-dialog"
+import { ServiceTabs } from "@/components/admin/service/service-tabs"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
@@ -41,25 +42,27 @@ export default async function ServicesPage({ searchParams }) {
         </CreateServiceDialog>
       </div>
 
-      <ServiceFilter
-        initialSearchTerm={searchP.search || ""}
-        initialCategoryFilter={searchP.category || "all"}
-        initialRoleFilter={searchP.role || "all"}
-      />
-
-      <Suspense fallback={<TableSkeleton />}>
-        <ServiceTable
-          services={services}
-          pagination={
-            {
-              page: searchP.page ? parseInt(searchP.page) : 1,
-              limit: searchP.limit ? parseInt(searchP.limit) : 10,
-              total: pagination.total || 0,
-              totalPages: pagination.totalPages || 0,
-            }
-          }
+      <ServiceTabs>
+        <ServiceFilter
+          initialSearchTerm={searchP.search || ""}
+          initialCategoryFilter={searchP.category || "all"}
+          initialRoleFilter={searchP.role || "all"}
         />
-      </Suspense>
+
+        <Suspense fallback={<TableSkeleton />}>
+          <ServiceTable
+            services={services}
+            pagination={
+              {
+                page: searchP.page ? parseInt(searchP.page) : 1,
+                limit: searchP.limit ? parseInt(searchP.limit) : 10,
+                total: pagination.total || 0,
+                totalPages: pagination.totalPages || 0,
+              }
+            }
+          />
+        </Suspense>
+      </ServiceTabs>
     </div>
   );
 }
