@@ -9,7 +9,7 @@ const BASE_URL =
   "http://localhost:8080/api"             // override per env
 
 // ─── Resolve Bearer token ─────────────────────────────────────────────────────
-async function getAuthHeaders() {
+export async function getAuthHeaders() {
   const jar = cookies()
   const session = await auth().catch(() => null)
   const token =

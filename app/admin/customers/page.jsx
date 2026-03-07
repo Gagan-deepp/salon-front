@@ -1,5 +1,6 @@
 import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog"
 import { CustomerTable } from "@/components/admin/customer/customer-table"
+import { CustomerTabs } from "@/components/admin/customer/customer-tabs"
 import { TableSkeleton } from "@/components/admin/table-skeleton"
 import { Button } from "@/components/ui/button"
 import { getCustomers } from "@/lib/actions/customer_action"
@@ -50,9 +51,11 @@ export default function CustomersPage({ searchParams }) {
           </Button>
         </CreateCustomerDialog>
       </div>
-      <Suspense fallback={<TableSkeleton />}>
-        <CustomerList searchParams={searchParams} />
-      </Suspense>
+      <CustomerTabs>
+        <Suspense fallback={<TableSkeleton />}>
+          <CustomerList searchParams={searchParams} />
+        </Suspense>
+      </CustomerTabs>
     </div>
   );
 }
