@@ -40,7 +40,7 @@ export default function RepeatCustomerFilters() {
                             <Button
                                 variant="outline"
                                 className={cn(
-                                    "w-[200px] justify-start text-left font-normal",
+                                    "w-[300px] justify-start text-left font-normal",
                                     !startDate && "text-muted-foreground"
                                 )}
                             >
@@ -59,7 +59,7 @@ export default function RepeatCustomerFilters() {
                             <Button
                                 variant="outline"
                                 className={cn(
-                                    "w-[200px] justify-start text-left font-normal",
+                                    "w-[300px] justify-start text-left font-normal",
                                     !endDate && "text-muted-foreground"
                                 )}
                             >
