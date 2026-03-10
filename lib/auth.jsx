@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { login } from "./actions/user-auth";
+import { login, refreshToken } from "./actions/user-auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -25,13 +25,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     franchiseId: user.franchiseId,
                     companyId: user.companyId,
                     accessToken: result.data.data.accessToken,
+                    refreshToken: result.data.data.refreshToken
                 }
 
             },
         })
     ],
     callbacks: {
-        jwt({ token, user }) {
+        async jwt({ token, user }) {
 
 
             if (user) {
@@ -44,10 +45,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.accessToken = customUser.accessToken
                 token.franchiseId = user.franchiseId
                 token.companyId = user.companyId
+                token.refreshToken = customUser.refreshToken
+                token.accessTokenExpiry = Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days
             }
 
+            if (Date.now() < (token.accessTokenExpiry)) {
+                return token;
+            }
 
-            return token
+            console.log("Token expired, refreshing... ==> ", token);
+            const new_token = await refreshToken(token.refreshToken);
+
+            if (!new_token || !new_token.success) {
+                throw new Error("Refresh failed");
+            }
+
+            return {
+                ...token,
+                accessToken: new_token.data.data.accessToken,
+                accessTokenExpiry: Date.now() + 7 * 24 * 60 * 60 * 1000
+            };
         },
         session({ session, token }) {
             if (token) {
@@ -59,6 +76,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
             }
             session.accessToken = token.accessToken
+            session.refreshToken = token.refreshToken
             session.franchiseId = token.franchiseId
             session.companyId = token.companyId
             return session

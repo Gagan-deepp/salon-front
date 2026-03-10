@@ -4,18 +4,12 @@ import { AuthError } from "next-auth"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
 import { signIn, signOut } from "../auth"
+import { getAuthHeaders } from "./franchise_action"
 
 const BASE_URL =
     process.env.NEXT_PUBLIC_API_BASE_URL ||
     "http://localhost:8080/api"
 
-function getAuthHeaders() {
-    const jar = cookies()
-    const token =
-        jar.get("accessToken")?.value ||
-        jar.get("token")?.value
-    return token ? { Authorization: `Bearer ${token}` } : {}
-}
 
 // ───────────────────────────────────────────────────────────────────────────────
 
@@ -47,6 +41,7 @@ export const signinAction = async (prevState, formData) => {
         throw error;
     }
 }
+
 
 export const signOutAction = async () => {
     await signOut({
@@ -116,11 +111,22 @@ export async function resetPassword(token, { password }) {
 }
 
 // Refresh Token (POST /auth/refresh-token)
-export async function refreshToken() {
+export async function refreshToken(refreshToken) {
     try {
-        const res = await axios.post(`${BASE_URL}/auth/refresh-token`, null, {
-            headers: { ...getAuthHeaders() },
-        })
+        const cookieStore = await cookies();
+        const allCookies = cookieStore.toString();
+
+
+        const res = await axios.post(`${BASE_URL}/auth/refresh-token`, {
+            refreshToken
+        },
+            {
+                headers: {
+                    Cookie: allCookies
+                },
+                withCredentials: true
+            }
+        )
         console.log("refreshToken response", res.data)
         return { success: true, data: res.data }
     } catch (error) {

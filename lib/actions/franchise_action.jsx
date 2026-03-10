@@ -7,13 +7,12 @@ import { auth } from "../auth"
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
 // Resolve the Bearer token from next-auth session (preferred) or cookies (fallback)
-async function getAuthHeaders() {
-  const jar = cookies()
+export async function getAuthHeaders() {
+
   const session = await auth().catch(() => null) // guards against auth() throwing
-  const token =
-    session?.accessToken ||
-    jar.get("accessToken")?.value ||
-    jar.get("token")?.value
+  const token = session?.accessToken
+
+
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 

@@ -1,25 +1,12 @@
 "use server"
 import axios from "axios"
 import { revalidatePath } from "next/cache"
-import { cookies } from "next/headers"
-import { auth } from "../auth"        // adjust path if different
+import { getAuthHeaders } from "./franchise_action"
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   "http://localhost:8080/api"
 
-// -----------------------------------------------------------------------------
-// Shared Bearer-token helper
-async function getAuthHeaders() {
-  const jar = cookies()
-  const session = await auth().catch(() => null)
-  const token =
-    session?.accessToken ||
-    jar.get("accessToken")?.value ||
-    jar.get("token")?.value
-
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
 
 // ──────────────────────────────────────────────────────────────────────────────
 // 1) Create Payment  – POST /payments

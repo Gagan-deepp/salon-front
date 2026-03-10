@@ -1,21 +1,10 @@
 "use server"
 import axios from "axios"
 import { revalidatePath } from "next/cache"
-import { cookies } from "next/headers"
-import { auth } from "../auth"
+import { getAuthHeaders } from "./franchise_action"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
-// Resolve the Bearer token from next-auth session (preferred) or cookies (fallback)
-async function getAuthHeaders() {
-  const jar = cookies()
-  const session = await auth().catch(() => null) // guards against auth() throwing
-  const token =
-    session?.accessToken ||
-    jar.get("accessToken")?.value ||
-    jar.get("token")?.value
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
 
 // Optional: light coercion to align with your company schema
 function normalizeCompanyPayload(payload = {}) {
