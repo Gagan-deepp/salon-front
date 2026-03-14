@@ -60,7 +60,8 @@ export function PaymentTable({ payments, pagination }) {
               <TableHead>Amount</TableHead>
               <TableHead>Payment Mode</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
+              {/* <TableHead>Date</TableHead> */}
+              <TableHead>Payment Date</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -84,7 +85,8 @@ export function PaymentTable({ payments, pagination }) {
                   <TableCell className="font-semibold">₹{payment.amounts?.finalAmount?.toFixed(2) || "0.00"}</TableCell>
                   <TableCell>{getPaymentModeBadge(payment.paymentMode)}</TableCell>
                   <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                  <TableCell className="text-sm">{formatDate(payment.createdAt)}</TableCell>
+                  {/* <TableCell className="text-sm">{formatDate(payment.createdAt)}</TableCell> */}
+                  <TableCell className="text-sm">{formatDate(payment.paymentTimestamp)}</TableCell>
                   <TableCell>
                     <Link href={`/admin/payments/${payment._id}`}>
                       <Button variant="outline" size="sm">
