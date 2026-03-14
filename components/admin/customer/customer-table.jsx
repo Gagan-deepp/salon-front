@@ -132,7 +132,7 @@ export function CustomerTable({ customers, pagination }) {
             <TableRow>
               <TableHead>Customer</TableHead>
               <TableHead>Contact</TableHead>
-              <TableHead>Location</TableHead>
+              {/* <TableHead>Location</TableHead> */}
               {/* <TableHead>Loyalty Points</TableHead> */}
               <TableHead>Visits</TableHead>
               <TableHead>Total Spent</TableHead>
@@ -174,14 +174,14 @@ export function CustomerTable({ customers, pagination }) {
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <div className="flex items-center space-x-1">
                     <MapPin className="h-3 w-3 text-muted-foreground" />
                     <span className="text-sm">
                       {customer.address?.city}, {customer.address?.state}
                     </span>
                   </div>
-                </TableCell>
+                </TableCell> */}
                 {/* <TableCell>
                   <div className="text-sm">
                     <div className="flex items-center space-x-1">
@@ -195,7 +195,7 @@ export function CustomerTable({ customers, pagination }) {
                 </TableCell> */}
                 <TableCell>
                   <div className="text-sm">
-                    <div className="font-medium">{customer.visitHistory?.totalVisits || 0}</div>
+                    <div className="font-medium">{customer.total_visits || 0}</div>
                     <div className="text-muted-foreground">
                       {customer.visitHistory?.lastVisit && `Last: ${formatDate(customer.visitHistory.lastVisit)}`}
                     </div>
@@ -203,7 +203,7 @@ export function CustomerTable({ customers, pagination }) {
                 </TableCell>
                 <TableCell>
                   <div className="font-medium">
-                    {formatCurrency(customer.visitHistory?.totalSpent || 0)}
+                    {formatCurrency(customer.total_spent || 0)}
                   </div>
                 </TableCell>
                 <TableCell>
