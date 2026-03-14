@@ -34,7 +34,7 @@ export function CustomerDetails({ customer }) {
         if (historyResult.success) {
           setCustomerHistory(historyResult.data.history || historyResult.data || [])
         }
-        console.log("historyResult",historyResult)
+        console.log("customer coming",customer)
 
         // Load customer stats
         const statsResult = await getCustomerStats(customer._id, {
@@ -126,7 +126,7 @@ export function CustomerDetails({ customer }) {
         </div>
       </div>
       {/* Key Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
@@ -134,7 +134,7 @@ export function CustomerDetails({ customer }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(customer.visitHistory?.totalSpent || 0)}
+              {formatCurrency(customer.total_spent || 0)}
             </div>
             <p className="text-xs text-muted-foreground">Lifetime value</p>
           </CardContent>
@@ -145,40 +145,13 @@ export function CustomerDetails({ customer }) {
             <TrendingUp className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{customer.visitHistory?.totalVisits || 0}</div>
+            <div className="text-2xl font-bold">{customer.total_visits || 0}</div>
             <p className="text-xs text-muted-foreground">
-              {customer.visitHistory?.lastVisit && `Last: ${formatDate(customer.visitHistory.lastVisit)}`}
+              {customer.last_visit && `Last: ${formatDate(customer.last_visit)}`}
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Loyalty Points</CardTitle>
-            <Star className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{customer.loyaltyPoints?.available || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Total earned: {customer.loyaltyPoints?.total || 0}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Bill Value</CardTitle>
-            <Clock className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {customer.visitHistory?.totalVisits > 0
-                ? formatCurrency(
-                  (customer.visitHistory?.totalSpent || 0) / customer.visitHistory.totalVisits
-                )
-                : formatCurrency(0)}
-            </div>
-            <p className="text-xs text-muted-foreground">Per visit</p>
-          </CardContent>
-        </Card>
+
       </div>
       <Tabs defaultValue="profile" className="space-y-4">
         {/* <TabsList> */}
