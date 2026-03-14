@@ -114,7 +114,7 @@ export function AppSidebar({ ...props }) {
             icon: UserCircle
           },
           {
-            title: "Customer Service Bucket",
+            title: "Service Bucket",
             url: "/admin/reports/customer-service-bucket",
             icon: UserCircle
           },
@@ -253,7 +253,7 @@ export function AppSidebar({ ...props }) {
             icon: UserCircle
           },
           {
-            title: "Customer Service Bucket",
+            title: "Service Bucket",
             url: "/admin/reports/customer-service-bucket",
             icon: UserCircle
           },
