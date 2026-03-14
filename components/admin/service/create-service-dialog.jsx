@@ -19,8 +19,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from "@/components/ui/switch"
 import { createService } from "@/lib/actions/service_action"
 import { getFranchises } from "@/lib/actions/franchise_action"
+import { getProducts } from "@/lib/actions/product_action" // Use existing action
 import { toast } from "sonner"
 import { useSession } from "next-auth/react"
+import { Plus, Trash2, Calculator, AlertCircle } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const CATEGORIES = [
   { value: "Hair", label: "Hair" },
@@ -38,9 +42,34 @@ const ROLES = [
   { value: "MANAGER", label: "Manager" },
 ]
 
+const UNITS = [
+  { value: "ML", label: "ML" },
+  { value: "Gram", label: "Gram" },
+  { value: "Units", label: "Units" },
+]
+
 async function fetchFranchises() {
   const result = await getFranchises({ limit: 100 })
   return result.success ? result.data.data : []
+}
+
+async function fetchConsumableProducts() {
+  // Fetch consumable products using your existing action
+  const result = await getProducts({
+    page: 1,
+    limit: 100, // Get all consumable products
+    search: "",
+    category: "",
+    lowStock: "",
+    type: "consumables" // Filter by type if your action supports it
+  })
+  
+  if (result.success) {
+    // Filter by type on frontend if backend doesn't support it
+    const products = result.data?.data || result.data || []
+    return products.filter(p => p.isActive !== false)
+  }
+  return []
 }
 
 export function CreateServiceDialog({ children }) {
@@ -48,18 +77,32 @@ export function CreateServiceDialog({ children }) {
   const [loading, setLoading] = useState(false)
   const [selectedRoles, setSelectedRoles] = useState([])
   const [franchises, setFranchises] = useState([])
-  const [inclusiveGST, setInclusiveGST] = useState(false) // New state for GST toggle
+  const [inclusiveGST, setInclusiveGST] = useState(false)
+  const [price, setPrice] = useState(0)
+  
+  // Consumables state
+  const [consumables, setConsumables] = useState([])
+  const [products, setProducts] = useState([])
+  const [loadingProducts, setLoadingProducts] = useState(false)
+  
   const router = useRouter()
   const { data: session } = useSession()
 
-
   useEffect(() => {
-    const loadFranchises = async () => {
+    const loadInitialData = async () => {
+      // Load franchises
       const franchiseList = await fetchFranchises()
       setFranchises(franchiseList)
+      
+      // Load consumable products
+      setLoadingProducts(true)
+      const productList = await fetchConsumableProducts()
+      setProducts(productList)
+      setLoadingProducts(false)
     }
+    
     if (open) {
-      loadFranchises()
+      loadInitialData()
     }
   }, [open])
 
@@ -71,8 +114,74 @@ export function CreateServiceDialog({ children }) {
     }
   }
 
+  // Add new consumable row
+  const addConsumable = () => {
+    setConsumables([...consumables, {
+      productId: "",
+      itemName: "",
+      quantityUsed: 0,
+      unit: "ML",
+      totalProductCost: 0,
+      totalProductQuantity: 0,
+      costPerUnit: 0,
+      costOfProductUsed: 0
+    }])
+  }
+
+  // Remove consumable row
+  const removeConsumable = (index) => {
+    setConsumables(consumables.filter((_, i) => i !== index))
+  }
+
+  // Update consumable field
+  const updateConsumable = (index, field, value) => {
+    const updated = [...consumables]
+    updated[index][field] = value
+
+    // If product is selected, auto-fill details
+    if (field === "productId" && value) {
+      const product = products.find(p => p._id === value)
+      if (product) {
+        updated[index].itemName = product.name
+        updated[index].totalProductCost = product.price?.cost || product.price?.selling || 0
+        updated[index].unit = "ML" // Default
+      }
+    }
+
+    // Auto-calculate costs
+    const qty = parseFloat(updated[index].totalProductQuantity) || 0
+    const cost = parseFloat(updated[index].totalProductCost) || 0
+    const used = parseFloat(updated[index].quantityUsed) || 0
+
+    if (qty > 0) {
+      updated[index].costPerUnit = cost / qty
+      updated[index].costOfProductUsed = (cost / qty) * used
+    } else {
+      updated[index].costPerUnit = 0
+      updated[index].costOfProductUsed = 0
+    }
+
+    setConsumables(updated)
+  }
+
+  // Calculate totals
+  const totalConsumableCost = consumables.reduce((sum, c) => sum + (parseFloat(c.costOfProductUsed) || 0), 0)
+  const profitMargin = (parseFloat(price) || 0) - totalConsumableCost
+  const profitMarginPercent = price > 0 ? (profitMargin / price) * 100 : 0
+
   const handleSubmit = async (formData) => {
     setLoading(true)
+
+    // Validate consumables
+    const hasInvalidConsumables = consumables.some(c => 
+      !c.productId || c.quantityUsed <= 0 || c.totalProductQuantity <= 0
+    )
+
+    if (consumables.length > 0 && hasInvalidConsumables) {
+      toast.error("Please fill all consumable fields correctly")
+      setLoading(false)
+      return
+    }
 
     const payload = {
       name: formData.get("name"),
@@ -81,12 +190,21 @@ export function CreateServiceDialog({ children }) {
       description: formData.get("description"),
       duration: Number.parseInt(formData.get("duration")),
       price: Number.parseFloat(formData.get("price")),
-      // Only include gstRate if not inclusive
       gstRate: Number.parseFloat(formData.get("gstRate")),
       inclusiveGST: inclusiveGST,
       franchiseId: formData.get("franchiseId"),
       allowedRoles: selectedRoles,
       commissionRate: Number.parseFloat(formData.get("commissionRate")),
+      
+      // Add consumables
+      consumables: consumables.map(c => ({
+        productId: c.productId,
+        itemName: c.itemName,
+        quantityUsed: parseFloat(c.quantityUsed),
+        unit: c.unit,
+        totalProductCost: parseFloat(c.totalProductCost),
+        totalProductQuantity: parseFloat(c.totalProductQuantity)
+      }))
     }
 
     const result = await createService(payload)
@@ -95,7 +213,9 @@ export function CreateServiceDialog({ children }) {
       toast.success("Service created successfully")
       setOpen(false)
       setSelectedRoles([])
-      setInclusiveGST(false) // Reset toggle
+      setInclusiveGST(false)
+      setConsumables([])
+      setPrice(0)
       router.refresh()
     } else {
       toast.error(result.error || "Failed to create service")
@@ -107,171 +227,360 @@ export function CreateServiceDialog({ children }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Service</DialogTitle>
-          <DialogDescription>Add a new service to your offerings.</DialogDescription>
+          <DialogDescription>Add a new service to your offerings with consumable tracking.</DialogDescription>
         </DialogHeader>
 
-        <form action={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Service Name *</Label>
-              <Input id="name" name="name" required placeholder="Enter service name" />
+        <form action={handleSubmit} className="space-y-6">
+          {/* Basic Information */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold border-b pb-2">Basic Information</h3>
+            
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Service Name *</Label>
+                <Input id="name" name="name" required placeholder="Enter service name" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">Category *</Label>
+                <Select name="category" required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="type">Type *</Label>
+                <Select name="type" required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Service Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="technical">Technical</SelectItem>
+                    <SelectItem value="non-technical">Non Technical</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
-              <Select name="category" required>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+              <Label htmlFor="description">Description</Label>
+              <Textarea id="description" name="description" rows={2} placeholder="Enter service description" />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="franchiseId">Franchise *</Label>
+              <Select name="franchiseId" required defaultValue={session?.franchiseId || ""}>
+                <SelectTrigger className="w-full" disabled={session?.user?.role === "FRANCHISE_OWNER"}>
+                  <SelectValue placeholder="Select franchise" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
+                  {franchises.map((franchise) => (
+                    <SelectItem key={franchise._id} value={franchise._id}>
+                      {franchise.name} ({franchise.code})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="type">Type *</Label>
-              <Select name="type" required>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Service Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="technical"> Technical </SelectItem>
-                  <SelectItem value="non-technical"> Non Technical </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea id="description" name="description" rows={3} placeholder="Enter service description" />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="franchiseId">Franchise *</Label>
-            {/* <Select name="franchiseId" required>
-              <SelectTrigger >
-                <SelectValue placeholder="Select franchise" />
-              </SelectTrigger>
-              <SelectContent>
-                {franchises.map((franchise) => (
-                  <SelectItem key={franchise._id} value={franchise._id}>
-                    {franchise.name} ({franchise.code})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select> */}
-
-
-
-            <Select name="franchiseId" required value={session?.franchiseId || ""}>
-              <SelectTrigger className="w-full" disabled={session?.user?.role === "FRANCHISE_OWNER"}>
-                <SelectValue placeholder="Select franchise" />
-              </SelectTrigger>
-              <SelectContent>
-                {franchises.map((franchise) => (
-                  <SelectItem key={franchise._id} value={franchise._id}>
-                    {franchise.name} ({franchise.code})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="duration">Duration (minutes) *</Label>
-              <Input id="duration" name="duration" type="number" min="1" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="price">Price *</Label>
-              <Input id="price" name="price" type="number" step="0.01" min="0" required />
-            </div>
-          </div>
-
-          {/* GST Section with Toggle */}
-          <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-
-                <p className="text-sm text-gray-500">
-                  {inclusiveGST
-                    ? "Price already includes GST (no additional GST will be charged)"
-                    : "GST will be added on top of the price"}
-                </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="duration">Duration (minutes) *</Label>
+                <Input id="duration" name="duration" type="number" min="1" required />
               </div>
-              <Switch
-                id="inclusiveGST"
-                checked={inclusiveGST}
-                onCheckedChange={setInclusiveGST}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="price">Price *</Label>
+                <Input 
+                  id="price" 
+                  name="price" 
+                  type="number" 
+                  step="0.01" 
+                  min="0" 
+                  required 
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+              </div>
             </div>
 
+            {/* GST Section */}
+            <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <p className="text-sm text-gray-500">
+                    {inclusiveGST
+                      ? "Price already includes GST (no additional GST will be charged)"
+                      : "GST will be added on top of the price"}
+                  </p>
+                </div>
+                <Switch
+                  id="inclusiveGST"
+                  checked={inclusiveGST}
+                  onCheckedChange={setInclusiveGST}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gstRate">GST Rate (%) *</Label>
+                <Input
+                  id="gstRate"
+                  name="gstRate"
+                  type="number"
+                  min="0"
+                  max="28"
+                  step="0.01"
+                  defaultValue="18"
+                  required={!inclusiveGST}
+                  className="bg-white"
+                />
+              </div>
+
+              {inclusiveGST && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
+                  <strong>Note:</strong> The entered price already includes GST. No additional GST will be calculated at billing.
+                </div>
+              )}
+            </div>
 
             <div className="space-y-2">
-              <Label htmlFor="gstRate">GST Rate (%) *</Label>
+              <Label htmlFor="commissionRate">Commission Rate (%)</Label>
               <Input
-                id="gstRate"
-                name="gstRate"
+                id="commissionRate"
+                name="commissionRate"
                 type="number"
                 min="0"
-                max="28"
+                max="50"
                 step="0.01"
-                defaultValue="18"
-                required={!inclusiveGST}
-                className="bg-white"
+                defaultValue="10"
               />
-              {/* <p className="text-xs text-gray-500">
-                  This GST rate will be added on top of the base price
-                </p> */}
             </div>
 
+            <div className="space-y-2">
+              <Label>Allowed Roles *</Label>
+              <div className="grid grid-cols-3 gap-4">
+                {ROLES.map((role) => (
+                  <div key={role.value} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={role.value}
+                      checked={selectedRoles.includes(role.value)}
+                      onCheckedChange={(checked) => handleRoleChange(role.value, checked)}
+                    />
+                    <Label htmlFor={role.value} className="text-sm">
+                      {role.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
 
-            {inclusiveGST && (
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
-                <strong>Note:</strong> The entered price already includes GST. No additional GST will be calculated at billing.
+          {/* Consumables Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b pb-2">
+              <h3 className="text-sm font-semibold">Consumables (Optional)</h3>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addConsumable}
+                disabled={loadingProducts}
+                className="h-8"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                {loadingProducts ? "Loading..." : "Add Consumable"}
+              </Button>
+            </div>
+
+            {loadingProducts && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Loading consumable products...
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {!loadingProducts && products.length === 0 && consumables.length === 0 && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  No consumable products found. Please add products with type "consumables" first.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {consumables.length === 0 && !loadingProducts && products.length > 0 && (
+              <p className="text-sm text-gray-500 italic">
+                No consumables added. Click "Add Consumable" to track product usage for this service.
+              </p>
+            )}
+
+            {consumables.length > 0 && (
+              <div className="space-y-3">
+                {consumables.map((consumable, index) => (
+                  <Card key={index} className="bg-gray-50">
+                    <CardContent className="pt-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <h4 className="text-sm font-medium">Consumable #{index + 1}</h4>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeConsumable(index)}
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+                        {/* Product Selection */}
+                        <div className="md:col-span-6 space-y-2">
+                          <Label className="text-xs">Product *</Label>
+                          <Select
+                            value={consumable.productId}
+                            onValueChange={(value) => updateConsumable(index, "productId", value)}
+                          >
+                            <SelectTrigger className="h-9 bg-white">
+                              <SelectValue placeholder="-- Select Product --" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {products.map(product => (
+                                <SelectItem key={product._id} value={product._id}>
+                                  {product.name} ({product.sku}) - ₹{product.price?.selling || product.price?.cost || 0}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Quantity Used */}
+                        <div className="space-y-2">
+                          <Label className="text-xs">Qty Used *</Label>
+                          <Input
+                            type="number"
+                            value={consumable.quantityUsed}
+                            onChange={(e) => updateConsumable(index, "quantityUsed", e.target.value)}
+                            className="h-9 bg-white"
+                            min="0"
+                            step="0.01"
+                            placeholder="e.g., 2"
+                          />
+                        </div>
+
+                        {/* Unit */}
+                        <div className="space-y-2">
+                          <Label className="text-xs">Unit</Label>
+                          <Select
+                            value={consumable.unit}
+                            onValueChange={(value) => updateConsumable(index, "unit", value)}
+                          >
+                            <SelectTrigger className="h-9 bg-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {UNITS.map(unit => (
+                                <SelectItem key={unit.value} value={unit.value}>
+                                  {unit.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Product Cost */}
+                        <div className="space-y-2">
+                          <Label className="text-xs">Product Cost (₹)</Label>
+                          <Input
+                            type="number"
+                            value={consumable.totalProductCost}
+                            onChange={(e) => updateConsumable(index, "totalProductCost", e.target.value)}
+                            className="h-9 bg-white"
+                            min="0"
+                            step="0.01"
+                            placeholder="Bottle cost"
+                          />
+                        </div>
+
+                        {/* Product Quantity */}
+                        <div className="space-y-2">
+                          <Label className="text-xs">Product Qty</Label>
+                          <Input
+                            type="number"
+                            value={consumable.totalProductQuantity}
+                            onChange={(e) => updateConsumable(index, "totalProductQuantity", e.target.value)}
+                            className="h-9 bg-white"
+                            min="0"
+                            step="0.01"
+                            placeholder="Total in bottle"
+                          />
+                        </div>
+
+                        {/* Cost Per Unit */}
+                        <div className="space-y-2">
+                          <Label className="text-xs text-gray-600">Cost/Unit</Label>
+                          <div className="h-9 px-3 py-2 bg-gray-100 border rounded-md text-sm text-gray-700">
+                            ₹{consumable.costPerUnit.toFixed(2)}
+                          </div>
+                        </div>
+
+                        {/* Cost Used */}
+                        <div className="space-y-2">
+                          <Label className="text-xs text-gray-600">Cost Used</Label>
+                          <div className="h-9 px-3 py-2 bg-gray-100 border rounded-md text-sm font-semibold text-gray-900">
+                            ₹{consumable.costOfProductUsed.toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="commissionRate">Commission Rate (%)</Label>
-            <Input
-              id="commissionRate"
-              name="commissionRate"
-              type="number"
-              min="0"
-              max="50"
-              step="0.01"
-              defaultValue="10"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Allowed Roles *</Label>
-            <div className="grid grid-cols-3 gap-4">
-              {ROLES.map((role) => (
-                <div key={role.value} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={role.value}
-                    checked={selectedRoles.includes(role.value)}
-                    onCheckedChange={(checked) => handleRoleChange(role.value, checked)}
-                  />
-                  <Label htmlFor={role.value} className="text-sm">
-                    {role.label}
-                  </Label>
+          {/* Cost Summary */}
+          {consumables.length > 0 && (
+            <Card className="bg-blue-50 border-blue-200">
+              <CardContent className="pt-4">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Calculator className="h-5 w-5 text-blue-600" />
+                  <h3 className="font-semibold text-blue-900">Cost Analysis</h3>
                 </div>
-              ))}
-            </div>
-          </div> 
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-600 text-xs mb-1">Service Price</p>
+                    <p className="text-lg font-bold">₹{parseFloat(price || 0).toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 text-xs mb-1">Consumable Cost</p>
+                    <p className="text-lg font-bold text-red-600">₹{totalConsumableCost.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 text-xs mb-1">Profit Margin</p>
+                    <p className="text-lg font-bold text-green-600">₹{profitMargin.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 text-xs mb-1">Margin %</p>
+                    <p className="text-lg font-bold text-green-600">{profitMarginPercent.toFixed(2)}%</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-          <div className="flex justify-end space-x-2 pt-4">
+          {/* Actions */}
+          <div className="flex justify-end space-x-2 pt-4 border-t">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
@@ -282,5 +591,5 @@ export function CreateServiceDialog({ children }) {
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

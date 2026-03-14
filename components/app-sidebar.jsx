@@ -143,6 +143,11 @@ export function AppSidebar({ ...props }) {
             url: "/admin/reports/kitty-report",
             icon: UserCircle
           },
+          {
+            title: "Consumable Usage",
+            url: "/admin/reports/consumable-usage",
+            icon: UserCircle
+          },
         ],
       },
     ],
