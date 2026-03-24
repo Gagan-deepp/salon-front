@@ -31,7 +31,7 @@ export default async function ProductsPage({ searchParams }) {
     <div className="p-6 max-w-[92rem] ">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold ">Products</h1>
+          <h1 className="text-3xl font-bold ">In Salon Products</h1>
           <p className="text-gray-600">Manage your product inventory</p>
         </div>
         <CreateProductDialog>

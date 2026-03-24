@@ -27,8 +27,8 @@ export default async function OffersPage({ searchParams }) {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Offers & Promo Codes</h1>
-          <p className="text-gray-600">Manage promotional offers and discount codes</p>
+          <h1 className="text-3xl font-bold">Promotional Code</h1>
+          <p className="text-gray-600">Manage promotional code </p>
         </div>
         <CreateOfferDialog>
           <Button>

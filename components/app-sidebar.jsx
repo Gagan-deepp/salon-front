@@ -58,22 +58,22 @@ export function AppSidebar({ ...props }) {
         icon: UserCircle
       },
       {
-        title: "Payments",
+        title: "Bills",
         url: "/admin/payments",
         icon: BadgeIndianRupee
       },
       {
-        title: "Membership - Payments",
+        title: "Membership Purchase",
         url: "/admin/membership-payments",
         icon: CreditCard
       },
       {
-        title: "Products",
+        title: "InSalon Products",
         url: "/admin/products",
         icon: ShoppingBasket
       },
       {
-        title: "Services",
+        title: "Service Menu",
         url: "/admin/services",
         icon: Telescope
       },
@@ -83,7 +83,7 @@ export function AppSidebar({ ...props }) {
         icon: UserCheck,
       },
       {
-        title: "Offers",
+        title: "Promotion Codes",
         url: "/admin/offers",
         icon: Gift
       },
@@ -212,27 +212,27 @@ export function AppSidebar({ ...props }) {
         icon: UserCircle
       },
       {
-        title: "Payments",
+        title: "Bills",
         url: "/admin/payments",
         icon: BadgeIndianRupee
       },
       {
-        title: "Membership - Payments",
+        title: "Membership Purchase",
         url: "/admin/membership-payments",
         icon: CreditCard
       },
       {
-        title: "Products",
+        title: "InSalon Products",
         url: "/admin/products",
         icon: ShoppingBasket
       },
       {
-        title: "Services",
+        title: "Service Menu",
         url: "/admin/services",
         icon: Telescope
       },
       {
-        title: "Offers",
+        title: "Promotion Codes",
         url: "/admin/offers",
         icon: DollarSign
       },

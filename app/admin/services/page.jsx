@@ -31,7 +31,7 @@ export default async function ServicesPage({ searchParams }) {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold ">Services</h1>
+          <h1 className="text-3xl font-bold ">Service Menu</h1>
           <p className="text-gray-600">Manage your beauty and wellness services</p>
         </div>
         <CreateServiceDialog>

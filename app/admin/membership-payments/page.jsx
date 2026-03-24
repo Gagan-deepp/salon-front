@@ -32,7 +32,7 @@ export default async function PaymentsPage({ searchParams }) {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold">Payments</h1>
+                    <h1 className="text-3xl font-bold">Membership Purchases</h1>
                     <p className="text-gray-600">Manage and track all payment transactions</p>
                 </div>
                 <div className="flex gap-2">
