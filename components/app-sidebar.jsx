@@ -240,51 +240,7 @@ export function AppSidebar({ ...props }) {
         title: "Packages",
         url: "/admin/packages",
         icon: Package2Icon
-      },
-      {
-        title: "Reports",
-        url: "#",
-        icon: SquareTerminal,
-        isActive: true,
-        items: [
-          {
-            title: "Customer Metrics",
-            url: "/admin/reports/customer-metrics",
-            icon: UserCircle
-          },
-          {
-            title: "Customer Purchase",
-            url: "/admin/reports/customer-purchase",
-            icon: UserCircle
-          },
-          {
-            title: "Service Bucket",
-            url: "/admin/reports/customer-service-bucket",
-            icon: UserCircle
-          },
-          {
-            title: "Gain Loss",
-            url: "/admin/reports/gain-loss",
-            icon: UserCircle
-          },
-          {
-            title: "Service Performance",
-            url: "/admin/reports/service",
-            icon: Briefcase
-          },
-          {
-            title: "Repeat Customer",
-            url: "/admin/reports/repeat-customer",
-            icon: UserCircle
-          },
-          {
-            title: "Churn Rate",
-            url: "/admin/reports/churn-rate",
-            icon: UserCircle
-          },
-
-        ],
-      },
+      }
     ],
   }
 
