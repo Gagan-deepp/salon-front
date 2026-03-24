@@ -57,7 +57,7 @@ export function PaymentDetails({ payment }) {
   }
 
   const orderDetails = {
-    orderNumber: payment._id || "N/A",
+    // orderNumber: payment._id || "N/A",
     orderDate: new Date(payment.createdAt).toLocaleDateString("en-IN") || "N/A",
     invoiceNumber: payment.invoiceId || "N/A",
     invoiceDate: new Date(payment.createdAt).toLocaleDateString("en-IN") || "N/A",
@@ -380,7 +380,7 @@ export function PaymentDetails({ payment }) {
                 </div>
                 <div>
                   <label className="text-sm font-medium ">Employee ID</label>
-                  <p className="font-mono">{payment.cashierInfo.cashierId._id}</p>
+                  {/* <p className="font-mono">{payment.cashierInfo.cashierId._id}</p> */}
                 </div>
               </CardContent>
             </Card>
