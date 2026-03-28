@@ -100,3 +100,19 @@ export async function getFranchiseAnalytics(franchiseId, params) {
     return { success: false, error: error.response?.data?.message || "getFranchiseAnalytics failed" }
   }
 }
+
+export async function deleteFranchise(franchiseId) {
+  try {
+    const headers = await getAuthHeaders()
+    const res = await axios.delete(`${BASE_URL}/franchises/${franchiseId}`, {
+      headers,
+    })
+    console.log("getFranchiseAnalytics response", res.data)
+    return { success: true, data: res.data }
+  } catch (error) {
+    console.error("getFranchiseAnalytics error", error)
+    return { success: false, error: error.response?.data?.message || "getFranchiseAnalytics failed" }
+  }
+}
+
+

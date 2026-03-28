@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { AlertTriangle } from "lucide-react"
 import { toast } from "sonner"
+import { deleteFranchise } from "@/lib/actions/franchise_action"
 
 export function DeleteFranchiseDialog({ children, franchise }) {
   const [open, setOpen] = useState(false)
@@ -26,10 +27,11 @@ export function DeleteFranchiseDialog({ children, franchise }) {
     try {
       // Simulate API call - replace with actual delete action when available
       await new Promise((resolve) => setTimeout(resolve, 1000))
-
+      const result = await deleteFranchise(franchise._id)
+      console.log("result from delete",result)
       toast.success("Franchise deleted successfully")
       setOpen(false)
-      router.push("/admin/franchises")
+      await router.push("/admin/franchises")
       router.refresh()
     } catch (error) {
       toast.error("Failed to delete franchise")
