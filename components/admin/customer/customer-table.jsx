@@ -220,28 +220,30 @@ export function CustomerTable({ customers, pagination }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
+                        className="group"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleView(customer._id)
                         }}>
-                        <Eye className="mr-2 h-4 w-4" />
+                        <Eye className="mr-2 h-4 w-4 group-hover:text-white!" />
                         View
                       </DropdownMenuItem>
                       <DropdownMenuItem
+                        className="group"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleEdit(customer._id)
                         }}>
-                        <Edit className="mr-2 h-4 w-4" />
+                        <Edit className="mr-2 h-4 w-4 group-hover:text-white" />
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="text-destructive"
+                        className="text-destructive group"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleDelete(customer._id)
                         }}>
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <Trash2 className="mr-2 h-4 w-4 group-hover:text-white" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>

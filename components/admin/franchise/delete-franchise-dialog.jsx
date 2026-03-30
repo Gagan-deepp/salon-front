@@ -28,11 +28,10 @@ export function DeleteFranchiseDialog({ children, franchise }) {
       // Simulate API call - replace with actual delete action when available
       await new Promise((resolve) => setTimeout(resolve, 1000))
       const result = await deleteFranchise(franchise._id)
-      console.log("result from delete",result)
       toast.success("Franchise deleted successfully")
-      setOpen(false)
-      await router.push("/admin/franchises")
       router.refresh()
+      router.push("/admin/branches")
+      setOpen(false)
     } catch (error) {
       toast.error("Failed to delete franchise")
     }

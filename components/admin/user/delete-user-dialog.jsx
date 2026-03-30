@@ -31,6 +31,7 @@ export function DeleteUserDialog({ children, user, onUserDeleted }) {
       toast.success("User deleted successfully")
       setOpen(false)
       router.refresh()
+      router.push("/admin/users")
       onUserDeleted?.()
     } else {
       toast.error(result.error || "Failed to delete user")
@@ -55,7 +56,7 @@ export function DeleteUserDialog({ children, user, onUserDeleted }) {
           <AlertDialogAction
             onClick={handleDelete}
             disabled={loading}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-white hover:bg-destructive/90"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Delete User

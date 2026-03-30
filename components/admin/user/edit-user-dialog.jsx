@@ -12,6 +12,7 @@ import { updateUser } from "@/lib/actions/user_action"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { getFranchises } from "@/lib/actions/franchise_action"
+import { useSession } from "next-auth/react"
 
 async function fetchFranchises() {
   const result = await getFranchises({ limit: 100 })
@@ -23,6 +24,7 @@ export function EditUserDialog({ children, user, onUserUpdated }) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
+  const { data: session } = useSession()
   const [franchises, setFranchises] = useState([])
 
 
@@ -118,9 +120,9 @@ export function EditUserDialog({ children, user, onUserUpdated }) {
 
           <div className="space-y-2">
             <Label htmlFor="franchiseId">Franchise *</Label>
-            <Select name="franchiseId" disabled={user?.role === "SUPER_ADMIN"}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select franchise" defaultValue={user?.franchise?.name} />
+            <Select name="franchiseId" className="w-full" required defaultValue={session?.franchiseId || ""}>
+              <SelectTrigger className="w-full" disabled={session?.user?.role === "FRANCHISE_OWNER"}>
+                <SelectValue className="w-full" placeholder="Select franchise" />
               </SelectTrigger>
               <SelectContent>
                 {franchises.map((franchise) => (

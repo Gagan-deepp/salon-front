@@ -17,9 +17,9 @@ export default function AdminLayout({ children }) {
               <SidebarTrigger className="-ml-1" />
 
 
-              <div className="flex gap-2" >
+              {/* <div className="flex gap-2" >
                 <ModeToggle />
-              </div>
+              </div> */}
             </div>
           </header>
           <main >

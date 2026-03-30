@@ -108,6 +108,7 @@ export async function deleteFranchise(franchiseId) {
       headers,
     })
     console.log("getFranchiseAnalytics response", res.data)
+
     return { success: true, data: res.data }
   } catch (error) {
     console.error("getFranchiseAnalytics error", error)

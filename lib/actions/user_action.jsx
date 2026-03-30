@@ -70,7 +70,7 @@ export async function updateUser(userId, payload) {
         revalidatePath(`/admin/users/${userId}`)
         return { success: true, data: res.data }
     } catch (error) {
-        console.error("updateUser error", error)
+        console.error("updateUser error", error.response?.data)
         return { success: false, error: error.response?.data?.message || "updateUser failed" }
     }
 }

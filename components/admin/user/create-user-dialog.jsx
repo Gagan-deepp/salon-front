@@ -158,7 +158,7 @@ export function CreateUserDialog({ children, onUserCreated, isSuperAdmin = true 
             </div>
             <div className="space-y-2 w-full col-span-2">
               <Label htmlFor="franchiseId">Franchise *</Label>
-              <Select name="franchiseId" className="w-full" required value={session?.franchiseId || ""}>
+              <Select name="franchiseId" className="w-full" required defaultValue={session?.franchiseId || ""}>
                 <SelectTrigger className="w-full" disabled={session?.user?.role === "FRANCHISE_OWNER"}>
                   <SelectValue className="w-full" placeholder="Select franchise" />
                 </SelectTrigger>
