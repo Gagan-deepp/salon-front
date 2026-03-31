@@ -11,6 +11,8 @@
 
 # testing
 /coverage
+/example
+TODO.md
 
 # next.js
 /.next/
@@ -20,7 +22,6 @@
 /build
 
 # project files
-TODO.md
 
 # misc
 .DS_Store

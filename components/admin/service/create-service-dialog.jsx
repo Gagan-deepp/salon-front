@@ -25,6 +25,7 @@ import { useSession } from "next-auth/react"
 import { Plus, Trash2, Calculator, AlertCircle } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ProductCombobox } from "@/components/admin/payment/product-combobox"
 
 const CATEGORIES = [
   { value: "Hair", label: "Hair" },
@@ -53,25 +54,6 @@ async function fetchFranchises() {
   return result.success ? result.data.data : []
 }
 
-async function fetchConsumableProducts() {
-  // Fetch consumable products using your existing action
-  const result = await getProducts({
-    page: 1,
-    limit: 100, // Get all consumable products
-    search: "",
-    category: "",
-    lowStock: "",
-    type: "consumables" // Filter by type if your action supports it
-  })
-  
-  if (result.success) {
-    // Filter by type on frontend if backend doesn't support it
-    const products = result.data?.data || result.data || []
-    return products.filter(p => p.isActive !== false)
-  }
-  return []
-}
-
 export function CreateServiceDialog({ children }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -82,8 +64,6 @@ export function CreateServiceDialog({ children }) {
   
   // Consumables state
   const [consumables, setConsumables] = useState([])
-  const [products, setProducts] = useState([])
-  const [loadingProducts, setLoadingProducts] = useState(false)
   
   const router = useRouter()
   const { data: session } = useSession()
@@ -93,12 +73,6 @@ export function CreateServiceDialog({ children }) {
       // Load franchises
       const franchiseList = await fetchFranchises()
       setFranchises(franchiseList)
-      
-      // Load consumable products
-      setLoadingProducts(true)
-      const productList = await fetchConsumableProducts()
-      setProducts(productList)
-      setLoadingProducts(false)
     }
     
     if (open) {
@@ -134,17 +108,20 @@ export function CreateServiceDialog({ children }) {
   }
 
   // Update consumable field
-  const updateConsumable = (index, field, value) => {
+  const updateConsumable = (index, field, value, productObj = null) => {
     const updated = [...consumables]
     updated[index][field] = value
 
-    // If product is selected, auto-fill details
-    if (field === "productId" && value) {
-      const product = products.find(p => p._id === value)
-      if (product) {
-        updated[index].itemName = product.name
-        updated[index].totalProductCost = product.price?.cost || product.price?.selling || 0
+    // If product is selected from Combobox, auto-fill details from the object
+    if (field === "productId") {
+      if (value && productObj) {
+        updated[index].itemName = productObj.name
+        updated[index].totalProductCost = productObj.price?.cost || productObj.price?.selling || 0
         updated[index].unit = "ML" // Default
+      } else if (!value) {
+        // Clear details if selection is removed
+        updated[index].itemName = ""
+        updated[index].totalProductCost = 0
       }
     }
 
@@ -393,33 +370,14 @@ export function CreateServiceDialog({ children }) {
                 variant="outline"
                 size="sm"
                 onClick={addConsumable}
-                disabled={loadingProducts}
                 className="h-8"
               >
                 <Plus className="h-4 w-4 mr-1" />
-                {loadingProducts ? "Loading..." : "Add Consumable"}
+                Add Consumable
               </Button>
             </div>
 
-            {loadingProducts && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Loading consumable products...
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {!loadingProducts && products.length === 0 && consumables.length === 0 && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  No consumable products found. Please add products with type "consumables" first.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {consumables.length === 0 && !loadingProducts && products.length > 0 && (
+            {consumables.length === 0 && (
               <p className="text-sm text-gray-500 italic">
                 No consumables added. Click "Add Consumable" to track product usage for this service.
               </p>
@@ -447,21 +405,11 @@ export function CreateServiceDialog({ children }) {
                         {/* Product Selection */}
                         <div className="md:col-span-6 space-y-2">
                           <Label className="text-xs">Product *</Label>
-                          <Select
+                          <ProductCombobox
                             value={consumable.productId}
-                            onValueChange={(value) => updateConsumable(index, "productId", value)}
-                          >
-                            <SelectTrigger className="h-9 bg-white">
-                              <SelectValue placeholder="-- Select Product --" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {products.map(product => (
-                                <SelectItem key={product._id} value={product._id}>
-                                  {product.name} ({product.sku}) - ₹{product.price?.selling || product.price?.cost || 0}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            params={{ type: "consumables" }}
+                            onValueChange={(id, product) => updateConsumable(index, "productId", id, product)}
+                          />
                         </div>
 
                         {/* Quantity Used */}

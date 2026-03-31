@@ -1,10 +1,12 @@
 "use client";
 
 import { CreateCustomerDialog } from "@/components/admin/customer/create-customer-dialog";
+import { CustomerCombobox } from "@/components/admin/customer/customer-combobox";
 import { DiscountDialog } from "@/components/admin/payment/discount-dialog";
 import { PackageRedemptionDialog } from "@/components/admin/payment/package-redemption-dialog";
 import { PaymentDialog } from "@/components/admin/payment/payment-dialog";
 import { ProductCard } from "@/components/admin/payment/product-card";
+import { ServiceCombobox } from "@/components/admin/service/service-combobox";
 import { PaymentSkeleton } from "@/components/admin/table-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,11 +22,9 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getCustomersDropdown } from "@/lib/actions/customer_action";
 import { getOffers } from "@/lib/actions/offer_action";
 import { createPayment, validatePromoCode } from "@/lib/actions/payment_action";
 import { getProducts } from "@/lib/actions/product_action";
-import { getServices } from "@/lib/actions/service_action";
 import { getUsers } from "@/lib/actions/user_action";
 import {
   Calculator,
@@ -34,7 +34,6 @@ import {
   Loader2,
   Plus,
   Receipt,
-  Search,
   Tag,
   Trash,
 } from "lucide-react";
@@ -51,7 +50,6 @@ export default function CreatePaymentPage() {
   const [providers, setProviders] = useState([]);
   const [services, setServices] = useState([]);
   const [products, setProducts] = useState([]);
-  const [customerSearchText, setCustomerSearchText] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isMembershipApplied, setIsMembershipApplied] = useState(false);
 
@@ -99,25 +97,18 @@ export default function CreatePaymentPage() {
     }
   }, [formData.customerId, customers]);
   // Fetch dropdown data
+  // Customers & Services are now fetched by their own Combobox components.
+  // We only need to fetch Products and Providers here.
   useEffect(() => {
     const fetchData = async () => {
-      setDataLoading(true); // Start loading
+      setDataLoading(true);
       try {
-        const [customersRes, servicesRes, productsRes, providerRes] =
+        const [productsRes, providerRes] =
           await Promise.all([
-            getCustomersDropdown({ limit: 100 }),
-            getServices({ limit: 100 }),
             getProducts({ limit: 100 }),
             getUsers({ page: 1, limit: 100, isActive: true }),
           ]);
 
-        //debugger;
-        if (customersRes.success && customersRes.data.data?.length > 0) {
-          setCustomers(customersRes.data.data);
-        }
-        if (servicesRes.success && servicesRes.data.data?.length > 0) {
-          setServices(servicesRes.data.data);
-        }
         if (productsRes.success && productsRes.data.data?.length > 0) {
           setProducts(productsRes.data.data);
         }
@@ -127,7 +118,7 @@ export default function CreatePaymentPage() {
       } catch (error) {
         console.error("Failed to fetch dropdown data:", error);
       } finally {
-        setDataLoading(false); // End loading - this is crucial!
+        setDataLoading(false);
       }
     };
 
@@ -395,11 +386,11 @@ export default function CreatePaymentPage() {
 
   const handleCustomerCreated = (newCustomer) => {
     setCustomers((prevCustomers) => [newCustomer, ...prevCustomers]);
+    setSelectedCustomer(newCustomer);
     setFormData((prevFormData) => ({
       ...prevFormData,
       customerId: newCustomer._id,
     }));
-    setCustomerSearchText(`${newCustomer.name} - ${newCustomer.phone}`);
   };
 
   const handleDiscountApply = (discountData) => {
@@ -637,55 +628,15 @@ export default function CreatePaymentPage() {
                     <Label htmlFor="customer" className="text-base font-medium">
                       Customer *
                     </Label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <Search className="w-5 h-5 text-gray-400" />
-                      </div>
-
-                      <input
-                        id="customer-search"
-                        type="text"
-                        list="customers-datalist"
-                        placeholder="Search customer by name or phone..."
-                        className="w-full h-10 ring-2 ring-border rounded-md pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
-                        value={customerSearchText}
-                        onChange={(e) => {
-                          const searchValue = e.target.value;
-                          setCustomerSearchText(searchValue);
-
-                          const foundCustomer = customers.find(
-                            (c) =>
-                              c.name.toLowerCase() === searchValue.toLowerCase() ||
-                              c.phone === searchValue ||
-                              `${c.name} - ${c.phone}` === searchValue
-                          );
-
-                          if (foundCustomer) {
-                            setFormData((prev) => ({
-                              ...prev,
-                              customerId: foundCustomer._id,
-                            }));
-                          } else {
-                            setFormData((prev) => ({ ...prev, customerId: "" }));
-                          }
-                        }}
-                        onFocus={() => {
-                          if (formData.customerId) {
-                            setCustomerSearchText("");
-                          }
-                        }}
-                        required
-                      />
-
-                      <datalist id="customers-datalist">
-                        {customers.map((customer) => (
-                          <option
-                            key={customer._id}
-                            value={`${customer.name} - ${customer.phone}`}
-                          />
-                        ))}
-                      </datalist>
-                    </div>
+                    <CustomerCombobox
+                      value={formData.customerId}
+                      onValueChange={(id, customer) => {
+                        setFormData(prev => ({ ...prev, customerId: id }));
+                        if (customer && !customers.find(c => c._id === id)) {
+                          setCustomers(prev => [...prev, customer]);
+                        }
+                      }}
+                    />
                   </div>
 
                   <Tabs defaultValue="services" className="w-full">
@@ -746,13 +697,10 @@ export default function CreatePaymentPage() {
                                   <Label className="text-sm font-medium">
                                     Service
                                   </Label>
-                                  <Select
+                                  <ServiceCombobox
                                     value={service.serviceId}
                                     disabled={service.isPackageRedemption}
-                                    onValueChange={(value) => {
-                                      const selectedService = services.find(
-                                        (s) => s._id === value
-                                      );
+                                    onValueChange={(id, selectedService) => {
                                       if (selectedService) {
                                         setFormData((prev) => ({
                                           ...prev,
@@ -760,38 +708,20 @@ export default function CreatePaymentPage() {
                                             i === index
                                               ? {
                                               ...s,
-                                              serviceId: value,
+                                              serviceId: id,
                                               serviceName: selectedService.name,
                                               price: selectedService.price,
                                               serviceCode: selectedService.code,
-                                              duration:
-                                                selectedService.duration,
+                                              duration: selectedService.duration,
                                               gstRate: selectedService.gstRate,
-                                              inclusiveGst:
-                                                selectedService.inclusiveGST,
+                                              inclusiveGst: selectedService.inclusiveGST,
                                             }
                                             : s
                                         ),
                                       }));
                                       }
                                     }}
-                                  >
-                                    <SelectTrigger className="mt-1 w-full">
-                                      <SelectValue placeholder="Select service" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {services.map((s) => (
-                                        <SelectItem key={s._id} value={s._id}>
-                                          <div className="flex items-center gap-2">
-                                            <span>{s.name}</span>
-                                            <span className="text-sm">
-                                              - ₹{s.price}
-                                            </span>
-                                          </div>
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
+                                  />
                                 </div>
                                 <div>
                                   <Label className="text-sm font-medium">

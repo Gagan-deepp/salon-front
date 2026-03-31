@@ -11,8 +11,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
-import { getCustomersDropdown } from "@/lib/actions/customer_action"
 import { Separator } from "@/components/ui/separator"
+import { ServiceCombobox } from "@/components/admin/service/service-combobox"
+import { CustomerCombobox } from "@/components/admin/customer/customer-combobox"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
 
@@ -20,11 +21,9 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
     const [open, setOpen] = useState(false)
     const [isPending, startTransition] = useTransition()
     const [franchises, setFranchises] = useState([])
-    const [services, setServices] = useState([])
-    const [customers, setCustomers] = useState([])
     const [loadingFranchises, setLoadingFranchises] = useState(false)
-    const [loadingServices, setLoadingServices] = useState(false)
     const [selectedFranchise, setSelectedFranchise] = useState("")
+    const [selectedServiceId, setSelectedServiceId] = useState("")
     const [selectedCustomer, setSelectedCustomer] = useState({ name: "", phone: "", email: "" })
     const router = useRouter()
     const { data: session } = useSession()
@@ -40,10 +39,8 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
     }, [open, session])
 
     useEffect(() => {
-        if (selectedFranchise) {
-            fetchServices(selectedFranchise)
-        } else {
-            setServices([])
+        if (!selectedFranchise) {
+            setSelectedServiceId("")
         }
     }, [selectedFranchise])
 
@@ -66,29 +63,6 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
         }
     }
 
-    const fetchServices = async (franchiseId) => {
-        try {
-            setLoadingServices(true)
-            const response = await fetch(
-                `${BASE_URL}/services/getAllServices?franchiseId=${franchiseId}&isActive=true&limit=100`
-            )
-            const result = await response.json()
-
-            const customersRes = await getCustomersDropdown({ limit: 100 })
-            if (customersRes.success) setCustomers(customersRes.data.data || [])
-            if (result.success) {
-                setServices(result.data || [])
-            } else {
-                toast.error("Failed to load services")
-            }
-        } catch (error) {
-            console.error("Error fetching services:", error)
-            toast.error("Failed to load services")
-        } finally {
-            setLoadingServices(false)
-        }
-    }
-
     const getMinDate = () => {
         const today = new Date()
         return today.toISOString().split("T")[0]
@@ -97,8 +71,8 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
     const handleSubmit = async (formData) => {
         startTransition(async () => {
             const payload = {
-                franchiseId: formData.get("franchiseId"),
-                serviceId: formData.get("serviceId"),
+                franchiseId: selectedFranchise || formData.get("franchiseId"),
+                serviceId: selectedServiceId || formData.get("serviceId"),
                 customerName: selectedCustomer.name ? selectedCustomer.name : formData.get("customerName"),
                 customerPhone: selectedCustomer.phone ? selectedCustomer.phone : formData.get("customerPhone"),
                 customerEmail: selectedCustomer.email ? selectedCustomer.email : formData.get("customerEmail"),
@@ -195,51 +169,25 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
 
                         <div className="space-y-2">
                             <Label htmlFor="serviceId">Service *</Label>
-                            {loadingServices ? (
-                                <div className="flex items-center gap-2 p-3 border rounded-md bg-muted/50">
-                                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                                    <span className="text-sm text-muted-foreground">Loading services...</span>
-                                </div>
-                            ) : (
-                                <Select
-                                    name="serviceId"
-                                    disabled={!selectedFranchise || services.length === 0}
-                                    required
-                                    className="w-full"
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue
-                                            placeholder={
-                                                !selectedFranchise
-                                                    ? "Select salon first"
-                                                    : services.length === 0
-                                                        ? "No services available"
-                                                        : "Select service"
-                                            }
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {services.map((service) => (
-                                            <SelectItem key={service._id} value={service._id}>
-                                                {service.name} - ₹{service.price} ({service.duration} mins)
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            )}
+                            <ServiceCombobox
+                                value={selectedServiceId}
+                                franchiseId={selectedFranchise}
+                                onValueChange={setSelectedServiceId}
+                                disabled={!selectedFranchise}
+                            />
+                            <input type="hidden" name="serviceId" value={selectedServiceId} />
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="customerEmail">Select an Existing Customer</Label>
 
-                        <Select
-                            name="customerName"
-                            value={selectedCustomer.name ? customers.find((c) => c.name === selectedCustomer.name)?._id : ""}
-                            onValueChange={(value) => {
-                                const customer = customers.find((c) => c._id === value)
+                        <CustomerCombobox
+                            value={selectedCustomer.id}
+                            onValueChange={(id, customer) => {
                                 if (customer) {
                                     setSelectedCustomer({
+                                        id: customer._id || customer.id,
                                         name: customer.name,
                                         phone: customer.phone,
                                         email: customer.email || "",
@@ -248,21 +196,7 @@ export function BookAppointmentDialog({ children, onAppointmentBooked }) {
                                     setSelectedCustomer({ name: "", phone: "", email: "" })
                                 }
                             }}
-                            required>
-                            <SelectTrigger className="h-11 w-full">
-                                <SelectValue placeholder="Select customer" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {customers.map((customer) => (
-                                    <SelectItem key={customer._id} value={customer._id}>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium">{customer.name}</span>
-                                            <span className="text-sm "> - {customer.phone}</span>
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        />
                     </div>
 
                     <div className="flex items-center justify-center" >
