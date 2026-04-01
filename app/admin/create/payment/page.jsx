@@ -333,7 +333,7 @@ export default function CreatePaymentPage() {
       finalAmount,
     });
 
-    console.log("hello jay===============", calculations)
+    // console.log("hello jay===============", calculations)
   };
 
   const servicesTotal = () => {
@@ -409,118 +409,103 @@ export default function CreatePaymentPage() {
     toast.success("Package service added to bill");
   };
 
-  const handlePaymentComplete = async (paymentData) => {
-    setLoading(true);
-    try {
-      const payload = {
-        ...formData,
-        ...paymentData,
-        amounts: calculations,
+ const handlePaymentComplete = async (paymentData) => {
+  setLoading(true);
+  try {
+    const payload = {
+      ...formData,
+      ...paymentData,
+      amounts: calculations,
+    };
+
+    const result = await createPayment(payload);
+
+    if (result.success) {
+      const invoice = result.data.invoice;
+      const payment = result.data.payment;
+
+      // ✅ Reset form & redirect IMMEDIATELY — don't wait for invoice email
+      toast.success("Payment created successfully!");
+      setFormData({
+        customerId: "",
+        services: [],
+        products: [],
+        discount: { percentage: 0, promoCode: "" },
+      });
+      setLoading(false);
+      router.push("/admin/payments"); // or wherever you redirect
+
+      // 🔥 Fire invoice email in background — no await
+      const invoiceData = {
+        customerInfo: {
+          name: invoice.customerId?.name || "N/A",
+          phoneNumber: invoice.customerId?.phone || "N/A",
+          email: invoice.customerId?.email || "",
+          address: invoice.customerId?.address || "",
+          modeOfPayment: payment.paymentMode || "N/A",
+          placeOfSupply: paymentData.placeOfSupply || invoice.customerId?.address?.state || "N/A",
+          placeOfDelivery: paymentData.placeOfDelivery || invoice.customerId?.address?.city || "N/A",
+        },
+        sellerInfo: {
+          companyName: invoice.franchiseId?.name || "N/A",
+          address: invoice.franchiseId?.address
+            ? `${invoice.franchiseId.address.street}, ${invoice.franchiseId.address.city}, ${invoice.franchiseId.address.state}, ${invoice.franchiseId.address.country} - ${invoice.franchiseId.address.pincode}`
+            : "N/A",
+          city: invoice.franchiseId?.address?.city || "N/A",
+          phone: invoice.franchiseId?.contact?.phone || "N/A",
+          email: invoice.franchiseId?.contact?.email || "N/A",
+          gstNumber: invoice.franchiseId?.gstNumber || "N/A",
+          additionalAddress: invoice.franchiseId?.additionalAddress || "",
+        },
+        orderDetails: {
+          orderNumber: payment._id || invoice._id,
+          orderDate: new Date(invoice.createdAt).toLocaleDateString("en-IN"),
+          invoiceNumber: invoice.invoiceNumber,
+          invoiceDate: new Date(invoice.createdAt).toLocaleDateString("en-IN"),
+          gstNumber: invoice.franchiseId?.gstNumber || "N/A",
+          panNumber: invoice.franchiseId?.panNumber || "N/A",
+          cinNumber: invoice.franchiseId?.cinNumber || "N/A",
+        },
+        items: [
+          ...formData.services.map((s) => ({
+            serviceName: s.serviceName,
+            price: s.price,
+            code: s.serviceCode,
+            quantity: s.quantity,
+            inclusiveGst: s.inclusiveGst || false,
+            gstRate: s.gstRate || 18,
+          })),
+          ...formData.products.map((p) => ({
+            productName: p.productName,
+            price: p.price,
+            quantity: p.quantity,
+            code: p.productCode,
+            inclusiveGst: p.inclusiveGst || false, // ✅ also fixed the bug: was `s.inclusiveGst`
+            gstRate: p.gstRate || 18,
+          })),
+        ],
+        discount: {
+          percentage: calculations.discount.percentage,
+          amount: calculations.discount.amount,
+        },
       };
 
-      const result = await createPayment(payload);
+      // No await — runs in background after redirect
+      fetch("/api/send-invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(invoiceData),
+      }).catch((err) => console.error("Invoice email failed silently:", err));
 
-      if (result.success) {
-        const invoice = result.data.invoice;
-        const payment = result.data.payment;
-        const selectedCustomer = customers.find(
-          (c) => c._id === formData.customerId
-        );
-
-        const invoiceData = {
-          customerInfo: {
-            name: invoice.customerId?.name || selectedCustomer?.name || "N/A",
-            phoneNumber:
-              invoice.customerId?.phone || selectedCustomer?.phone || "N/A",
-            email: invoice.customerId?.email || selectedCustomer?.email || "",
-            address:
-              invoice.customerId?.address || selectedCustomer?.address || "",
-            modeOfPayment: payment.paymentMode || "N/A",
-            placeOfSupply:
-              paymentData.placeOfSupply ||
-              invoice.customerId?.address?.state ||
-              "N/A",
-            placeOfDelivery:
-              paymentData.placeOfDelivery ||
-              invoice.customerId?.address?.city ||
-              "N/A",
-          },
-          sellerInfo: {
-            companyName: invoice.franchiseId?.name || "N/A",
-            address: invoice.franchiseId?.address
-              ? `${invoice.franchiseId.address.street}, ${invoice.franchiseId.address.city}, ${invoice.franchiseId.address.state}, ${invoice.franchiseId.address.country} - ${invoice.franchiseId.address.pincode}`
-              : "N/A",
-            city: invoice.franchiseId?.address?.city || "N/A",
-            phone: invoice.franchiseId?.contact?.phone || "N/A",
-            email: invoice.franchiseId?.contact?.email || "N/A",
-            gstNumber: invoice.franchiseId?.gstNumber || "N/A",
-            additionalAddress: invoice.franchiseId?.additionalAddress || "",
-          },
-          orderDetails: {
-            orderNumber: payment._id || invoice._id,
-            orderDate: new Date(invoice.createdAt).toLocaleDateString("en-IN"),
-            invoiceNumber: invoice.invoiceNumber,
-            invoiceDate: new Date(invoice.createdAt).toLocaleDateString(
-              "en-IN"
-            ),
-            gstNumber: invoice.franchiseId?.gstNumber || "N/A",
-            panNumber: invoice.franchiseId?.panNumber || "N/A",
-            cinNumber: invoice.franchiseId?.cinNumber || "N/A",
-          },
-          items: [
-            ...formData.services.map((s) => ({
-              serviceName: s.serviceName,
-              price: s.price,
-              code: s.serviceCode,
-              quantity: s.quantity,
-              inclusiveGst: s.inclusiveGst || false,
-              gstRate: s.gstRate || 18,
-            })),
-            ...formData.products.map((p) => ({
-              productName: p.productName,
-              price: p.price,
-              quantity: p.quantity,
-              code: p.productCode,
-              inclusiveGst: s.inclusiveGst || false,
-              gstRate: p.gstRate || 18,
-            })),
-          ],
-          discount: {
-            percentage: calculations.discount.percentage,
-            amount: calculations.discount.amount,
-          },
-        };
-
-        const response = await fetch("/api/send-invoice", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(invoiceData),
-        });
-
-        const res = await response.json();
-        toast.success(`Payment created successfully`);
-        setFormData({
-          customerId: "",
-          services: [],
-          products: [],
-          discount: {
-            percentage: 0,
-            promoCode: "",
-          },
-        });
-        router.refresh();
-      } else {
-        toast.warning(result.error);
-      }
-    } catch (error) {
-      toast.error(`Failed to create payment`);
-    } finally {
+    } else {
+      toast.warning(result.error);
       setLoading(false);
     }
-  };
-
+  } catch (error) {
+    toast.error("Failed to create payment");
+    setLoading(false);
+  }
+};
   return (
     <div className="space-y-6 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
