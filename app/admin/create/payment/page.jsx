@@ -680,7 +680,7 @@ export default function CreatePaymentPage() {
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div className="md:col-span-2 lg:col-span-1">
                                   <Label className="text-sm font-medium">
-                                    Service
+                                    Service *
                                   </Label>
                                   <ServiceCombobox
                                     value={service.serviceId}
@@ -751,7 +751,7 @@ export default function CreatePaymentPage() {
                                 {!service.isPackageRedemption && (
                                   <div>
                                     <Label className="text-sm font-medium">
-                                      Salon Expert
+                                      Salon Expert *
                                     </Label>
                                     <Select
                                       value={service.providerId}
