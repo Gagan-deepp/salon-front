@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   BadgeIndianRupee,
@@ -18,26 +18,46 @@ import {
   Telescope,
   UserCheck,
   UserCircle,
-  CreditCard
-} from "lucide-react"
-import { useEffect, useState } from "react"
+  CreditCard,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
-import rynoxLogo from "@/assets/new-logo-png.png"
-import { NavUser } from "@/components/nav-user"
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
-import Image from "next/image"
+import rynoxLogo from "@/assets/new-logo-png.png";
+import { NavUser } from "@/components/nav-user";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarRail,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
+import Image from "next/image";
 
 export function AppSidebar({ ...props }) {
-  const pathName = usePathname()
-  const { data: session, status } = useSession()
+  const pathName = usePathname();
+  const { data: session, status } = useSession();
+  const { state } = useSidebar(); // "expanded" | "collapsed"
 
   // Loading state until session loads
-  const [isLoading, setIsLoading] = useState(true)
-  const [sideMenus, setSideMenus] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
+  const [sideMenus, setSideMenus] = useState([]);
 
   // Role-based menu data
   const adminData = {
@@ -50,32 +70,32 @@ export function AppSidebar({ ...props }) {
       {
         title: "Franchise",
         url: `/admin/franchise`,
-        icon: ShoppingCart
+        icon: ShoppingCart,
       },
       {
         title: "Customers",
         url: "/admin/customers",
-        icon: UserCircle
+        icon: UserCircle,
       },
       {
         title: "Bills",
         url: "/admin/payments",
-        icon: BadgeIndianRupee
+        icon: BadgeIndianRupee,
       },
       {
         title: "Membership Purchase",
         url: "/admin/membership-payments",
-        icon: CreditCard
+        icon: CreditCard,
       },
       {
         title: "InSalon Products",
         url: "/admin/products",
-        icon: ShoppingBasket
+        icon: ShoppingBasket,
       },
       {
         title: "Service Menu",
         url: "/admin/services",
-        icon: Telescope
+        icon: Telescope,
       },
       {
         title: "Operators",
@@ -85,12 +105,12 @@ export function AppSidebar({ ...props }) {
       {
         title: "Promotion Codes",
         url: "/admin/offers",
-        icon: Gift
+        icon: Gift,
       },
       {
         title: "Packages",
         url: "/admin/packages",
-        icon: Package2Icon
+        icon: Package2Icon,
       },
       {
         title: "Appointments",
@@ -106,47 +126,47 @@ export function AppSidebar({ ...props }) {
           {
             title: "Customer Metrics",
             url: "/admin/reports/customer-metrics",
-            icon: UserCircle
+            icon: UserCircle,
           },
           {
             title: "Customer Purchase",
             url: "/admin/reports/customer-purchase",
-            icon: UserCircle
+            icon: UserCircle,
           },
           {
             title: "Service Bucket",
             url: "/admin/reports/customer-service-bucket",
-            icon: UserCircle
+            icon: UserCircle,
           },
           {
             title: "Gain Loss",
             url: "/admin/reports/gain-loss",
-            icon: UserCircle
+            icon: UserCircle,
           },
           {
             title: "Service Performance",
             url: "/admin/reports/service",
-            icon: Briefcase
+            icon: Briefcase,
           },
           {
             title: "Repeat Customer",
             url: "/admin/reports/repeat-customer",
-            icon: UserCircle
+            icon: UserCircle,
           },
           {
             title: "Churn Rate",
             url: "/admin/reports/churn-rate",
-            icon: UserCircle
+            icon: UserCircle,
           },
           {
             title: "Kitty Report",
             url: "/admin/reports/kitty-report",
-            icon: UserCircle
+            icon: UserCircle,
           },
           {
             title: "Consumable Usage",
             url: "/admin/reports/consumable-usage",
-            icon: UserCircle
+            icon: UserCircle,
           },
         ],
       },
@@ -155,12 +175,12 @@ export function AppSidebar({ ...props }) {
       {
         title: "Create Payment",
         url: "/admin/create/payment",
-        icon: ShoppingCart
+        icon: ShoppingCart,
       },
       {
         title: "All Payments",
         url: "/admin/payments",
-        icon: BadgeIndianRupee
+        icon: BadgeIndianRupee,
       },
       {
         title: "Appointments",
@@ -176,30 +196,30 @@ export function AppSidebar({ ...props }) {
         title: "Buy Membership",
         url: "/admin/purchase/membership",
         icon: UserCircle2,
-      }
+      },
     ],
     saas_owner: [
       {
         title: "Companies",
         url: "/admin/companies",
-        icon: Telescope
+        icon: Telescope,
       },
       {
         title: "Subscription",
         url: "/admin/subscription",
-        icon: DollarSign
-      }
+        icon: DollarSign,
+      },
     ],
     navMain: [
       {
         title: "Dashboard",
         url: "/admin",
-        icon: LayoutDashboard
+        icon: LayoutDashboard,
       },
       {
         title: "Branches",
         url: "/admin/branches",
-        icon: Building2
+        icon: Building2,
       },
       {
         title: "Operators",
@@ -209,69 +229,75 @@ export function AppSidebar({ ...props }) {
       {
         title: "Customers",
         url: "/admin/customers",
-        icon: UserCircle
+        icon: UserCircle,
       },
       {
         title: "Bills",
         url: "/admin/payments",
-        icon: BadgeIndianRupee
+        icon: BadgeIndianRupee,
       },
       {
         title: "Membership Purchase",
         url: "/admin/membership-payments",
-        icon: CreditCard
+        icon: CreditCard,
       },
       {
         title: "InSalon Products",
         url: "/admin/products",
-        icon: ShoppingBasket
+        icon: ShoppingBasket,
       },
       {
         title: "Service Menu",
         url: "/admin/services",
-        icon: Telescope
+        icon: Telescope,
       },
       {
         title: "Promotion Codes",
         url: "/admin/offers",
-        icon: DollarSign
+        icon: DollarSign,
       },
       {
         title: "Packages",
         url: "/admin/packages",
-        icon: Package2Icon
-      }
+        icon: Package2Icon,
+      },
     ],
-  }
+  };
 
   // Set menus based on role once session loads
   useEffect(() => {
-    if (status === 'loading') {
-      setIsLoading(true)
-      return
+    if (status === "loading") {
+      setIsLoading(true);
+      return;
     }
 
-    if (status === 'authenticated' && session?.user?.role) {
-      console.log("✅ Role loaded:", session.user.role)
+    if (status === "authenticated" && session?.user?.role) {
+      console.log("✅ Role loaded:", session.user.role);
 
-      const roleMenus = {
-        "FRANCHISE_OWNER": adminData.franchise_owner,
-        "CASHIER": adminData.cashier,
-        "SAAS_OWNER": adminData.saas_owner,
-      }[session.user.role] || adminData.navMain
+      const roleMenus =
+        {
+          FRANCHISE_OWNER: adminData.franchise_owner,
+          CASHIER: adminData.cashier,
+          SAAS_OWNER: adminData.saas_owner,
+        }[session.user.role] || adminData.navMain;
 
-      setSideMenus(roleMenus)
-      setIsLoading(false)
-      console.log("✅ Menu set for role:", session.user.role, roleMenus.length, "items")
+      setSideMenus(roleMenus);
+      setIsLoading(false);
+      console.log(
+        "✅ Menu set for role:",
+        session.user.role,
+        roleMenus.length,
+        "items",
+      );
     } else {
       // No session or unknown role - show minimal menu or loading
-      setSideMenus([])
-      setIsLoading(false)
+      setSideMenus([]);
+      setIsLoading(false);
     }
-  }, [status, session?.user?.role])
+  }, [status, session?.user?.role]);
 
   // Show loading skeleton while role-based menus load
-  if (isLoading || status === 'loading') {
+  if (isLoading || status === "loading") {
     return (
       <Sidebar collapsible="icon" {...props}>
         <SidebarHeader>
@@ -304,7 +330,7 @@ export function AppSidebar({ ...props }) {
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
-    )
+    );
   }
 
   return (
@@ -314,18 +340,29 @@ export function AppSidebar({ ...props }) {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="xl"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-b-1 border-accent/60 rounded-none"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-accent/60 rounded-none"
               asChild
             >
               <div>
-                <Link href="/" className="flex items-center space-x-2 group justify-start">
-                  <Image
-                    src={rynoxLogo.src}
-                    alt="Rynox"
-                    width={80}
-                    height={80}
-                    className="h-16 w-auto"
-                  />
+                <Link
+                  href="/"
+                  className="flex items-center justify-center group"
+                >
+                  {state === "collapsed" ? (
+                    <div className="flex w-full justify-center items-center">
+                      <span className="flex items-center justify-center mr-[50%] h-8 w-14 rounded-md  text-black text-sm select-none">
+                        
+                      </span>
+                    </div>
+                  ) : (
+                    <Image
+                      src={rynoxLogo.src}
+                      alt="Rynox"
+                      width={80}
+                      height={80}
+                      className="h-16 w-auto"
+                    />
+                  )}
                 </Link>
               </div>
             </SidebarMenuButton>
@@ -333,55 +370,62 @@ export function AppSidebar({ ...props }) {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="overflow-y-scroll no-scrollbar" >
+      <SidebarContent className="overflow-y-scroll no-scrollbar">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu >
+            <SidebarMenu>
               {sideMenus.map((item) => {
-                const isActive = pathName === item.url
-                return (
-                  item.items ? (
-                    <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
-                      <SidebarMenuItem>
-                        <CollapsibleTrigger asChild>
-                          <SidebarMenuSubButton
-                            tooltip={item.title}
-                            className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
-                          >
-                            {item.icon && <item.icon className="size-2" />}
-                            <span className="text-base">{item.title}</span>
-                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                          </SidebarMenuSubButton>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <SidebarMenuSub>
-                            {item.items?.map((subItem) => (
-                              <SidebarMenuSubItem key={subItem.title}>
-                                <SidebarMenuSubButton asChild className="!py-4">
-                                  <Link href={subItem.url}>
-                                    <span className="text-sm">{subItem.title}</span>
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            ))}
-                          </SidebarMenuSub>
-                        </CollapsibleContent>
-                      </SidebarMenuItem>
-                    </Collapsible>
-                  ) : (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                          className={`my-2! py-6! ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
-                      >
-                        <Link href={item.url}>
+                const isActive = pathName === item.url;
+                return item.items ? (
+                  <Collapsible
+                    key={item.title}
+                    asChild
+                    defaultOpen={item.isActive}
+                    className="group/collapsible"
+                  >
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuSubButton
+                          tooltip={item.title}
+                          className={`!my-2 !py-4 ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
+                        >
                           {item.icon && <item.icon className="size-2" />}
-                            <span className="text-base font-medium">{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
+                          <span className="text-base">{item.title}</span>
+                          <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                        </SidebarMenuSubButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {item.items?.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton asChild className="!py-4">
+                                <Link href={subItem.url}>
+                                  <span className="text-sm">
+                                    {subItem.title}
+                                  </span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
                     </SidebarMenuItem>
-                  )
-                )
+                  </Collapsible>
+                ) : (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className={`my-2! py-6! ${isActive && "rounded-md bg-sidebar-primary/90 text-sidebar-primary-foreground"}`}
+                    >
+                      <Link href={item.url}>
+                        {item.icon && <item.icon className="size-2" />}
+                        <span className="text-base font-medium">
+                          {item.title}
+                        </span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
               })}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -393,5 +437,5 @@ export function AppSidebar({ ...props }) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
