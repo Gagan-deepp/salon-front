@@ -70,8 +70,8 @@ const PaymentTableWrapper = async ({ params, user }) => {
 
   const result = user.role === "SUPER_ADMIN" ? await getAllPayments(params) : user.role === "CASHIER" ? await getCashierPayments(params, user.id) : await getFranchisePayments(params)
 
-  console.log("result payments",result)
-  console.debug("Payment Data Result ==> ", result.data.data)
+  // console.log("result payments",result)
+  // console.debug("Payment Data Result ==> ", result.data.data)
   const payments = result.success ? result.data.data || [] : []
   const pagination = result.success ? result.data.pagination || {} : {}
   const total = result.success ? result.data.data.length || 0 : 0
